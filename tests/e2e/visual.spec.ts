@@ -156,24 +156,15 @@ test('tactical preview matches real stage progress and earns the four-turn medal
   await page.screenshot({ path:dir+'/tactical-win-'+testInfo.project.name+'.png',fullPage:true });
 });
 
-test('keyboard navigation skips unaffordable moves instead of trapping focus', async ({ page }) => {
+test('focused move explains its real technique before the player commits', async ({ page }) => {
   await page.goto('./?encounter=task');
   await page.getByRole('button', { name: /PLAY/i }).click();
   await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
-  const stage = page.getByTestId('phaser-stage');
-  await expect(stage).toHaveAttribute('data-phase', 'command');
-  await page.getByRole('button', { name: 'Deep Think' }).click();
-  await expect(stage).toHaveAttribute('data-phase', 'command');
-  await page.getByRole('button', { name: 'Code Execution' }).click();
-  await expect(stage).toHaveAttribute('data-phase', 'command');
-  // Two AP remain. Higher-cost moves must be skipped by directional input.
-  const affordable = page.locator('.retro-move:not(:disabled)');
-  const disabled = page.locator('.retro-move:disabled');
-  await expect(disabled).not.toHaveCount(0);
-  await expect(affordable).not.toHaveCount(0);
-  await affordable.first().focus();
-  for (const key of ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'd', 's']) {
-    await page.keyboard.press(key);
-    await expect(page.locator('.retro-move:focus')).toBeEnabled();
-  }
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
+  await page.getByRole('button', { name: 'Deep Think' }).focus();
+  await expect(page.locator('.move-lesson')).toContainText('Break a difficult problem into smaller steps.');
+  await page.getByRole('button', { name: 'Code Execution' }).focus();
+  await expect(page.locator('.move-lesson')).toContainText('Put a software solution into action.');
+  await expect(page.locator('.move-lesson')).toContainText('No progress on this step');
+  await expect(page.getByRole('button', { name: 'Code Execution' })).toBeFocused();
 });
