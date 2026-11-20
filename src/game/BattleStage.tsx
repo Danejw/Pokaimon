@@ -115,5 +115,5 @@ export function BattleStage({ enemy = 'TASK', model = 'astra', effect = '', redu
     game.current = instance;
     return () => { instance.destroy(true); if (game.current === instance) game.current = null; };
   }, [enemy, model, reducedMotion]);
-  return <div className={'battle-stage ' + (effect ? 'stage-hit' : '')} ref={node} data-testid="phaser-stage" aria-label="Pokaimon battle battlefield" />;
+  return <div className={'battle-stage ' + (effect && !reducedMotion ? 'stage-hit' : '')} ref={node} data-testid="phaser-stage" aria-label="Pokaimon battle battlefield" />;
 }

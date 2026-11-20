@@ -70,7 +70,7 @@ export function App(){
       })}</div>
       <p className="disclaimer">A weak matchup can still be tried, but may be impossible to win without the needed capability.</p>
     </section>}
-    {screen==='arena'&&<BattlePanel key={model.id+'-'+encounter.id} model={model} encounter={encounter} reducedMotion={prefs.reducedMotion} soundEnabled={prefs.sound} onBack={()=>setScreen('encounters')} onWin={recordWin}/>}
+    {screen==='arena'&&<BattlePanel key={model.id+'-'+encounter.id} model={model} encounter={encounter} reducedMotion={prefs.reducedMotion} textSpeed={prefs.textSpeed} soundEnabled={prefs.sound} onBack={()=>setScreen('encounters')} onWin={recordWin}/>}
     {screen==='guide'&&<section className="guide-page">
       <div className="section-top"><button className="back-button" onClick={()=>setScreen('home')}>← HOME</button><span>FIELD GUIDE</span></div>
       <h2>Know your moves</h2><p className="intro">This is a game about AI capability types. Abilities are educational simulations; provider-specific support must be verified before live use.</p>
