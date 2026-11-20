@@ -41,7 +41,7 @@ function createScene(enemy: string, model: string): typeof Phaser.Scene {
       h.fillStyle(0xe88ca0); h.fillCircle(-21, -8, 5); h.fillCircle(23, -8, 5);
       h.lineStyle(3, 0x3e3759); h.strokeCircle(1, -9, 7);
       hero.add(h);
-      if (model === 'grok') h.setTint?.(0xb5a3ff);
+      // Character variants will use separate drawn sprites in Phase 2.
       if (!this.game.registry.get('reducedMotion')) {
         this.tweens.add({ targets: enemyArt, y: 154, duration: 850, yoyo: true, repeat: -1 });
         this.tweens.add({ targets: hero, y: 319, duration: 1050, yoyo: true, repeat: -1 });
