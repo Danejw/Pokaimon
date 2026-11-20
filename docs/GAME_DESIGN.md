@@ -6,6 +6,20 @@
 **Baseline date:** 2026-11-19  
 **Companion:** [Implementation Plan](./IMPLEMENTATION_PLAN.md)
 
+
+## Current approved gameplay flow (2026-11-19 revision)
+
+The [retro battle interaction direction](./RETRO_BATTLE_DIRECTION.md) supersedes earlier MVP screen-navigation decisions.
+
+**Press PLAY -> a wild problem is chosen at random -> enemy and original red-capped trainer enter the grassy arena -> player chooses one of three AI models in the battle screen -> trainer throws an original signal capsule and exits -> model creature summons -> player uses four capability moves -> problem is defeated or the player runs out of AP -> retry or begin another random wild encounter.**
+
+- There is **no visible challenge-selection screen**. All five wild tasks are eligible from the beginning. Clearing an encounter saves a Field Guide achievement; it no longer gates the encounter pool.
+- Trainer entrance, capsule arc, AI summon, attack FX, reactions and victory are short 16-bit-style animations. The game waits for a real player to make selections and attacks.
+- Original sprites are defined in the game source with unique poses/effects for GPT-6.2 Astra, Grok 4.7 and Claude Fable 5.2.
+- The fixed side-view battlefield, warm yellow grass, crunchy pixel fonts, triangular selection cursor and framed dialogue panels replace the original modern dashboard/card UI.
+- Animations are presentation only. The existing deterministic battle reducer and simulated-outcome labeling are authoritative.
+- The earlier 15-second Muse/Jolly video storyboard is an interaction reference, not a mandate to change the starting AI model roster or autoplay a battle. No licensed Pokémon characters, artwork, capture-ball graphics or music are copied.
+
 ## 1. One-sentence pitch
 
 **Pokaimon is a browser-based, turn-based creature-battle game where AI models are collectible characters, real-world problems are encounters, and moves teach useful AI capabilities and strategies.**
@@ -37,7 +51,7 @@ Primary audience: people curious about AI who know games and memes, developers c
 
 Initial delivery: install-free responsive web app, portrait-first on Android and iPhone with a desktop layout. Mouse, touch, and keyboard support. No signup to complete a battle. English for MVP.
 
-Target first-session experience: launch, choose a model, encounter TASK, select four moves, win or lose, read one useful explanation, and retry. Aim for a 2–4 minute first play session; tune by testing.
+Target first-session experience: launch, see a randomly chosen wild problem and trainer enter, choose a model in the battle, watch its summon animation, select four-move tactics, win or lose, learn why, and retry. Aim for a 2–4 minute first play session; tune by testing.
 
 ## 4. Universe and presentation
 
@@ -217,7 +231,7 @@ Content records carry a published/updated date, source URLs, confidence or verif
 Initial screens:
 
 1. **Home:** Play, Field Guide, Settings. Fast first play.
-2. **Model Selection:** Three original sprites with name, provider, four moves, gameplay stats, and a “game balance” note.
+2. **In-battle Model Selection:** Three rows with model icons, provider, levels and a grid-snapped directional cursor over the still-visible enemy and trainer; select a model to trigger the animated summon.
 3. **Battle:** Fixed background, enemy/progress UI, player sprite, dialogue box, 2 × 2 move grid, AP/turn indicator, and brief effectiveness cue.
 4. **Result:** Victory/defeat, stage recap, move effectiveness, one actionable AI lesson, retry/next encounter.
 5. **Field Guide:** Encounter and move encyclopedia with links to documentation when available.

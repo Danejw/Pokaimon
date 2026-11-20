@@ -1,6 +1,6 @@
 # Pokaimon
 
-**Master your models. Battle real-world problems.** A responsive, original pixel-art inspired AI literacy game. Initial battles are deterministic simulations; no paid model APIs are called.
+**Master your models. Battle real-world problems.** A nostalgic pixel-art AI literacy battle game. Press PLAY to meet a random wild problem, choose an AI inside the arena, watch your trainer summon it, then use capability moves. Battle rules are deterministic simulations; no paid model APIs are called.
 
 ## Development
 Requires Node 22+.
@@ -22,6 +22,7 @@ The Vite app is served from `/Pokaimon/` to support GitHub Pages deployment. Vis
 - [Game design](docs/GAME_DESIGN.md)
 - [Phased plan](docs/IMPLEMENTATION_PLAN.md)
 - [MVP status and manual playtest](docs/MVP_STATUS.md)
+- [Retro wild encounter and summon design](docs/RETRO_BATTLE_DIRECTION.md)
 - [Security and rights review](docs/SECURITY_REVIEW.md)
 - [Skills and agent guide](AGENTS.md)
 

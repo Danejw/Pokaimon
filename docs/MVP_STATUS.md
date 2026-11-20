@@ -14,13 +14,24 @@ Each phase was introduced as a separate feature commit. Small follow-up CI fixes
 | 3 | [238b28cb](https://github.com/Danejw/Pokaimon/commit/238b28cb3a5cb651ef4ed791c0eb234997c77e57) | [6f53a525](https://github.com/Danejw/Pokaimon/commit/6f53a5250051c7ba74367bd344ace94651ee92fc) | Five enemies, progression, local saves and Field Guide |
 | 4 | [a08dfe2f](https://github.com/Danejw/Pokaimon/commit/a08dfe2faf226d55cd88b20efafe3423ccedf9de) | [bf8b50b2](https://github.com/Danejw/Pokaimon/commit/bf8b50b255bc3ea669701b3c83b0d05f80860894) | AG-UI streaming endpoint and SDK, live-provider adapter contract, synthesized sound, accessibility improvements |
 
+## Retro wild encounter revision (post Phase 4)
+
+[PR #1](https://github.com/Danejw/Pokaimon/pull/1) merged the new flow on November 19, 2026 HST.
+
+- PLAY now chooses one of the five wild encounters randomly; no separate encounter picker or unlock gate.
+- The trainer and problem enter a single side-view battlefield; model selection appears below that same battle.
+- Choosing GPT-6.2 Astra, Grok 4.7 or Claude Fable 5.2 triggers the signal-capsule throw, distinctive pixel-art companion summon and individual attack effects.
+- Battles wait for each player move, then resolve the existing deterministic rules. Victory/retry/next-encounter and local completion tracking remain.
+- The original retro 16-bit interface replaces the previous web-card layout. Accessible keyboard/touch selection, reduced motion, original synthesized cues and simulated-battle labeling remain.
+- The [full retro interaction specification](RETRO_BATTLE_DIRECTION.md) is the current presentation source of truth. CI [passed for the feature branch](https://github.com/Danejw/Pokaimon/actions/runs/44684854574); first physical-device playtest is still pending.
+
 ## Verified versus outstanding
 
 Automated checks passed for every checkpoint. Phase 4 CI includes lint, typecheck, Vitest unit/integration tests, AG-UI 1.0 official-client tests, app build, and Playwright mobile/desktop browser tests. See [passing Phase 4 CI](https://github.com/Danejw/Pokaimon/actions/runs/44680548697).
 
 **Implementation status:** Web MVP code complete and passing CI. Battles simulate educational capability use; no real AI model executes a task and no paid inference occurs. The AG-UI server is runnable locally and is not deployed to static GitHub Pages.
 
-**Public deployment:** **GitHub Pages successfully deployed** at https://danejw.github.io/Pokaimon/ . The [deployment workflow's second attempt](https://github.com/Danejw/Pokaimon/actions/runs/44680949777) completed successfully after GitHub Pages was enabled. Public URL and Pages deployment were confirmed in GitHub Actions logs; direct external HTTP verification was unavailable in this environment.
+**Public deployment:** GitHub Pages was enabled and the initial MVP deployed successfully at https://danejw.github.io/Pokaimon/ . The [deployment workflow's second attempt](https://github.com/Danejw/Pokaimon/actions/runs/44680949777) completed successfully after GitHub Pages was enabled. Public URL and Pages deployment were confirmed in GitHub Actions logs; direct external HTTP verification was unavailable in this environment.
 
 **Manual QA:** Physical Android playback and design review remain pending. Automated mobile browser emulation is not proof of a real device playtest. Trademark clearance for public marketing, full audio/design polish, and a dependency lockfile also remain later quality tasks.
 

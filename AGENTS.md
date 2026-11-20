@@ -9,6 +9,7 @@ This is the repository-wide entry point for AI coding agents. Keep it short and 
 Before making changes, read the relevant sections of:
 - [Game Design](docs/GAME_DESIGN.md) for what to build, rules, terminology, educational goals, scope and non-goals.
 - [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) for the current phase, vertical slices, acceptance criteria, and Go/No-go.
+- [Retro Battle Direction](docs/RETRO_BATTLE_DIRECTION.md) for the **currently approved** player-driven random encounter, trainer/summon, pixel-art animation and battle presentation. This supersedes older screen-menu assumptions.
 - Existing source code and tests. **Actual repository behavior is the source of truth for what exists.** If documentation disagrees with code, report and resolve the discrepancy before changing behavior.
 
 ## Implementation rules

@@ -5,6 +5,8 @@
 **Baseline date:** 2026-11-19  
 **Product contract:** [Game Design Document](./GAME_DESIGN.md)
 
+**Post-MVP visual interaction revision:** The [retro battle direction](RETRO_BATTLE_DIRECTION.md) has been implemented in [PR #1](https://github.com/Danejw/Pokaimon/pull/1), CI verified, and merged. The originally planned encounter picker was removed in favor of random wild encounters and in-battle model selection. Older phase checkboxes below are historical plans; use the actual code and [MVP Status](MVP_STATUS.md) for verified implementation.
+
 ## 1. Goal and execution strategy
 
 Ship a **real, playable, mobile-friendly AI-literacy battle game** in small complete vertical slices. Each phase adds something a player can use from start to finish, not just an isolated architecture layer.
