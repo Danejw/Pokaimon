@@ -46,6 +46,40 @@ function drawPlatform(g:Phaser.GameObjects.Graphics,x:number,y:number,width:numb
   }
 }
 
+/** Layered, deterministic pixel scenery shared by every battle encounter. */
+function drawScenery(g:Phaser.GameObjects.Graphics):void {
+  // Distant ridge and broken treeline use integer coordinates for crisp scaling.
+  g.fillStyle(0xd6b89a);
+  for(let x=0;x<360;x+=12){
+    const ridge=110+Math.round(Math.sin(x*0.035)*13)+Math.round(Math.sin(x*0.11)*5);
+    g.fillRect(x,ridge,12,170-ridge);
+  }
+  g.fillStyle(0x82b99a);
+  for(let x=0;x<360;x+=9){
+    const top=153+Math.round(Math.sin(x*0.075)*9);
+    g.fillRect(x,top,9,179-top);
+  }
+  g.fillStyle(0x4f9779);
+  for(let x=0;x<360;x+=18){
+    const top=170+(x%54===0?-11:0);
+    g.fillRect(x+3,top,9,13);
+    g.fillRect(x,top+6,15,7);
+  }
+  // Staggered foreground tufts and sunlit ground pixels.
+  for(let i=0;i<34;i++){
+    const x=(i*67+19)%354;
+    const y=198+(i*43)%119;
+    g.fillStyle(i%3===0?0xf8d99a:0xd6a568);
+    g.fillRect(x,y,7,3);
+    if(i%4===0){
+      g.fillStyle(0x599c6c);
+      g.fillRect(x+2,y-5,3,8);
+      g.fillRect(x-2,y-2,4,3);
+      g.fillRect(x+5,y-3,4,3);
+    }
+  }
+}
+
 function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene {
   return class BattleScene extends Phaser.Scene {
     private trainer!:ReturnType<typeof createPixelCharacter>;
@@ -55,6 +89,7 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
     private lastPhase:BattlePhase|null=null;
     private lastAttackSequence=0;
     private heroIdle=false;
+    private enemyIdle=false;
 
     constructor(){super('retro-battle');}
 
@@ -71,6 +106,7 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
       // A few square-pixel cloudlets and blades create depth without photographic gradients.
       g.fillStyle(0xfffaf0);g.fillRect(42,45,30,5);g.fillRect(49,40,23,5);
       g.fillRect(307,35,31,5);g.fillRect(314,30,24,5);
+      drawScenery(g);
       drawPlatform(g,261,209,170);
       drawPlatform(g,93,291,168);
       // Ground grass edges; intentionally chunked into large pixels.
@@ -85,6 +121,10 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
 
       const art=enemySprites[enemyName]??enemySprites.TASK;
       this.enemy=createPixelCharacter(this,art,410,201);
+      if(!initial.reducedMotion){
+        this.enemyIdle=true;
+        this.tweens.add({targets:this.enemy.container,y:197,duration:600,yoyo:true,repeat:-1,ease:'Stepped'});
+      }
       this.trainer=createPixelCharacter(this,trainerSprite,-66,281);
       this.hero=createPixelCharacter(this,modelSprites.astra,89,283);
       this.hero.container.setVisible(false);
@@ -198,6 +238,23 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
         return;
       }
       const offset=model==='grok'?26:model==='fable'?18:15;
+      // Each move family has its own readable pixel signature.
+      if(type==='verification'){
+        for(let i=0;i<4;i++){
+          const ring=this.add.rectangle(260,161,38+i*11,38+i*11,0x7ad8ae,0).setStrokeStyle(3,0x7ad8ae).setDepth(14);
+          this.tweens.add({targets:ring,scaleX:1.45,scaleY:1.45,alpha:0,duration:260+i*55,delay:i*35,onComplete:()=>ring.destroy()});
+        }
+      }else if(type==='reasoning'){
+        for(let i=0;i<6;i++){
+          const ray=this.add.rectangle(260,160,6,38,0xfce176).setDepth(14).setRotation(i*Math.PI/3);
+          this.tweens.add({targets:ray,alpha:0,scaleY:1.8,duration:340,onComplete:()=>ray.destroy()});
+        }
+      }else if(type==='research'){
+        for(let i=0;i<5;i++){
+          const card=this.add.rectangle(145+i*5,220-i*9,17,23,0x94dff7).setStrokeStyle(2,0xffffff).setDepth(14);
+          this.tweens.add({targets:card,x:245+i*5,y:153+i*7,angle:i%2?20:-20,alpha:0,duration:350+i*35,onComplete:()=>card.destroy()});
+        }
+      }
       this.tweens.add({
         targets:this.hero.container,x:89+offset,duration:100,yoyo:true,repeat:1,
         onComplete:()=>this.hero.paint('idle'),
