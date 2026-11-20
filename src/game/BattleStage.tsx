@@ -23,14 +23,36 @@ function createScene(enemy: string, model: string): typeof Phaser.Scene {
       g.fillEllipse(92, 388, 136, 20);
       const enemyArt = this.add.container(266, 160);
       const task = this.add.graphics();
-      task.fillStyle(0x2d294b, 1); task.fillRoundedRect(-39, -59, 78, 103, 9);
-      task.fillStyle(0xfff7dd, 1); task.fillRoundedRect(-34, -64, 68, 96, 7);
-      task.fillStyle(0x666082, 1);
-      for (let i = 0; i < 3; i++) {
-        task.fillRect(-23, -39 + i * 24, 11, 11);
-        task.fillRect(-4, -35 + i * 24, 27, 4);
+      if (enemy === 'BUG') {
+        task.fillStyle(0x28273d); task.fillEllipse(0,0,91,86);
+        task.fillStyle(0xdc7e9a); task.fillEllipse(0,0,80,76);
+        task.fillStyle(0x4c2d59); task.fillRect(-27,-12,13,17);task.fillRect(14,-12,13,17);
+        task.lineStyle(5,0x332844);task.lineBetween(-35,-39,-49,-57);task.lineBetween(35,-39,49,-57);
+        task.lineBetween(-35,9,-57,23);task.lineBetween(35,9,57,23);
+      } else if (enemy === 'RESEARCH REQUEST') {
+        task.fillStyle(0x332b4c); task.fillRoundedRect(-43,-58,86,101,10);
+        task.fillStyle(0xf5e0b6); task.fillRoundedRect(-38,-53,76,90,7);
+        task.fillStyle(0xffb97c); task.fillRect(-28,-33,56,9);
+        task.fillStyle(0x524b64);task.fillRect(-25,-8,20,6);task.fillRect(8,-8,20,6);
+        task.fillStyle(0x524b64);task.fillRect(-7,18,14,7);
+      } else if (enemy === 'MATH PROBLEM') {
+        task.fillStyle(0x322842);task.fillTriangle(0,-69,-56,37,56,37);
+        task.fillStyle(0xbda7ff);task.fillTriangle(0,-57,-45,31,45,31);
+        task.fillStyle(0x332842);task.fillCircle(-12,3,5);task.fillCircle(14,3,5);
+        task.fillRect(-16,21,32,5);
+      } else if (enemy === 'HALLUCINATION') {
+        task.fillStyle(0x2c2a4a);task.fillEllipse(0,-4,102,105);
+        task.fillStyle(0xd9d5ff);task.fillEllipse(0,-7,91,95);
+        task.fillStyle(0x70678c);task.fillCircle(-17,-14,6);task.fillCircle(17,-14,6);
+        task.fillStyle(0xec8eaa);task.fillRect(-10,9,20,6);
+        task.fillStyle(0xbfa9f1);task.fillCircle(38,-55,15);task.fillCircle(52,-70,7);
+      } else {
+        task.fillStyle(0x2d294b, 1); task.fillRoundedRect(-39, -59, 78, 103, 9);
+        task.fillStyle(0xfff7dd, 1); task.fillRoundedRect(-34, -64, 68, 96, 7);
+        task.fillStyle(0x666082, 1);
+        for (let i = 0; i < 3; i++) {task.fillRect(-23, -39 + i * 24, 11, 11);task.fillRect(-4, -35 + i * 24, 27, 4);}
+        task.fillStyle(0x2d294b); task.fillCircle(-17, 17, 4); task.fillCircle(17, 17, 4);
       }
-      task.fillStyle(0x2d294b); task.fillCircle(-17, 17, 4); task.fillCircle(17, 17, 4);
       enemyArt.add(task);
       const hero = this.add.container(95, 324);
       const h = this.add.graphics();

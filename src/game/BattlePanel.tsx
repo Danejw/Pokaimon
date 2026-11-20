@@ -1,30 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BattleStage } from './BattleStage';
 import { applyMove, createBattle, summarizeBattle, totalProgress } from '../battle/engine';
-import { TASK, movesFor } from '../content/core';
-import type { BattleState, ModelDefinition } from '../battle/types';
+import { movesFor } from '../content/core';
+import type { BattleState, ModelDefinition, EncounterDefinition } from '../battle/types';
 
-export function BattlePanel({ model, reducedMotion, onBack }: { model: ModelDefinition; reducedMotion: boolean; onBack: () => void }) {
-  const [battle, setBattle] = useState<BattleState>(() => createBattle(TASK,model));
+export function BattlePanel({ model, encounter, reducedMotion, onBack, onWin }: { model: ModelDefinition; encounter: EncounterDefinition; reducedMotion: boolean; onBack: () => void; onWin: (id: string) => void }) {
+  const [battle, setBattle] = useState<BattleState>(() => createBattle(encounter,model));
+  useEffect(() => { if (battle.outcome === 'won') onWin(encounter.id); }, [battle.outcome, encounter.id, onWin]);
   const moves = movesFor(model);
-  const stage = TASK.stages[battle.stageIndex];
+  const stage = encounter.stages[battle.stageIndex];
   const latest = battle.events.slice(-4).reverse();
-  function useMove(id: string) { setBattle(prev => applyMove(prev, id, model, TASK)); }
+  function useMove(id: string) { setBattle(prev => applyMove(prev, id, model, encounter)); }
   return <section className="arena-page">
     <div className="section-top">
-      <button className="back-button" onClick={onBack}>← MODELS</button>
+      <button className="back-button" onClick={onBack}>← CHALLENGES</button>
       <span className="sim-tag">SIMULATED BATTLE</span>
     </div>
     <div className="battle-hud">
-      <div><strong>TASK</strong> <small>Lv.{TASK.level}</small></div>
+      <div><strong>{encounter.name}</strong> <small>Lv.{encounter.level}</small></div>
       <div className="hp-track" role="meter" aria-label="Task completion" aria-valuenow={totalProgress(battle)} aria-valuemin={0} aria-valuemax={100}>
         <span style={{ width: totalProgress(battle) + '%' }}/></div>
-      <small>{totalProgress(battle)}% resolved · stage {Math.min(battle.stageIndex + 1, TASK.stages.length)}/{TASK.stages.length}</small>
+      <small>{totalProgress(battle)}% resolved · stage {Math.min(battle.stageIndex + 1, encounter.stages.length)}/{TASK.stages.length}</small>
     </div>
-    <div className="battle-visual"><BattleStage enemy={TASK.name} model={model.id} reducedMotion={reducedMotion} effect={battle.turn ? String(battle.turn) : ''}/></div>
+    <div className="battle-visual"><BattleStage enemy={encounter.name} model={model.id} reducedMotion={reducedMotion} effect={battle.turn ? String(battle.turn) : ''}/></div>
     <div className="agent-bar"><strong>{model.displayName}</strong><span>AP {battle.ap}/{battle.maxAp} · TURN {battle.turn}</span></div>
     <div className="dialogue-box battle-dialogue" role="status" aria-live="polite">
-      <p>{battle.outcome === 'active' ? (stage?.label + ': ' + stage?.hint) : (battle.outcome === 'won' ? 'TASK completed!' : 'Battle lost!')}</p>
+      <p>{battle.outcome === 'active' ? (stage?.label + ': ' + stage?.hint) : (battle.outcome === 'won' ? encounter.name + ' completed!' : 'Battle lost!')}</p>
       <small>{battle.feedback}</small>
     </div>
     {battle.outcome === 'active' ? <>
@@ -36,9 +37,9 @@ export function BattlePanel({ model, reducedMotion, onBack }: { model: ModelDefi
       <p className="move-note">Tip: Match the move to the current task stage. Wrong moves still cost AP.</p>
     </> : <div className="result-panel">
       <h2>{battle.outcome === 'won' ? 'VICTORY!' : 'TRY AGAIN'}</h2>
-      <p>{summarizeBattle(battle)}</p>
-      <button className="primary full" onClick={() => setBattle(createBattle(TASK, model))}>RETRY BATTLE ↻</button>
-      <button className="secondary full" onClick={onBack}>BACK HOME</button>
+      <p>{summarizeBattle(battle, encounter)}</p>
+      <button className="primary full" onClick={() => setBattle(createBattle(encounter, model))}>RETRY BATTLE ↻</button>
+      <button className="secondary full" onClick={onBack}>MORE CHALLENGES</button>
     </div>}
     <details className="battle-log"><summary>Battle log ({battle.events.length} events)</summary>
       {latest.map(event => <p key={event.seq}><b>#{event.turn}</b> {event.message}</p>)}

@@ -51,9 +51,19 @@ export function applyMove(
     return next;
   }
   if (next.turn === 2) {
-    next.goals[next.stageIndex] += 14;
-    addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' used ' + encounter.special + '! More work is required.');
-    feedback += ' ' + encounter.name + ' used ' + encounter.special + '!';
+    const effect = encounter.specialEffect ?? 'scope-shift';
+    if (effect === 'regression' && next.stageIndex > 0) {
+      // A regression can reopen a recently completed stage.
+      next.stageIndex--;
+      next.progress[next.stageIndex] = Math.max(0, next.goals[next.stageIndex] - 16);
+      addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' used Regression! Recheck the prior change.');
+      feedback += ' Regression! Your previous stage needs another pass.';
+    } else {
+      const extra = effect === 'hidden-assumption' ? 12 : effect === 'false-lead' ? 18 : effect === 'source-conflict' ? 16 : 14;
+      next.goals[next.stageIndex] += extra;
+      addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' used ' + encounter.special + '! Extra verification is required.');
+      feedback += ' ' + encounter.name + ' used ' + encounter.special + '!';
+    }
   } else {
     addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' is watching your next move.');
   }

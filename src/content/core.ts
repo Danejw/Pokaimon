@@ -56,7 +56,7 @@ export function validateRoster(models: readonly ModelDefinition[] = MODELS, move
 
 export const TASK: EncounterDefinition = {
   id: 'task', name: 'TASK', level: 5, category: 'Workflow', description: 'A software-workflow problem. Plan a fix, apply an approach, and verify the result.',
-  special: 'Scope Shift',
+  special: 'Scope Shift', specialEffect: 'scope-shift',
   stages: [
     { id: 'plan', label: 'Understand & plan', goal: 36, accepts: ['reasoning','research','context'], hint: 'Break the problem down before acting.' },
     { id: 'execute', label: 'Apply a solution', goal: 36, accepts: ['coding'], hint: 'Choose a move that can work on the software solution.' },
