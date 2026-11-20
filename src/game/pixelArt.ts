@@ -1,5 +1,7 @@
 import * as Phaser from 'phaser';
 import { refineSprite } from './spriteDetail';
+import { ultraDetailSprite } from './ultraDetail';
+import { spriteCanvas } from './spriteRaster';
 
 /**
  * Original game-only pixel creatures. All source art is readable and editable here.
@@ -227,60 +229,47 @@ const hallucination:PixelArt = {
   ],
 };
 
-// Each sprite is now redrawn on a 2x (or 3x) finer pixel lattice at the same on-screen size.
-// Phaser battle poses and React party/guide portraits share these enriched source arrays.
+// The previous 2x/3x masters are refined another 4x per axis (16x addressable
+// pixel count versus the previous preview). On-screen footprints stay constant.
 export const enemySprites:Record<string,PixelArt> = {
-  'TASK':refineSprite(task, 'task'),
-  'BUG':refineSprite(bug, 'bug'),
-  'RESEARCH REQUEST':refineSprite(research, 'research'),
-  'MATH PROBLEM':refineSprite(math, 'math'),
-  'HALLUCINATION':refineSprite(hallucination, 'hallucination'),
+  'TASK':ultraDetailSprite(refineSprite(task, 'task'), 'task'),
+  'BUG':ultraDetailSprite(refineSprite(bug, 'bug'), 'bug'),
+  'RESEARCH REQUEST':ultraDetailSprite(refineSprite(research, 'research'), 'research'),
+  'MATH PROBLEM':ultraDetailSprite(refineSprite(math, 'math'), 'math'),
+  'HALLUCINATION':ultraDetailSprite(refineSprite(hallucination, 'hallucination'), 'hallucination'),
 };
 export const modelSprites:Record<ModelId,PixelArt> = {
-  astra:refineSprite(astra, 'astra'),
-  grok:refineSprite(grok, 'grok'),
-  fable:refineSprite(fable, 'fable'),
+  astra:ultraDetailSprite(refineSprite(astra, 'astra'), 'astra'),
+  grok:ultraDetailSprite(refineSprite(grok, 'grok'), 'grok'),
+  fable:ultraDetailSprite(refineSprite(fable, 'fable'), 'fable'),
 };
-export const trainerSprite = refineSprite(trainer, 'trainer');
+export const trainerSprite = ultraDetailSprite(refineSprite(trainer, 'trainer'), 'trainer');
 
-/** Draw a transparent, fixed-size sprite on a Phaser Graphics canvas. */
-export function paintSprite(graphics:Phaser.GameObjects.Graphics,art:PixelArt,pose:ModelPose='idle'):void {
-  graphics.clear();
-  const unit=art.pixelSize??3;
-  const width=Math.max(...art.pixels.map(row=>row.length));
-  const x0=-Math.floor(width*unit/2);
-  const y0=-art.pixels.length*unit;
-  for(let row=0;row<art.pixels.length;row++){
-    const pixels=art.pixels[row];
-    for(let col=0;col<pixels.length;col++){
-      const symbol=pixels[col];
-      if(symbol==='.' || symbol===' ')continue;
-      const color=art.palette[symbol];
-      if(color===undefined)continue;
-      // Pixel perfect, no image interpolation or runtime texture downloads.
-      graphics.fillStyle(color);
-      graphics.fillRect(x0+col*unit,y0+row*unit,unit,unit);
-    }
+/**
+ * Phaser draws one cached canvas texture per character/pose. A 160+ pixel-wide
+ * authored lattice would otherwise create tens of thousands of Graphics nodes.
+ * Texture keys are local to the current Phaser Game; all screens share the art.
+ */
+const textureIds = new WeakMap<PixelArt, number>();
+let nextTextureId = 0;
+function textureFor(scene: Phaser.Scene, art: PixelArt, pose: ModelPose): string {
+  let id = textureIds.get(art);
+  if (id === undefined) {
+    id = ++nextTextureId;
+    textureIds.set(art, id);
   }
-  // Pose overlays add expressive features while preserving each creature's silhouette.
-  if(pose==='attack'){
-    graphics.fillStyle(0xffffff);graphics.fillRect(-unit*3,y0+unit*5,unit*2,unit);
-    graphics.fillStyle(0xf8db74);graphics.fillRect(unit*2,y0+unit*3,unit*2,unit*2);
-  }
-  if(pose==='charge'){
-    graphics.fillStyle(0xfff3b1);graphics.fillRect(-3,y0-7,6,6);
-  }else if(pose==='victory'){
-    graphics.fillStyle(0xffec95);graphics.fillRect(-22,y0-9,7,7);graphics.fillRect(19,y0-6,6,6);
-    graphics.fillRect(-12,y0-17,5,5);graphics.fillRect(9,y0-20,5,5);
-  }else if(pose==='hurt'){
-    graphics.fillStyle(0xff7d86);graphics.fillRect(-3,y0-7,6,6);
-    graphics.fillRect(-unit*3,y0+unit*7,unit*2,unit);
-  }
+  const key = 'pokaimon-hires-' + id + '-' + pose;
+  if (!scene.textures.exists(key)) scene.textures.addCanvas(key, spriteCanvas(art, pose));
+  return key;
 }
-export function createPixelCharacter(scene:Phaser.Scene,art:PixelArt,x:number,y:number):{container:Phaser.GameObjects.Container,paint:(pose?:ModelPose)=>void}{
-  const graphic=scene.add.graphics();
-  const container=scene.add.container(x,y,[graphic]);
-  const paint=(pose:ModelPose='idle')=>paintSprite(graphic,art,pose);
-  paint();
-  return {container,paint};
+
+export function createPixelCharacter(
+  scene: Phaser.Scene, art: PixelArt, x: number, y: number,
+): { container: Phaser.GameObjects.Container; paint: (pose?: ModelPose) => void } {
+  const image = scene.add.image(0, 0, textureFor(scene, art, 'idle'))
+    .setOrigin(.5, 1)
+    .setScale(art.pixelSize ?? 3);
+  const container = scene.add.container(x, y, [image]);
+  const paint = (pose: ModelPose = 'idle') => image.setTexture(textureFor(scene, art, pose));
+  return { container, paint };
 }
