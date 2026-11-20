@@ -22,3 +22,7 @@ All vendored skill text and companion files are copied from these official upstr
 `copilotkit-agui` is from an **archived** repository and may describe older protocol shapes. Check https://docs.ag-ui.com/ before implementing AG-UI. The `playwright-cli` skill requires the CLI to be installed separately when browser testing starts. The sprite helper scripts may require Pillow; they are included without executing them.
 
 Skill installation adds **guidance only**, not runtime dependencies, API credentials, live AI calls, or game features. Skills and licenses are maintained as upstream snapshots; update intentionally and review changes.
+
+## Integrity check
+
+The full official skill directories, shared reference files, and scripts are verified against pinned upstream Git blob IDs. Read [SKILL_AUDIT.md](SKILL_AUDIT.md) and run `node scripts/verify-vendored-skills.mjs` after any skill changes. The inventory is in [skills-manifest.json](skills-manifest.json).

@@ -1,0 +1,1022 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "Official upstream Git tree entries at pinned commits",
+  "sourcePins": {
+    "openai/plugins": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+    "phaserjs/phaser": "02d8931b626d9764c133cbb3fbf99966c03c757c",
+    "microsoft/playwright-cli": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+    "openai/skills": "49f948faa9258a0c61caceaf225e179651397431",
+    "vercel-labs/agent-skills": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+    "CopilotKit/skills": "8d78cf908844a30d2909f7da4eb8cb6f51fa02ad"
+  },
+  "files": [
+    {
+      "path": ".agents/references/alternative-3d-engines.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/alternative-3d-engines.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "14c4192d2bc2bf65443499246cd003f4e8461f64"
+    },
+    {
+      "path": ".agents/references/engine-selection.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/engine-selection.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "d5d7bc10850c4aa1ad8c64bf415ed7919d281a5e"
+    },
+    {
+      "path": ".agents/references/frontend-prompts.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/frontend-prompts.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "86d46e2de9fcbb5d85cbc7a59d09429072002449"
+    },
+    {
+      "path": ".agents/references/gltf-loading-starter.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/gltf-loading-starter.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "2eb1324ca55d17fa08ac7a9cb19a41bfcd22f513"
+    },
+    {
+      "path": ".agents/references/phaser-architecture.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/phaser-architecture.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "53fb903dc4b8fa1f74c3320c5103774879561594"
+    },
+    {
+      "path": ".agents/references/playtest-checklist.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/playtest-checklist.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "3a2e81d4aad7897759e1c492a93d41ddc959b39c"
+    },
+    {
+      "path": ".agents/references/rapier-integration-starter.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/rapier-integration-starter.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "f78a5be3d7d8c1cd1d89b33dff45f9375a81d4fe"
+    },
+    {
+      "path": ".agents/references/react-three-fiber-stack.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/react-three-fiber-stack.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "947a3e0ddc51df70250d4ac95ef43f136997e97e"
+    },
+    {
+      "path": ".agents/references/react-three-fiber-starter.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/react-three-fiber-starter.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "c14a92e8b326eda857053445dd2df9b370f8c106"
+    },
+    {
+      "path": ".agents/references/sprite-pipeline.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/sprite-pipeline.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "d3804a623b7c98f43051f0d1015f33364ac8c9be"
+    },
+    {
+      "path": ".agents/references/three-hud-layout-patterns.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/three-hud-layout-patterns.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "af9a1345da0f97e880fdfc6e7820d3177b77c779"
+    },
+    {
+      "path": ".agents/references/three-webgl-architecture.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/three-webgl-architecture.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "f6558b77d7bb3c9842ca330b6d47a67f9ee7bd0c"
+    },
+    {
+      "path": ".agents/references/threejs-stack.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/threejs-stack.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "aee34d4d9e91676727e43f9737e823c75071bcc0"
+    },
+    {
+      "path": ".agents/references/threejs-vanilla-starter.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/threejs-vanilla-starter.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "9f7830f6c905478495642f703eca60ea7a57ec97"
+    },
+    {
+      "path": ".agents/references/web-3d-asset-pipeline.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/web-3d-asset-pipeline.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "ce5bc3da7613285e207a50065aed8055bca2dcb1"
+    },
+    {
+      "path": ".agents/references/webgl-debugging-and-performance.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/references/webgl-debugging-and-performance.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "5d9853f79067d0cb32ddb46ebfe4136819b00050"
+    },
+    {
+      "path": ".agents/scripts/build_sprite_edit_canvas.py",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/scripts/build_sprite_edit_canvas.py",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "fc1b2a2ef3bbb529d818fd58d722e3a180847c43"
+    },
+    {
+      "path": ".agents/scripts/normalize_sprite_strip.py",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/scripts/normalize_sprite_strip.py",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "9bb3e0485550b3a27942fe2eb634495529982254"
+    },
+    {
+      "path": ".agents/scripts/render_sprite_preview_sheet.py",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/scripts/render_sprite_preview_sheet.py",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "8937ed83873e8766982bd52f2ca261db5527f47d"
+    },
+    {
+      "path": ".agents/skills/copilotkit-agui/LICENSE",
+      "sourceRepo": "CopilotKit/skills",
+      "sourcePath": "LICENSE",
+      "sourceCommit": "8d78cf908844a30d2909f7da4eb8cb6f51fa02ad",
+      "gitBlobSha": "3b2206e4a39953e65bfde70f550573d343f5b510"
+    },
+    {
+      "path": ".agents/skills/copilotkit-agui/references/building-agents.md",
+      "sourceRepo": "CopilotKit/skills",
+      "sourcePath": "skills/copilotkit-agui/references/building-agents.md",
+      "sourceCommit": "8d78cf908844a30d2909f7da4eb8cb6f51fa02ad",
+      "gitBlobSha": "9f41a40077ef398fdeafb3293b368136fc64a973"
+    },
+    {
+      "path": ".agents/skills/copilotkit-agui/references/client-sdk.md",
+      "sourceRepo": "CopilotKit/skills",
+      "sourcePath": "skills/copilotkit-agui/references/client-sdk.md",
+      "sourceCommit": "8d78cf908844a30d2909f7da4eb8cb6f51fa02ad",
+      "gitBlobSha": "aca991524b101528a634c8ad3b71589b9280a29f"
+    },
+    {
+      "path": ".agents/skills/copilotkit-agui/references/event-flow-diagrams.md",
+      "sourceRepo": "CopilotKit/skills",
+      "sourcePath": "skills/copilotkit-agui/references/event-flow-diagrams.md",
+      "sourceCommit": "8d78cf908844a30d2909f7da4eb8cb6f51fa02ad",
+      "gitBlobSha": "a73385c5838adf504f6d74d092c5b35590a5a8ae"
+    },
+    {
+      "path": ".agents/skills/copilotkit-agui/references/protocol-spec.md",
+      "sourceRepo": "CopilotKit/skills",
+      "sourcePath": "skills/copilotkit-agui/references/protocol-spec.md",
+      "sourceCommit": "8d78cf908844a30d2909f7da4eb8cb6f51fa02ad",
+      "gitBlobSha": "79e5e81f020827ac71a6dbf983887ebbb1680837"
+    },
+    {
+      "path": ".agents/skills/copilotkit-agui/SKILL.md",
+      "sourceRepo": "CopilotKit/skills",
+      "sourcePath": "skills/copilotkit-agui/SKILL.md",
+      "sourceCommit": "8d78cf908844a30d2909f7da4eb8cb6f51fa02ad",
+      "gitBlobSha": "469a26b054e71c9fbad2ac802273fb4c3b9f26d8"
+    },
+    {
+      "path": ".agents/skills/copilotkit-agui/sources.md",
+      "sourceRepo": "CopilotKit/skills",
+      "sourcePath": "skills/copilotkit-agui/sources.md",
+      "sourceCommit": "8d78cf908844a30d2909f7da4eb8cb6f51fa02ad",
+      "gitBlobSha": "2fc37e808e65b048737663c996a1632e2316872e"
+    },
+    {
+      "path": ".agents/skills/game-playtest/agents/openai.yaml",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/game-playtest/agents/openai.yaml",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "9ef3afd845b316c47824974b6524adf4823af3ec"
+    },
+    {
+      "path": ".agents/skills/game-playtest/SKILL.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/game-playtest/SKILL.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "d74823c9231966b8bc49924932f4b1c7d3a19e0a"
+    },
+    {
+      "path": ".agents/skills/game-ui-frontend/agents/openai.yaml",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/game-ui-frontend/agents/openai.yaml",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "38d5e21db91a814732021fbf5f50112c70285c9d"
+    },
+    {
+      "path": ".agents/skills/game-ui-frontend/SKILL.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/game-ui-frontend/SKILL.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "f2681fb955143f96cb04bfa4f1cb09d6839b162a"
+    },
+    {
+      "path": ".agents/skills/phaser-2d-game/agents/openai.yaml",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/phaser-2d-game/agents/openai.yaml",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "c715eb752a9b65958ff77aa32af57f2ee43c0998"
+    },
+    {
+      "path": ".agents/skills/phaser-2d-game/SKILL.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/phaser-2d-game/SKILL.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "8bd4ed6afcb502a0c78cd8b32cbb3163b7187fff"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/LICENSE",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "LICENSE",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "cefe596afef12e19a8e5e923f1a04c7da3188760"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/element-attributes.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/element-attributes.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "4e9fa6b99103bbe4e1262c37a9c4a664dfe1dbd5"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/playwright-tests.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/playwright-tests.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "bec2ec90e4adbc6ed56f06ab19c34916ce7f736b"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/pr-attachments.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/pr-attachments.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "91663b58bccf34b1cd2790ef8ae335d45b3d99df"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/request-mocking.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/request-mocking.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "9005fda67dfc4af13848fd9ebedee08420aeec97"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/running-code.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/running-code.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "565eefdb584a6e904ceb86701fd789977840a6d4"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/session-management.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/session-management.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "96f126b56e1b0b6d91d918f6b2987d9ec68d4dfd"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/storage-state.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/storage-state.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "e2390da8da25ce03d559d2a199bc4bb69f880cce"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/test-generation.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/test-generation.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "49c76d2991f9165f77e9b9755dbdd4996ab8e586"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/tracing.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/tracing.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "88d7eab6216c72645b198482813fe94cbb5b6ec1"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/references/video-recording.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/references/video-recording.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "f0b528ab1a70f2e8d5a828862a3dd89b8644239b"
+    },
+    {
+      "path": ".agents/skills/playwright-cli/SKILL.md",
+      "sourceRepo": "microsoft/playwright-cli",
+      "sourcePath": "skills/playwright-cli/SKILL.md",
+      "sourceCommit": "c872a33cec77fa03c28fa7c6d1ad99d15d04ce42",
+      "gitBlobSha": "4ad911bdb742adc1728ea4b3eb6c208e379386fa"
+    },
+    {
+      "path": ".agents/skills/scale-and-responsive/LICENSE.md",
+      "sourceRepo": "phaserjs/phaser",
+      "sourcePath": "LICENSE.md",
+      "sourceCommit": "02d8931b626d9764c133cbb3fbf99966c03c757c",
+      "gitBlobSha": "33aa21b2adf01a08ca6acb55ddaf8fd2dc4b3368"
+    },
+    {
+      "path": ".agents/skills/scale-and-responsive/SKILL.md",
+      "sourceRepo": "phaserjs/phaser",
+      "sourcePath": "skills/scale-and-responsive/SKILL.md",
+      "sourceCommit": "02d8931b626d9764c133cbb3fbf99966c03c757c",
+      "gitBlobSha": "c52f9e3fd2eec1c1aec68dca7cabbd9bb6e78479"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/agents/openai.yaml",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/agents/openai.yaml",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "1721736a914e6ce41da2e0e005f6a8e782f2e642"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/LICENSE.txt",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/LICENSE.txt",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "13e25df86ce06eb6488e6a6bc5c5847f5dedc352"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/golang-general-backend-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/golang-general-backend-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "85e9c6a1669e0d04af56c9a0bce113dd35e0248d"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/javascript-express-web-server-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/javascript-express-web-server-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "98d79067ffb784ce426394193e744ddc7f3c93be"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/javascript-general-web-frontend-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/javascript-general-web-frontend-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "d8b696f363ea54661791c048ba19a57933d20825"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/javascript-jquery-web-frontend-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/javascript-jquery-web-frontend-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "3fd00db430ed55fafe50112b8d8b751fe82deec1"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/javascript-typescript-nextjs-web-server-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/javascript-typescript-nextjs-web-server-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "44cc8213b11feda2eac8283dfd6a11fe93a68965"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/javascript-typescript-react-web-frontend-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/javascript-typescript-react-web-frontend-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "33fb693282a40754a081a499cda3d471aa23da28"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/javascript-typescript-vue-web-frontend-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/javascript-typescript-vue-web-frontend-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "be326548bf953b6d1918727d228449ab4cb5110d"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/python-django-web-server-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/python-django-web-server-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "0b9a89a73e0ff3a88ccb7837b56ad1a5f15259e0"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/python-fastapi-web-server-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/python-fastapi-web-server-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "d394a55bb86b3b2e5c2b73e65cb115a2a0ce1c05"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/references/python-flask-web-server-security.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/references/python-flask-web-server-security.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "adbc599aad8688a3446f5b595a1f4f0c1eac942f"
+    },
+    {
+      "path": ".agents/skills/security-best-practices/SKILL.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-best-practices/SKILL.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "45ccbd8d671c4c4cc3e7e0645a16a3f80ec50de7"
+    },
+    {
+      "path": ".agents/skills/security-threat-model/agents/openai.yaml",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-threat-model/agents/openai.yaml",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "d8b04e20a62688188f19bd396ae6b923841ddf8e"
+    },
+    {
+      "path": ".agents/skills/security-threat-model/LICENSE.txt",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-threat-model/LICENSE.txt",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "13e25df86ce06eb6488e6a6bc5c5847f5dedc352"
+    },
+    {
+      "path": ".agents/skills/security-threat-model/references/prompt-template.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-threat-model/references/prompt-template.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "b6affb0d2f873ffe398f7a8df00095dc0ff01f59"
+    },
+    {
+      "path": ".agents/skills/security-threat-model/references/security-controls-and-assets.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-threat-model/references/security-controls-and-assets.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "63d1455aeacfc97eaca4e371040dbadfbd791635"
+    },
+    {
+      "path": ".agents/skills/security-threat-model/SKILL.md",
+      "sourceRepo": "openai/skills",
+      "sourcePath": "skills/.curated/security-threat-model/SKILL.md",
+      "sourceCommit": "49f948faa9258a0c61caceaf225e179651397431",
+      "gitBlobSha": "abd3c1c95d49c4e0e0664f198f4bf168c6291aec"
+    },
+    {
+      "path": ".agents/skills/sprite-pipeline/agents/openai.yaml",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/sprite-pipeline/agents/openai.yaml",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "fe41692205c1ca5c973f6e8d69362bea1a5b074c"
+    },
+    {
+      "path": ".agents/skills/sprite-pipeline/SKILL.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/sprite-pipeline/SKILL.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "a31ef15cf890426873a805ced1ed9b11f16a1efa"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/AGENTS.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/AGENTS.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "4e340a50684a8e7811d5bfa4df48bd9989d0fd87"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/metadata.json",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/metadata.json",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "3bec38b176cc71d105895ec4678bbe79305dcb4c"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/README.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/README.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "f283e1c0c21c5b13c848452528c3949ff544846c"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/_sections.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/_sections.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "4d20c144bc3b9265fc5976c704a8dd60ed3a806a"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/_template.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/_template.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "1e9e70703485021e0b969f5731f38c8b9f8694db"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/advanced-effect-event-deps.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/advanced-effect-event-deps.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "24d901b62be66f6088eb1de5b262e67f5c337d57"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/advanced-event-handler-refs.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/advanced-event-handler-refs.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "97e7ade243aa6dae50d6faa5111dea0d04778ead"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/advanced-init-once.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/advanced-init-once.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "73ee38e5e74c0afa28cb730afe3275479432092a"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/advanced-use-latest.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/advanced-use-latest.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "9c7cb501693d4a9521697f13dbd5906dd99f0257"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/async-api-routes.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/async-api-routes.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "6feda1ef0ac06b57b33c7b5bd6a19ca88d6c8a34"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/async-cheap-condition-before-await.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/async-cheap-condition-before-await.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "5799d7f6ee6e9d70422048ab0cae06ca021d22b2"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/async-defer-await.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/async-defer-await.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "460b5e16baf9c66f85e4169eb9d43e4d07f2ce94"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/async-dependencies.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/async-dependencies.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "0484ebab993f3db78277e8731872473d02475e6d"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/async-parallel.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/async-parallel.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "64133f6c31fec81eaaabd712586337d20122e09f"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/async-suspense-boundaries.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/async-suspense-boundaries.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "1fbc05b04ed2474637b12014a77688750e78f931"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/bundle-analyzable-paths.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/bundle-analyzable-paths.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "8276f156cf1aa8a611bd5bc3cadcb362e16ccd13"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/bundle-barrel-imports.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/bundle-barrel-imports.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "22d1050196671b7bc9f9aaf88cc665ba6fa8deb0"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/bundle-conditional.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/bundle-conditional.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "99d6fc90e31d683d2b6b71353b92d620b484b644"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/bundle-defer-third-party.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/bundle-defer-third-party.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "db041d1510e51defeade05926ba4e6bbad1068b5"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/bundle-dynamic-imports.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/bundle-dynamic-imports.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "60b62695e7a080e2020ff2242d8d841c5e3ecbc4"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/bundle-preload.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/bundle-preload.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "7000504065472628ae614786a3faadd23b0435a7"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/client-event-listeners.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/client-event-listeners.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "aad4ae91605d715aad8e92b76bd7fb85c91d7cdf"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/client-localstorage-schema.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/client-localstorage-schema.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "d30a1a7d4f85b0d50a0808eaa1b382c6deb595f4"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/client-passive-event-listeners.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/client-passive-event-listeners.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "ce39a889efb4452ec4c044555ff818301dcf7ece"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/client-swr-dedup.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/client-swr-dedup.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "2a430f27fd6abdc1b1b2f809b7a60114ff506790"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-batch-dom-css.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-batch-dom-css.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "a62d84ed8149b6d4f173debc7043af03f8f8dd06"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-cache-function-results.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-cache-function-results.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "180f8ac8fffd7e6ee320242d59d06565d40a12f8"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-cache-property-access.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-cache-property-access.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "39eec9061b4ca820150cc8183fb73f9e0c91ce85"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-cache-storage.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-cache-storage.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "aa4a30c08176aabd27b41fa44d5c1981457b675f"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-combine-iterations.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-combine-iterations.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "044d017ec3b24b53e46d638acd1d936a22ac6323"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-early-exit.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-early-exit.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "f46cb89c6cbe06e481aba0136848e3b17263ba96"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-flatmap-filter.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-flatmap-filter.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "ee0edf0da256eb8b62c5a998c768c51eb520e8cd"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-hoist-regexp.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-hoist-regexp.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "dae3fefdc0a1db66badcd4875489715edcdb038b"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-index-maps.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-index-maps.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "9d357a00b15ac67cdd638886f5197a13173a637d"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-length-check-first.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-length-check-first.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "8b89573630fdc3aa10564273f390ecc7e2b1cd3e"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-min-max-loop.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-min-max-loop.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "4b6656e96aecf3ae6ade52974090ae8b3e3f2bb5"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-request-idle-callback.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-request-idle-callback.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "d81927e5f0ddb9fa4eece79197728bfc4382cbfe"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-set-map-lookups.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-set-map-lookups.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "680a4892ee291c432bf8e769a44d0f1eb102b74b"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/js-tosorted-immutable.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/js-tosorted-immutable.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "eae8b3f8aed2c7a893ceaae4cab55fa1c444b309"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-activity.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-activity.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "c957a490b7c2688542766150741e85e066539251"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-animate-svg-wrapper.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-animate-svg-wrapper.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "646744cbe53b213c6fa5ead54ef107510e5be89d"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-conditional-render.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-conditional-render.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "7e866f5852dac80e0822e7f7c33476f5c9fc22f1"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-content-visibility.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-content-visibility.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "aa6656362b2c0dad9ffea788b5850843d6c0629e"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-hoist-jsx.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-hoist-jsx.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "32d2f3fcea53dadcf847231ee20c60fa2c5c3049"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-hydration-no-flicker.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-hydration-no-flicker.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "5cf0e79b69afd7564b965c09435a2c7ee79eb2bd"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-hydration-suppress-warning.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-hydration-suppress-warning.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "24ba2513a29f5259b3184695d2d4da25e03e42ac"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-resource-hints.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-resource-hints.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "1290bef06baf459f85dc5856ffc4486951224a48"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-script-defer-async.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-script-defer-async.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "ee275ed1c06da8f1ae70e744e47965799eaebf02"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-svg-precision.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-svg-precision.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "6d7712860365294936a1b736d29d3eb970b91da7"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rendering-usetransition-loading.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rendering-usetransition-loading.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "0c1b0b98e884d2c77bdec66df754693bd48c7777"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-defer-reads.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-defer-reads.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "e867c95f02fe6ed6ac2f91fdf1c0922304e0423a"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-dependencies.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-dependencies.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "47a4d92685702e3a3b07073c62a61800fa0a6d7d"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-derived-state-no-effect.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-derived-state-no-effect.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "3d9fe4050794ea6655add6bee50cfbc104e5dc31"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-derived-state.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-derived-state.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "e5c899f6c073338bbd1b73c0275bc3e5e7d9ae7b"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-functional-setstate.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-functional-setstate.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "b004ef45e347503947fee397b6c3d163b0a317fb"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-lazy-state-init.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-lazy-state-init.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "4ecb350fbadff3db805b72429276e672d42736dc"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-memo-with-default-value.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-memo-with-default-value.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "63570491848cb42c2bc7073bceb754893a6a4cfa"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-memo.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-memo.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "f8982ab612105a3b7faee1292b797338e7fb5271"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-move-effect-to-event.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-move-effect-to-event.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "dd58a1af091b3cf5cb271d25904af4feb836d1aa"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-no-inline-components.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-no-inline-components.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "d97592acefced05bc4a8538c77d226fa24c08534"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-simple-expression-in-memo.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-simple-expression-in-memo.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "59dfab0f3b048097627e0ca6e4c8da36629a5268"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-split-combined-hooks.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-split-combined-hooks.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "89d805644dbffe3877bc1356bdf8ad416a5c715b"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-transitions.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-transitions.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "d99f43f764232e994a49a1df89ec9d624552f439"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-use-deferred-value.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-use-deferred-value.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "619c04b0142bf5a5b7d0f69532a56b797a78f664"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/rerender-use-ref-transient-values.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/rerender-use-ref-transient-values.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "cf04b81f8a531eacd07a32e8917fb3ed3c1bbecb"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-after-nonblocking.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-after-nonblocking.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "e8f5b260f5fc6d58141bc61e0a091569adb81e7e"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-auth-actions.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-auth-actions.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "ee82c0442bc69ffae7bf20c07709d57893da1123"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-cache-lru.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-cache-lru.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "ef6938aa53c55dc3c0035bd6c66838810d870260"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-cache-react.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-cache-react.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "87c9ca33168a321a59fbaaa84843e2f48c99751a"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-dedup-props.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-dedup-props.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "fb24a2562c73fadbb9a11a79897c2cf93ea3c69a"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-hoist-static-io.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-hoist-static-io.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "25205c2fc42d0dd684d6423acde642774329a8cc"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-no-shared-module-state.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-no-shared-module-state.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "ff7d9f29c6e0e42ec1471acec8a3c7f394c8358d"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-parallel-fetching.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-parallel-fetching.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "1affc835a601a894fd02de08e6c9cdfd76d34b64"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-parallel-nested-fetching.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-parallel-nested-fetching.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "be1dc25075e40e6bda46cb24dc5a6f42b916b0e8"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/rules/server-serialization.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/rules/server-serialization.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "39c5c4164c31be7f171ea2f4b3b32fe47709a651"
+    },
+    {
+      "path": ".agents/skills/vercel-react-best-practices/SKILL.md",
+      "sourceRepo": "vercel-labs/agent-skills",
+      "sourcePath": "skills/react-best-practices/SKILL.md",
+      "sourceCommit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "gitBlobSha": "237988de4a66dd8a71d30a2c24ebe1a86b58d04e"
+    },
+    {
+      "path": ".agents/skills/web-game-foundations/agents/openai.yaml",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/web-game-foundations/agents/openai.yaml",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "a59dfd1c3add47d7166e41fb4516922510ba4f88"
+    },
+    {
+      "path": ".agents/skills/web-game-foundations/SKILL.md",
+      "sourceRepo": "openai/plugins",
+      "sourcePath": "plugins/game-studio/skills/web-game-foundations/SKILL.md",
+      "sourceCommit": "981b02c0c44058b595f3b4180002c3ae3c806d40",
+      "gitBlobSha": "1fe88e9c7c63c4f0ef9fda4ebd24fa61ae9a44a1"
+    }
+  ]
+}
