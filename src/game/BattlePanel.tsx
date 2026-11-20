@@ -265,6 +265,12 @@ export function BattlePanel({
             </small></span>
           </button>)}
         </div>
+        <div className="move-lesson" role="status" aria-live="polite">
+          <b>{moves[selectedMove]?.name}:</b>{' '}{moves[selectedMove]?.description}{' '}
+          <span>{forecasts[selectedMove]?.status === 'effective'
+            ? 'Fits this step (simulated +' + forecasts[selectedMove].gain + ').'
+            : 'No progress on this step.'}</span>
+        </div>
         <div className="retro-help tactical-help">{intel?.incomingSpecial
           ? 'WILD COUNTER NEXT: ' + intel.incomingSpecial.toUpperCase()
           : 'MATCH MOVE TYPE TO THE CURRENT STEP'}</div>
