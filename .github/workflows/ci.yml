@@ -23,6 +23,13 @@ jobs:
       - run: npm run build
       - run: npx playwright install chromium --with-deps
       - run: npm run test:e2e
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pokaimon-pixel-ui-screenshots
+          path: test-results/visual/
+          if-no-files-found: ignore
+          retention-days: 14
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

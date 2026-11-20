@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BattleStage } from './game/BattleStage';
 import { BattlePanel } from './game/BattlePanel';
+import { PixelPortrait } from './game/PixelPortrait';
 import { pickWildEncounter } from './game/encounterFlow';
 import { playCue } from './game/sound';
 import { probeAgui, type AguiProbeResult } from './integrations/agui/client';
@@ -75,10 +76,13 @@ export function App(){
       <p className="intro">Every move represents a real AI technique. Battle power and stats are simulated game rules.</p>
       <h3>YOUR AI TEAM</h3>
       {MODELS.map(m=><article className="guide-card" key={m.id}>
-        <strong>{m.displayName}</strong>
-        <small>{m.provider.toUpperCase()} · VER. {m.version}</small>
-        <p>{m.description}</p>
-        <a href={m.source} target="_blank" rel="noreferrer">OFFICIAL MODEL DOCUMENTATION ↗</a>
+        <span className="guide-portrait" aria-hidden="true"><PixelPortrait model={m.id as 'astra' | 'grok' | 'fable'} /></span>
+        <div className="guide-card-copy">
+          <strong>{m.displayName}</strong>
+          <small>{m.provider.toUpperCase()} · VER. {m.version}</small>
+          <p>{m.description}</p>
+          <a href={m.source} target="_blank" rel="noreferrer">OFFICIAL MODEL DOCUMENTATION ↗</a>
+        </div>
       </article>)}
       <h3>CAPABILITY MOVES</h3>
       {Object.values(MOVES).map(move=><article className="guide-card" key={move.id}>

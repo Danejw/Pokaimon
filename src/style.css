@@ -1,205 +1,250 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap');
 
+/* Pokaimon handheld system. The same original 1-pixel frames are reused everywhere. */
 :root {
-  font-family:'VT323',ui-monospace,monospace;
-  color:#263044;
-  background:#1c2534;
+  font-family:'Pixelify Sans',ui-monospace,monospace;
+  color:#303545;
+  background:#263443;
   font-synthesis:none;
+  --ink:#303545; --ink-deep:#171f32; --border-light:#fdf6de;
+  --parchment:#fffbee; --cream:#f8edcb; --sand:#eecb8f;
+  --forest:#488c6e; --mint:#93d5a6; --yellow:#f6d56a;
+  --pink:#e4a7a1; --frame:#6c7884;
 }
 *{box-sizing:border-box}
 html,body,#root{margin:0;width:100%;min-height:100%}
 button,select,input{font:inherit}
-button{cursor:pointer}
-button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible {
-  outline:3px dashed #faab3c;
-  outline-offset:3px;
+button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{
+  outline:3px dashed #db833f;outline-offset:3px
 }
 body{
-  background:repeating-linear-gradient(0deg,#182231,#182231 8px,#1c2736 8px,#1c2736 16px);
+  background:repeating-linear-gradient(0deg,#273547 0px,#273547 7px,#304255 7px,#304255 10px);
 }
 .retro-shell{
-  min-height:100dvh;
-  max-width:458px;
-  margin:0 auto;
-  padding:0 9px 10px;
-  background:#fff8e9;
-  border-left:5px solid #293449;
-  border-right:5px solid #293449;
-  box-shadow:0 0 0 4px #53647a;
-  display:flex;
-  flex-direction:column;
+  width:100%;max-width:492px;min-height:100dvh;margin:0 auto;padding:0 9px 10px;
+  display:flex;flex-direction:column;
+  background:#f5f0d8;
+  border-left:5px solid #3a4452;border-right:5px solid #3a4452;
+  box-shadow:inset 4px 0 #b7c4bf,inset -4px 0 #b7c4bf,0 0 0 4px #6b8293;
 }
-.retro-header {
-  height:45px;
-  display:flex;
-  gap:8px;
-  align-items:center;
-  padding:6px 8px;
-  background:#31475b;
-  color:#fff7de;
-  border-bottom:5px solid #f0c56e;
+.retro-header{
+  height:44px;flex-shrink:0;display:flex;align-items:center;gap:8px;
+  padding:8px;background:#3e5961;color:#fcf5da;
+  border-bottom:5px solid #edbd68;box-shadow:0 3px 0 #a4ac9c;
 }
-.brandmark{color:#a0f4db;font-size:21px}
+.brandmark{color:#b6efc9;font-size:20px}
 .brand{font:12px 'Press Start 2P',monospace;letter-spacing:1px}
-.edition{margin-left:auto;font:13px 'VT323',monospace;letter-spacing:1px}
-.retro-footer{margin-top:auto;text-align:center;padding:17px 0 3px;font:10px 'VT323',monospace;color:#637085;letter-spacing:1px}
+.edition{margin-left:auto;font:600 13px 'Pixelify Sans',monospace;letter-spacing:1px}
+.retro-footer{margin-top:auto;text-align:center;padding:15px 0 4px;font:14px 'Pixelify Sans',monospace;color:#6a7680;letter-spacing:1px}
 h1,h2,h3{margin:0}
-.eyebrow{color:#a65a38;font:13px 'VT323',monospace;letter-spacing:1px;margin:18px 0 7px}
-.retro-home h1{
-  font:clamp(20px,6vw,27px)/1.75 'Press Start 2P',monospace;
-  letter-spacing:-1px;margin:9px 0;color:#2d3a50;
-}
-.retro-home h1 em{font-style:normal;color:#569b81}
-.intro{font-size:19px;line-height:1.1;color:#576277;margin:8px 0 15px}
+.eyebrow{color:#96573f;font:700 17px 'Pixelify Sans',monospace;letter-spacing:1px;margin:17px 0 7px}
+.retro-home{flex:1}
+.retro-home h1{font:clamp(21px,6vw,29px)/1.7 'Press Start 2P',monospace;letter-spacing:-1px;margin:9px 0;color:#2f4050}
+.retro-home h1 em{font-style:normal;color:#47876f}
+.intro{font-size:20px;line-height:1.14;color:#5a6670;margin:10px 0 18px}
 .home-page{flex:1}
-.retro-preview{position:relative;width:100%;aspect-ratio:360/274;background:#f8d49c;border:5px solid #2e3b4e;overflow:hidden;box-shadow:0 5px 0 #526779}
+.retro-preview{position:relative;width:100%;aspect-ratio:360/274;background:#f8d49c;border:5px solid var(--ink);overflow:hidden;box-shadow:0 5px 0 #74858e}
 .home-visual .battle-stage{width:100%;height:100%}
 .home-visual canvas{image-rendering:pixelated}
 .home-overlay{
   position:absolute;bottom:0;left:0;right:0;
-  background:#fff9e8;border-top:4px solid #303a4a;
-  text-align:center;display:flex;flex-direction:column;gap:3px;padding:9px;
+  background:#fff8dc;border-top:5px double var(--ink);
+  text-align:center;display:flex;flex-direction:column;gap:3px;padding:12px 8px 9px;
 }
-.home-overlay>span{font-size:15px;color:#c48341}
-.home-overlay strong{font:12px 'Press Start 2P',monospace}
-.home-overlay small{font:14px 'VT323',monospace}
+.home-overlay>span{font-size:16px;color:#b77948}
+.home-overlay strong{font:clamp(9px,2.5vw,12px)/1.5 'Press Start 2P',monospace}
+.home-overlay small{font:600 17px 'Pixelify Sans',monospace}
 .home-actions{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:20px}
 .primary,.secondary,.danger-button{
-  border:4px solid #2b3547;border-radius:0;
-  padding:12px 8px;min-height:48px;
-  font:11px 'Press Start 2P',monospace;
-  background:#e6efd8;color:#2b3747;
-  box-shadow:4px 4px 0 #74897c;
+  border:4px solid var(--ink);border-radius:0;min-height:53px;
+  padding:12px 9px;background:#e2ebd6;color:var(--ink);
+  font:clamp(9px,2.4vw,11px)/1.6 'Press Start 2P',monospace;
+  box-shadow:inset 0 0 0 3px #fff6df,4px 4px 0 #76858b;
 }
-.primary{background:#f7d96e}
-.secondary{background:#fdf8ec}
-.primary:hover,.secondary:hover{background:#bdebd0}
-.text-button{border:0;background:none;display:block;margin:15px auto;color:#35475a;font:14px 'VT323',monospace}
-.disclaimer{font:13px/1.4 'VT323',monospace;color:#5d687c;text-align:center;margin:13px 0 5px}
+.primary{background:#f6d26a}
+.secondary{background:#fff9ea}
+.primary:hover,.secondary:hover{background:#bdebcf}
+.primary:active,.secondary:active{transform:translate(2px,2px);box-shadow:inset 0 0 0 3px #fff6df,2px 2px 0 #76858b}
+.text-button{border:0;background:transparent;display:block;margin:15px auto;padding:8px;color:#35475a;font:600 19px 'Pixelify Sans',monospace}
+.disclaimer{font:15px/1.3 'Pixelify Sans',monospace;color:#586877;text-align:center;margin:15px 2px 5px}
 .full{width:100%}
 .retro-topbar{
-  height:35px;display:flex;align-items:center;justify-content:space-between;
-  font:14px 'VT323',monospace;color:#293a4d;
+  height:37px;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font:17px 'Pixelify Sans',monospace;color:#304253;
 }
-.retro-topbar>span{font:10px 'Press Start 2P',monospace}
-.retro-topbar small{font:12px 'VT323',monospace}
+.retro-topbar .battle-chapter{font:700 13px 'Pixelify Sans',monospace}
+.retro-topbar small{font:700 13px 'Pixelify Sans',monospace;color:#477764}
 .retro-back,.back-button{
-  border:0;background:transparent;
-  font:15px 'VT323',monospace;color:#315b5d;padding:7px 3px;cursor:pointer;
+  border:0;background:transparent;padding:8px 3px;
+  font:700 18px 'Pixelify Sans',monospace;color:#32645d;
 }
-.retro-battle{flex:1}
+.retro-battle{flex:1;display:flex;flex-direction:column}
+.game-frame{
+  border:5px solid var(--ink);
+  background:#e4e8d2;
+  box-shadow:inset 0 0 0 3px #9eaeaa,5px 5px 0 #738496;
+  padding:0 0 7px;
+}
 .battle-screen{
-  position:relative;aspect-ratio:360/330;width:100%;
-  border:5px solid #2b3549;background:#f9c57e;overflow:hidden;
+  position:relative;width:100%;aspect-ratio:360/330;
+  background:#f9c57e;overflow:hidden;
+  border-bottom:5px solid #3a4e55;
 }
 .battle-screen .battle-stage{position:absolute;inset:0;width:100%;height:100%}
-.pixel-canvas canvas{image-rendering:pixelated!important;image-rendering:crisp-edges;display:block}
-.pixel-box{background:#fff8e8;border:4px solid #293448;box-shadow:inset 0 0 0 3px #e5dacc,4px 4px 0 #445669}
-.enemy-status,.hero-status{position:absolute;z-index:4;padding:8px 8px 5px;min-height:58px}
-.enemy-status{top:5px;left:5px;width:57%;border-radius:0}
-.hero-status{bottom:8px;right:7px;width:59%;min-height:55px}
-.status-heading{display:flex;align-items:center;justify-content:space-between;gap:5px}
-.status-heading strong{font:clamp(8px,1.9vw,11px)/1.4 'Press Start 2P',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.status-heading b{font:12px 'VT323',monospace;white-space:nowrap}
-.status-hp{display:flex;align-items:center;gap:6px;margin-top:6px}
-.status-hp b{font:14px 'Press Start 2P',monospace;color:#d9a441}
-.status-hp small{font:13px 'VT323',monospace}
-.classic-hp{height:12px;flex:1;background:#e4e9ce;border:3px solid #304253;border-radius:0;min-width:0;overflow:hidden}
-.classic-hp span{height:100%;display:block;background:#45d868;transition:width .35s steps(10,end)}
-.classic-hp .hp-yellow{background:#ffcd45}
-.classic-hp .hp-red{background:#ee625c}
+.pixel-canvas canvas{image-rendering:pixelated!important;display:block}
+.pixel-box{
+  background:#fffbea;color:var(--ink);
+  border:4px solid var(--ink);
+  box-shadow:inset 0 0 0 3px #efe4d1,4px 4px 0 #637487;
+}
+.status-frame{
+  background:#fff9e8;border:4px solid var(--ink);
+  box-shadow:inset 0 0 0 3px #dedfd7,3px 3px 0 #75808a;
+  position:absolute;z-index:4;
+  min-height:57px;padding:7px 7px 6px;
+}
+.enemy-status{left:5px;top:7px;width:58%;clip-path:polygon(0 0,95% 0,100% 14%,100% 84%,95% 100%,0 100%)}
+.hero-status{right:6px;bottom:7px;width:64%;clip-path:polygon(0 0,100% 0,100% 100%,6% 100%,0 87%,0 12%)}
+.status-heading{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.status-heading strong{
+  font:700 clamp(12px,2.6vw,15px)/1 'Pixelify Sans',monospace;
+  letter-spacing:.2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.status-heading b{font:700 14px 'Pixelify Sans',monospace;white-space:nowrap}
+.status-hp{display:flex;align-items:center;gap:5px;margin-top:8px}
+.status-hp b{font:10px 'Press Start 2P',monospace;color:#e1aa38}
+.status-hp small{font:700 13px 'Pixelify Sans',monospace;white-space:nowrap}
+.classic-hp{flex:1;height:13px;min-width:0;background:#747c6c;border:3px solid var(--ink);padding:1px;overflow:hidden}
+.classic-hp span{height:100%;display:block;background:#52d65d;transition:width .34s steps(14,end)}
+.classic-hp .hp-yellow{background:#f3c448}
+.classic-hp .hp-red{background:#ea6256}
 .retro-dialogue{
-  min-height:83px;margin:7px 0 0;padding:10px 12px 8px;
-  background:#fffdf5;color:#293143;
-  position:relative;
+  position:relative;margin:0 6px;min-height:83px;padding:11px 13px 10px;
+  background:#fffdf3;border-top-width:5px;
 }
-.retro-dialogue p{margin:0;font:11px/1.7 'Press Start 2P',monospace;min-height:37px;overflow-wrap:anywhere}
-.retro-dialogue small{display:block;font:15px/1.1 'VT323',monospace;color:#566175;margin:7px 0 0}
-.retro-menu{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.retro-dialogue p{
+  position:relative;margin:0;padding:2px 0 0 1px;min-height:33px;
+  font:700 clamp(15px,3.35vw,19px)/1.35 'Pixelify Sans',monospace;
+  letter-spacing:.1px;overflow-wrap:anywhere
+}
+.dialogue-caret{position:absolute;bottom:-6px;right:0;font-size:18px;color:#cc834e;animation:cursor-blink .8s steps(2) infinite}
+.retro-dialogue small{display:block;font:500 16px/1.12 'Pixelify Sans',monospace;color:#556173;margin:7px 0 0}
+.retro-menu{display:flex;flex-direction:column;gap:5px;margin:7px 6px 0}
 .party-slot{
-  width:100%;min-height:60px;padding:6px 7px;display:flex;align-items:center;gap:6px;
-  background:#fffdf6;border:4px solid #2d3749;box-shadow:inset 0 0 0 3px #d8d6d4,3px 3px 0 #647389;
-  border-radius:0;color:#2b3545;text-align:left;
+  display:flex;align-items:center;gap:7px;width:100%;min-height:66px;padding:6px 8px;
+  background:#fff9e8;border:4px solid var(--ink);border-radius:0;
+  box-shadow:inset 0 0 0 3px #d5dbcc,3px 3px 0 #7b8b93;
+  text-align:left;color:var(--ink);
 }
-.party-slot.is-selected,.party-slot:focus-visible{background:#ffe69a;box-shadow:inset 0 0 0 3px #fff7ca,3px 3px 0 #b1a47d}
-.party-cursor{width:19px;flex:none;font:19px 'VT323',monospace;color:#293448}
+.party-slot.is-selected,.party-slot:focus-visible{
+  background:#ffe5a5;box-shadow:inset 0 0 0 3px #fff9d9,3px 3px 0 #a39370;
+}
+.party-slot:active{transform:translate(1px,1px)}
+.party-cursor{width:19px;flex:none;font:19px 'Pixelify Sans',monospace;color:#202a3a}
 .party-avatar{
-  border:3px solid #2c384a;display:flex;align-items:center;justify-content:center;
-  flex:none;width:45px;height:43px;background:#8fe2d4;
-  font:23px 'VT323',monospace;box-shadow:inset -5px -5px 0 #46667d38;
+  width:58px;height:50px;flex:none;display:flex;align-items:center;justify-content:center;
+  border:3px solid #344254;box-shadow:inset -4px -4px #647f8a32;
+  background:#a6ead9;overflow:hidden;
 }
-.party-astra{background:#9ae6d4}
-.party-grok{background:#bca5f9}
-.party-fable{background:#ffc795}
+.party-astra{background:#a9eee0}
+.party-grok{background:#c6b5ef}
+.party-fable{background:#fcd5ad}
+.pixel-portrait{display:block;width:100%;height:100%;image-rendering:pixelated;overflow:visible}
 .party-details{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
-.party-details strong{font:clamp(8px,1.8vw,10px)/1.4 'Press Start 2P',monospace;white-space:normal}
-.party-details small{font:15px/1 'VT323',monospace;color:#525a67}
-.party-warning{font:12px 'VT323',monospace;color:#8c4945}
-.party-level{font:12px 'VT323',monospace;white-space:nowrap}
+.party-details strong{font:700 clamp(15px,3.2vw,18px)/1 'Pixelify Sans',monospace}
+.party-details small{font:500 14px/1 'Pixelify Sans',monospace;color:#525d6d}
+.party-warning{font:700 12px 'Pixelify Sans',monospace;color:#9f5e53}
+.party-level{font:700 14px 'Pixelify Sans',monospace;align-self:flex-start;white-space:nowrap}
+.party-ap{width:100%;max-width:150px;height:7px;margin-top:2px;border:2px solid #364759;background:#d8d3b9;display:block}
+.party-ap span{display:block;height:100%;width:100%;background:#6ed5a0}
 .retro-help{
-  color:#515d6d;font:14px 'VT323',monospace;
-  text-align:center;padding:8px 0 3px;letter-spacing:1px;
+  padding:6px 0 5px;color:#5c6774;text-align:center;
+  font:700 13px 'Pixelify Sans',monospace;letter-spacing:.3px
 }
-.retro-help span{margin-left:16px}
-.command-panel{margin-top:9px}
-.command-header{display:flex;justify-content:space-between;gap:7px;font:13px 'VT323',monospace;padding:4px 1px 7px}
+.retro-help span{margin-left:14px}
+.command-panel{margin:5px 6px 0}
+.command-header{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding:5px 3px 7px;font:700 14px 'Pixelify Sans',monospace;
+}
+.command-header span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.command-header span:last-child{white-space:nowrap}
 .command-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .retro-move{
-  min-height:57px;border:4px solid #293448;background:#fffdf2;
-  color:#293448;display:flex;align-items:center;gap:5px;text-align:left;padding:6px;
-  box-shadow:inset 0 0 0 2px #ddd4c2;
+  display:flex;align-items:center;gap:6px;min-height:61px;padding:7px 6px;
+  border:4px solid var(--ink);background:#fffdf2;color:var(--ink);text-align:left;
+  box-shadow:inset 0 0 0 3px #ded7c5;
 }
-.retro-move:hover,.retro-move:focus-visible{background:#ffe8a3}
-.retro-move:disabled{opacity:.55;cursor:not-allowed}
-.retro-move .retro-arrow{opacity:0;flex:none;font:15px 'VT323'}
-.retro-move:hover .retro-arrow,.retro-move:focus-visible .retro-arrow{opacity:1}
-.retro-move strong{font:clamp(8px,1.85vw,10px)/1.45 'Press Start 2P',monospace;overflow-wrap:anywhere}
-.retro-move small{display:block;margin-top:5px;font:13px 'VT323',monospace;color:#596172}
-.action-wait{text-align:center;padding:17px;color:#334252;font:12px 'Press Start 2P',monospace;line-height:1.7}
-.blink{animation:cursor-blink .45s steps(2) infinite;margin-left:9px}
+.retro-move.is-selected,.retro-move:hover,.retro-move:focus-visible{background:#ffe9a6;box-shadow:inset 0 0 0 3px #fff7d7}
+.retro-move:active{transform:translate(1px,1px)}
+.retro-move:disabled{opacity:.5;cursor:not-allowed}
+.retro-arrow{font:17px 'Pixelify Sans',monospace;flex:none;opacity:0}
+.retro-move.is-selected .retro-arrow,.retro-move:focus-visible .retro-arrow{opacity:1}
+.retro-move strong{
+  display:block;font:700 clamp(14px,3.1vw,17px)/1.05 'Pixelify Sans',monospace;
+  overflow-wrap:anywhere
+}
+.retro-move small{display:block;margin-top:5px;font:600 12px 'Pixelify Sans',monospace;color:#606b74}
+.action-wait{padding:26px 10px;text-align:center;font:12px/1.7 'Press Start 2P',monospace;color:#344b51}
+.blink{animation:cursor-blink .5s steps(2) infinite;margin-left:9px}
 @keyframes cursor-blink{50%{opacity:0}}
-.retro-result{padding:10px 0}
-.retro-result h2{font:18px 'Press Start 2P',monospace;color:#32785c;padding:6px 0 8px}
-.retro-result p{font:18px/1.1 'VT323',monospace}
-.result-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.result-buttons button{background:#fff4cf;border:4px solid #293448;padding:10px 5px;font:10px/1.7 'Press Start 2P',monospace}
-.result-buttons button:hover{background:#d6edc9}
-.battle-log{font:14px 'VT323',monospace;margin-top:15px}
-.battle-log p{margin:3px 0}
-.retro-footnote{text-align:center;font:12px/1.2 'VT323',monospace;color:#77808d;margin:11px 0 3px}
-.section-top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font:13px 'VT323',monospace}
-.retro-page h2{font:20px/1.65 'Press Start 2P',monospace;margin:15px 0 10px}
-.retro-page h3{font:12px 'Press Start 2P',monospace;margin:22px 0 10px}
-.guide-card{
-  border:4px solid #293448;background:#fffdf4;padding:11px 10px;
-  margin:10px 0;box-shadow:inset 0 0 0 2px #e9dfd0;
+.retro-result{padding:10px 12px 13px}
+.retro-result h2{font:18px 'Press Start 2P',monospace;color:#35765c;margin:6px 0 12px}
+.retro-result p{font:19px/1.15 'Pixelify Sans',monospace;margin:0 0 13px}
+.result-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.result-buttons button{
+  padding:9px 6px;background:#fff5cd;border:4px solid var(--ink);
+  font:700 14px/1.15 'Pixelify Sans',monospace;box-shadow:inset 0 0 0 2px #e6dac1
 }
-.guide-card>strong{font:11px/1.6 'Press Start 2P',monospace}
-.guide-card small{display:block;color:#5b6878;font:14px 'VT323',monospace;margin-top:6px}
-.guide-card p{font:17px/1.15 'VT323',monospace;margin:7px 0}
-.guide-card a{color:#356c65;font:14px 'VT323',monospace}
-.guide-tag{font:12px 'VT323',monospace;color:#75798f}
-.setting{border-bottom:3px solid #c3c7b9;padding:17px 2px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.setting span{display:flex;flex-direction:column;gap:3px}
-.setting strong{font:11px 'Press Start 2P',monospace}
-.setting small{font:16px 'VT323',monospace}
-.setting input{width:24px;height:24px;accent-color:#64a98d}
-.setting select{padding:6px;background:#fffdf4;border:3px solid #293448;color:#293448}
-.settings-page .full{margin-top:18px}
-.danger-button{width:100%;margin:20px 0;background:#ffcebb;font:10px/1.6 'Press Start 2P',monospace}
-.agui-diagnostic{border:3px solid #293448;padding:12px;margin-top:15px}
-.agui-diagnostic h3{font:13px 'Press Start 2P',monospace}
-.agui-diagnostic p{font:16px 'VT323',monospace}
+.result-buttons button:hover{background:#d8ebd4}
+.battle-log{font:15px 'Pixelify Sans',monospace;margin-top:12px}
+.battle-log summary{cursor:pointer}
+.battle-log p{margin:4px 0}
+.retro-footnote{text-align:center;padding:6px 0 2px;font:600 13px 'Pixelify Sans',monospace;color:#60747b}
+.retro-page{flex:1}
+.section-top{display:flex;align-items:center;justify-content:space-between;padding:12px 0;font:700 15px 'Pixelify Sans',monospace}
+.retro-page h2{font:clamp(18px,4vw,22px)/1.55 'Press Start 2P',monospace;margin:15px 0 12px}
+.retro-page h3{font:11px/1.5 'Press Start 2P',monospace;margin:22px 0 10px}
+.guide-card{display:flex;gap:11px;background:#fffdf3;border:4px solid var(--ink);padding:12px 10px;margin:8px 0;box-shadow:inset 0 0 0 3px #e4dccb,3px 3px 0 #83928d}
+.guide-card-copy{flex:1;min-width:0}
+.guide-card strong{display:block;font:700 18px 'Pixelify Sans',monospace}
+.guide-card small{display:block;color:#5b6878;font:15px 'Pixelify Sans',monospace;margin-top:5px}
+.guide-card p{font:16px/1.2 'Pixelify Sans',monospace;margin:8px 0}
+.guide-card a{color:#32665f;font:16px 'Pixelify Sans',monospace;text-decoration:underline}
+.guide-card .guide-tag{font:14px 'Pixelify Sans',monospace;color:#786b82}
+.guide-portrait{flex:none;width:66px;height:67px;padding:5px;display:flex;align-items:center;justify-content:center;background:#e1eedc;border:3px solid #526477}
+.setting{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:18px 3px;border-bottom:3px solid #a9b5a6}
+.setting span{display:flex;flex-direction:column;gap:4px}
+.setting strong{font:700 20px 'Pixelify Sans',monospace}
+.setting small{font:16px 'Pixelify Sans',monospace}
+.setting input{width:24px;height:24px;accent-color:#5ca680}
+.setting select{padding:8px;background:#fffdf4;border:3px solid var(--ink);color:var(--ink)}
+.settings-page .full{margin-top:16px}
+.danger-button{width:100%;margin:20px 0;background:#ffcebb}
+.agui-diagnostic{border:4px solid var(--ink);padding:11px;margin-top:18px;background:#fffdf2}
+.agui-diagnostic h3{font:12px 'Press Start 2P',monospace}
+.agui-diagnostic p{font:16px 'Pixelify Sans',monospace}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-@media(max-width:375px){
-  .retro-shell{padding:0 5px 7px;border-width:2px}
-  .party-avatar{height:37px;width:40px}
-  .party-slot{min-height:56px}
-  .status-heading strong{font-size:8px}
-  .retro-dialogue p{font-size:10px}
-  .retro-move strong{font-size:8px}
+@media (max-width:375px){
+  .retro-shell{padding-left:5px;padding-right:5px;border-width:2px}
+  .party-slot{min-height:61px;padding:4px 6px;gap:5px}
+  .party-avatar{width:48px;height:46px}
+  .party-cursor{width:13px;font-size:15px}
+  .party-level{font-size:12px}
+  .party-details strong{font-size:14px}
+  .retro-dialogue p{font-size:15px}
+  .retro-move strong{font-size:13px}
+  .status-heading strong{font-size:12px}
   .retro-header .edition{display:none}
 }
-@media(prefers-reduced-motion:reduce){
+@media (max-height:710px){
+  .retro-topbar{height:31px}
+  .retro-dialogue{min-height:72px}
+  .party-slot{min-height:57px}
+  .retro-move{min-height:51px}
+  .retro-help{padding-top:4px;padding-bottom:3px}
+}
+@media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }

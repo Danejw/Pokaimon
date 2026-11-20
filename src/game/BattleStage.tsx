@@ -60,7 +60,7 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
 
     create():void {
       const g=this.add.graphics();
-      // Handheld style: sharp horizontal palette bands; no gradients or 3D.
+      // Original handheld-pixel battlefield: drawn color bands and graphic edges, no external textures.
       g.fillStyle(0xffefdc);g.fillRect(0,0,360,78);
       g.fillStyle(0xfde0b2);g.fillRect(0,78,360,54);
       g.fillStyle(0xf6ca80);g.fillRect(0,132,360,34);
@@ -68,6 +68,9 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
       g.fillStyle(0xf8d295);g.fillRect(0,186,360,12);g.fillRect(0,231,360,5);
       g.fillStyle(0xf6be76);
       for(let i=0;i<14;i++){g.fillRect(i*29,183+(i%3)*7,20,4);}
+      // A few square-pixel cloudlets and blades create depth without photographic gradients.
+      g.fillStyle(0xfffaf0);g.fillRect(42,45,30,5);g.fillRect(49,40,23,5);
+      g.fillRect(307,35,31,5);g.fillRect(314,30,24,5);
       drawPlatform(g,261,209,170);
       drawPlatform(g,93,291,168);
       // Ground grass edges; intentionally chunked into large pixels.
@@ -75,6 +78,10 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
       for(let i=0;i<12;i++){g.fillRect(i*33,(i%2===0?310:317),11,20);}
       g.fillStyle(0x78c58b);
       for(let i=0;i<11;i++){g.fillRect(5+i*34,311+(i%3)*4,6,14);}
+      g.fillStyle(0x65b078);
+      for(let i=0;i<13;i++){g.fillRect((i*37+16)%360,276+(i%3)*5,6,5);}
+      g.fillStyle(0xffe1a5);
+      for(let i=0;i<8;i++){g.fillRect((i*61+37)%360,232+(i%4)*7,7,3);}
 
       const art=enemySprites[enemyName]??enemySprites.TASK;
       this.enemy=createPixelCharacter(this,art,410,201);
