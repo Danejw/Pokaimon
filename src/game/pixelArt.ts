@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { refineSprite } from './spriteDetail';
 
 /**
  * Original game-only pixel creatures. All source art is readable and editable here.
@@ -226,11 +227,21 @@ const hallucination:PixelArt = {
   ],
 };
 
+// Each sprite is now redrawn on a 2x (or 3x) finer pixel lattice at the same on-screen size.
+// Phaser battle poses and React party/guide portraits share these enriched source arrays.
 export const enemySprites:Record<string,PixelArt> = {
-  'TASK':task,'BUG':bug,'RESEARCH REQUEST':research,'MATH PROBLEM':math,'HALLUCINATION':hallucination,
+  'TASK':refineSprite(task, 'task'),
+  'BUG':refineSprite(bug, 'bug'),
+  'RESEARCH REQUEST':refineSprite(research, 'research'),
+  'MATH PROBLEM':refineSprite(math, 'math'),
+  'HALLUCINATION':refineSprite(hallucination, 'hallucination'),
 };
-export const modelSprites:Record<ModelId,PixelArt> = {astra,grok,fable};
-export const trainerSprite = trainer;
+export const modelSprites:Record<ModelId,PixelArt> = {
+  astra:refineSprite(astra, 'astra'),
+  grok:refineSprite(grok, 'grok'),
+  fable:refineSprite(fable, 'fable'),
+};
+export const trainerSprite = refineSprite(trainer, 'trainer');
 
 /** Draw a transparent, fixed-size sprite on a Phaser Graphics canvas. */
 export function paintSprite(graphics:Phaser.GameObjects.Graphics,art:PixelArt,pose:ModelPose='idle'):void {
