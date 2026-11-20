@@ -66,7 +66,6 @@ export function App(){
         <button className="secondary retro-secondary" onClick={()=>setScreen('guide')}>FIELD GUIDE</button>
       </div>
       <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ SETTINGS</button>
-      <p className="disclaimer">ORIGINAL PIXEL-ART SIMULATOR · NO LIVE MODEL EXECUTION</p>
     </section>}
 
     {screen==='battle'&&<BattlePanel key={sessionId} encounter={encounter}
@@ -128,6 +127,5 @@ export function App(){
         </div>}
       <button className="danger-button" onClick={()=>setProgress(clearProgress())}>RESET FIELD GUIDE PROGRESS</button>
     </section>}
-    <footer className="retro-footer">POKAIMON · BUILD YOUR BATTLE INSTINCT</footer>
   </main>;
 }
