@@ -31,7 +31,7 @@ Before making changes, read the relevant sections of:
 5. For interactive changes, exercise the complete flow and inspect screenshots at Android portrait dimensions (at least 360 × 800 and 390 × 844) and desktop. Use Playwright and structured manual checks where available.
 6. Report changed paths/commit, what is playable, actual test evidence, remaining unknowns, and phase Go/No-go. Update documentation and checkboxes only when verified.
 
-Phase 0 begins with an empty application repository: do not invent existing package scripts, releases, or working UI.
+The initial implementation of Phases 0–4 now exists. Read [MVP Status](docs/MVP_STATUS.md) before any further work. Verify the actual deployed site and CI instead of assuming the release is live.
 
 ## Official skill routing
 

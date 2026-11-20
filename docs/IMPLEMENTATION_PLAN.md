@@ -1,7 +1,7 @@
 # Pokaimon: Phased Implementation Plan
 
 **Document:** docs/IMPLEMENTATION_PLAN.md  
-**Status:** Ready for build sequencing, pending first playtest decisions  
+**Status:** Phases 0–4 implemented, CI verified. Public Pages deployment and physical Android playtest remain outstanding. See [MVP Status](./MVP_STATUS.md).  
 **Baseline date:** 2026-11-19  
 **Product contract:** [Game Design Document](./GAME_DESIGN.md)
 

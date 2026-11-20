@@ -21,6 +21,8 @@ The Vite app is served from `/Pokaimon/` to support GitHub Pages deployment. Vis
 ## Roadmap
 - [Game design](docs/GAME_DESIGN.md)
 - [Phased plan](docs/IMPLEMENTATION_PLAN.md)
+- [MVP status and manual playtest](docs/MVP_STATUS.md)
+- [Security and rights review](docs/SECURITY_REVIEW.md)
 - [Skills and agent guide](AGENTS.md)
 
 ## Release
