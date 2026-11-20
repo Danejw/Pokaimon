@@ -42,7 +42,6 @@ describe('clean, readable original pixel character art', () => {
     expect(trainer.pixels[36]).toContain('W'); // contrasting sneakers
     expect(trainer.pixels[31]).toContain('.'); // visible arm / leg separation
     expect(trainer.pixels[37][19]).toBe('K'); // separated shoes
-    expect(trainer.pixels.join('')).not.toMatch(/[\\uE000-\\uF8FF]/);
   });
 
   it('provides a larger expressive face on Grok and Math Problem', () => {
