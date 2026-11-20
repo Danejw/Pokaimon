@@ -21,6 +21,8 @@ interface Presentation {
   reducedMotion: boolean;
 }
 const PRESENTATION_EVENT='pokaimon:presentation';
+// The high-density canvas resolves quarter-logical-pixel sprite details on retina phones.
+const DETAIL_RENDER_SCALE = 4;
 
 const COLORS:Record<string,number>={
   reasoning:0xfce176, research:0x94dff7, coding:0xffaa69,
@@ -119,6 +121,10 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
     constructor(){super('retro-battle');}
 
     create():void {
+      // Keep world coordinates and battle logic at the original 360x330 while
+      // rendering four physical pixels per logical pixel for authored detail.
+      this.cameras.main.setOrigin(0, 0);
+      this.cameras.main.setZoom(DETAIL_RENDER_SCALE);
       const g=this.add.graphics();
       // Original handheld-pixel battlefield: drawn color bands and graphic edges, no external textures.
       g.fillStyle(0xffefdc);g.fillRect(0,0,360,78);
@@ -360,8 +366,10 @@ export function BattleStage({
     if(!node.current)return;
     const instance=new Phaser.Game({
       type:Phaser.CANVAS,parent:node.current,
-      width:360,height:330,backgroundColor:'#ffefdc',pixelArt:true,
-      scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH,width:360,height:330},
+      width:360*DETAIL_RENDER_SCALE,height:330*DETAIL_RENDER_SCALE,
+      backgroundColor:'#ffefdc',pixelArt:true,
+      scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH,
+        width:360*DETAIL_RENDER_SCALE,height:330*DETAIL_RENDER_SCALE},
       scene:[createScene(enemy,current.current)],
     });
     game.current=instance;
