@@ -3,7 +3,7 @@ import * as Phaser from 'phaser';
 
 interface StageProps { active?: boolean; enemy?: string; model?: string; effect?: string; reducedMotion?: boolean; }
 
-function createScene(enemy: string, model: string): typeof Phaser.Scene {
+function createScene(enemy: string): typeof Phaser.Scene {
   return class BattleScene extends Phaser.Scene {
     constructor() { super('battle'); }
     create() {
@@ -65,7 +65,7 @@ export function BattleStage({ enemy = 'TASK', model = 'astra', effect = '', redu
       backgroundColor: '#25284f',
       pixelArt: true,
       scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, width: 360, height: 480 },
-      scene: [createScene(enemy, model)],
+      scene: [createScene(enemy)],
     });
     instance.registry.set('reducedMotion', reducedMotion);
     game.current = instance;
