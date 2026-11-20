@@ -46,7 +46,7 @@ h1,h2,h3{margin:0}
 .home-page{flex:1}
 .retro-preview{position:relative;width:100%;aspect-ratio:360/274;background:#f8d49c;border:5px solid var(--ink);overflow:hidden;box-shadow:0 5px 0 #74858e}
 .home-visual .battle-stage{width:100%;height:100%}
-.home-visual canvas{image-rendering:auto}
+.home-visual canvas{image-rendering:pixelated}
 .home-overlay{
   position:absolute;bottom:0;left:0;right:0;
   background:#fff8dc;border-top:5px double var(--ink);
@@ -92,7 +92,7 @@ h1,h2,h3{margin:0}
   border-bottom:5px solid #3a4e55;
 }
 .battle-screen .battle-stage{position:absolute;inset:0;width:100%;height:100%}
-.pixel-canvas canvas{image-rendering:auto!important;display:block}
+.pixel-canvas canvas{image-rendering:pixelated!important;display:block}
 .pixel-box{
   background:#fffbea;color:var(--ink);
   border:4px solid var(--ink);
@@ -150,7 +150,7 @@ h1,h2,h3{margin:0}
 .party-astra{background:#a9eee0}
 .party-grok{background:#c6b5ef}
 .party-fable{background:#fcd5ad}
-.pixel-portrait{display:block;width:100%;height:100%;object-fit:contain;image-rendering:auto;overflow:hidden}
+.pixel-portrait{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;overflow:hidden}
 .party-details{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
 .party-details strong{font:700 clamp(15px,3.2vw,18px)/1 'Chakra Petch',system-ui,sans-serif}
 .party-details small{font:500 14px/1.25 'Chakra Petch',system-ui,sans-serif;color:#525d6d}
