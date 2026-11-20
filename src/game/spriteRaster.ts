@@ -1,16 +1,16 @@
-import type { SourcePixelArt } from './spriteDetail';
+import type { PixelDrawing } from './handDrawnSprites';
 
 /**
- * A small cached Canvas bitmap for a single original sprite definition.
+ * A small cached Canvas bitmap for each deliberate hand-authored sprite.
  * Phaser textures and React portraits are generated from these exact pixels.
- * Avoids tens of thousands of SVG nodes and Graphics commands on mobile.
+ * Keeps both battle and UI on the same restrained three-pixel art grid.
  */
 export type SpriteExpression = 'idle' | 'charge' | 'attack' | 'victory' | 'hurt';
 
-const canvases = new WeakMap<SourcePixelArt, Map<SpriteExpression, HTMLCanvasElement>>();
-const urls = new WeakMap<SourcePixelArt, string>();
+const canvases = new WeakMap<PixelDrawing, Map<SpriteExpression, HTMLCanvasElement>>();
+const urls = new WeakMap<PixelDrawing, string>();
 
-export function spriteCanvas(art: SourcePixelArt, expression: SpriteExpression = 'idle'): HTMLCanvasElement {
+export function spriteCanvas(art: PixelDrawing, expression: SpriteExpression = 'idle'): HTMLCanvasElement {
   const cache = canvases.get(art) ?? new Map<SpriteExpression, HTMLCanvasElement>();
   if (!canvases.has(art)) canvases.set(art, cache);
   const previous = cache.get(expression);
@@ -70,7 +70,7 @@ export function spriteCanvas(art: SourcePixelArt, expression: SpriteExpression =
   return canvas;
 }
 
-export function spriteImageUrl(art: SourcePixelArt): string {
+export function spriteImageUrl(art: PixelDrawing): string {
   const prior = urls.get(art);
   if (prior) return prior;
   const url = spriteCanvas(art).toDataURL('image/png');
