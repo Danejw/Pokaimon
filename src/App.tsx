@@ -61,7 +61,7 @@ export function App(){
         <button className="primary retro-primary" onClick={launchEncounter}>▶ PLAY</button>
         <button className="secondary retro-secondary" onClick={()=>setScreen('guide')}>FIELD GUIDE</button>
       </div>
-      <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ OPTIONS</button>
+      <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ SETTINGS</button>
       <p className="disclaimer">ORIGINAL PIXEL-ART SIMULATOR · NO LIVE MODEL EXECUTION</p>
     </section>}
 
