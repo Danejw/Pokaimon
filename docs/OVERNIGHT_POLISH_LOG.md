@@ -18,10 +18,10 @@ Build the most satisfying, legible, original, mobile-first Pokémon-like AI capa
 
 **Actual screenshot inspection:** Downloaded the CI `pokaimon-pixel-ui-screenshots` artifact from run 44745246813 and opened `tactics-chromium-mobile.png` and `tactical-win-chromium-mobile.png`. The move-match badges (+36 vs ×) are visible, aligned and legible within the two-column move menu. The stage label and forewarning are visible. The initial win screenshot exposed a **real visual flaw**: result dialogue repeated an entire long move lesson, expanded excessively and showed only the first characters of the typewriter victory headline during capture.
 
-**Follow-up correction:** `BattlePanel.tsx` now reveals the final victory line immediately and uses a compact result-stage message; the longer lesson stays in the result section. Playwright asserts the complete victory title and maximum dialogue box height. **Revised screenshot and CI on latest head still need rechecking.** Never call the correction verified until the latest run passes and new screenshots are examined.
+**Verified follow-up correction:** `BattlePanel.tsx` now reveals the final victory line immediately and uses a compact result-stage message; the longer lesson stays in the result section. Playwright asserts the complete victory title and maximum dialogue box height. The complete feature CI on head `f893592b` **passed**: https://github.com/Danejw/Pokaimon/actions/runs/44745886367 . Downloaded that run's screenshot artifact and opened `tactical-win-chromium-mobile.png`; saw full `TASK completed!`, concise two-line guidance, no repeated wall of text, readable medal, unobstructed battlefield, and two clear next-action buttons. This is an inspected, visibly improved result. The later docs-only head should still be validated independently.
 
 ## What to inspect next
-- Latest branch CI, preview Pages status, and `tactical-win-chromium-mobile.png` after the result-dialogue correction.
+- Latest branch CI and preview Pages status after any new commits. Check screenshot artifacts for every meaningful visual change.
 - Does the command layout fit 360×800 and 390×844 without scrolling? Does the win screen feel rewarding without duplicate paragraphs?
 - Add a meaningful next vertical slice, not decorative complexity. Candidate: a concise first-battle interactive tutorial, or optional mastery challenge with a clear goal, grounded in screenshot/playtest evidence.
 - Avoid adding fictitious model rankings, real-provider integrations, paid APIs, login, or sprawling extra screens.
