@@ -229,3 +229,37 @@ test('enemy counter leaves every battle command visible in a 390x844 portrait vi
   expect(bounds.menuBottom).toBeLessThanOrEqual(bounds.viewportHeight);
   await page.screenshot({ path: dir + '/counter-fit-' + testInfo.project.name + '.png', fullPage: true });
 });
+
+test('difficulty defaults to medium, persists, and controls battle spoilers', async ({ page }) => {
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /SETTINGS/i }).click();
+  await expect(page.getByRole('combobox', { name: 'Difficulty' })).toHaveValue('medium');
+  await page.getByRole('button', { name: /HOME/i }).click();
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
+  await expect(page.locator('.move-forecast')).toHaveCount(0);
+  await expect(page.locator('.move-lesson')).toContainText('Break a difficult problem into smaller steps.');
+  await expect(page.locator('.move-lesson')).not.toContainText('Fits this step');
+  await page.getByRole('button', { name: /HOME/i }).click();
+  await page.getByRole('button', { name: /SETTINGS/i }).click();
+  await page.getByRole('combobox', { name: 'Difficulty' }).selectOption('hard');
+  await page.reload();
+  await expect(page.getByRole('combobox', { name: 'Difficulty' })).toHaveValue('hard');
+  await page.getByRole('button', { name: /HOME/i }).click();
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
+  await expect(page.locator('.move-lesson')).toHaveCount(0);
+  await expect(page.locator('.tactical-help')).toHaveCount(0);
+  await expect(page.locator('.stage-intel')).not.toContainText('Break');
+  await page.getByRole('button', { name: /HOME/i }).click();
+  await page.getByRole('button', { name: /SETTINGS/i }).click();
+  await page.getByRole('combobox', { name: 'Difficulty' }).selectOption('easy');
+  await page.getByRole('button', { name: /HOME/i }).click();
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
+  await expect(page.locator('.move-forecast')).toHaveCount(4);
+  await expect(page.locator('.move-lesson')).toContainText('Fits this step');
+});
