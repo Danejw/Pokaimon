@@ -121,3 +121,31 @@ test('Grok and Math reference pair retains readable original pixel art', async (
     path: dir + '/grok-math-' + testInfo.project.name + '.png', fullPage: true,
   });
 });
+
+
+test('tactical preview matches real stage progress and earns the four-turn medal', async ({ page }, testInfo) => {
+  mkdirSync(dir, { recursive:true });
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name:'Select GPT-6.2 Astra' }).click();
+  const stage = page.getByTestId('phaser-stage');
+  await expect(stage).toHaveAttribute('data-phase','command');
+
+  await expect(page.locator('.stage-intel')).toContainText('STEP 1/3');
+  await expect(page.getByRole('button', { name:'Deep Think' })).toHaveClass(/is-effective/);
+  await expect(page.getByRole('button', { name:'Code Execution' })).toHaveClass(/is-mismatch/);
+  await page.screenshot({ path:dir+'/tactics-'+testInfo.project.name+'.png',fullPage:true });
+  await page.getByRole('button', { name:'Deep Think' }).click();
+  await expect(stage).toHaveAttribute('data-phase','command');
+  await expect(page.locator('.stage-intel')).toContainText('STEP 2/3');
+  await expect(page.getByRole('button', { name:'Code Execution' })).toHaveClass(/is-effective/);
+  await expect(page.locator('.tactical-help')).toContainText('SCOPE SHIFT');
+  await page.getByRole('button', { name:'Code Execution' }).click();
+  await expect(stage).toHaveAttribute('data-phase','command');
+  await expect(page.locator('.stage-intel')).toContainText('STEP 3/3');
+  await page.getByRole('button', { name:'Self-Correction' }).click();
+  await expect(stage).toHaveAttribute('data-phase','command');
+  await page.getByRole('button', { name:'Self-Correction' }).click();
+  await expect(page.getByText('TACTICAL CLEAR')).toBeVisible();
+  await page.screenshot({ path:dir+'/tactical-win-'+testInfo.project.name+'.png',fullPage:true });
+});
