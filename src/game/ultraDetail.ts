@@ -143,17 +143,20 @@ export function ultraDetailSprite<T extends SourcePixelArt>(source: T, subject: 
       for (let dy = 0; dy < scale; dy++)
         for (let dx = 0; dx < scale; dx++) refined[py + dy][px + dx] = symbol;
 
-      // Real directional micro-pixel lighting. No global checkerboard/dither.
-      if (y === 0 || rows[y - 1][x] !== symbol) {
+      // Light true silhouette and large material transitions only. Avoid
+      // re-highlighting every colored speck from the earlier detail master.
+      const boundary = (other: string): boolean =>
+        other === '.' || (symbol !== other && /^[A-Z]$/.test(symbol) && /^[A-Z]$/.test(other));
+      if (y === 0 || boundary(rows[y - 1][x])) {
         for (let dx = 1; dx < scale - 1; dx++) refined[py][px + dx] = bright;
       }
-      if (x === 0 || rows[y][x - 1] !== symbol) {
+      if (x === 0 || boundary(rows[y][x - 1])) {
         refined[py + 1][px] = bright;
       }
-      if (y + 1 >= height || rows[y + 1][x] !== symbol) {
+      if (y + 1 >= height || boundary(rows[y + 1][x])) {
         refined[py + scale - 1][px + 2] = shadow;
       }
-      if (x + 1 >= width || rows[y][x + 1] !== symbol) {
+      if (x + 1 >= width || boundary(rows[y][x + 1])) {
         refined[py + 2][px + scale - 1] = shadow;
       }
     }
