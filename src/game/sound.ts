@@ -1,27 +1,36 @@
 /**
- * Original two-tone synthesized game cues. No third-party sounds or melodies.
- * AudioContext is created only on an explicit player gesture.
+ * Synthesized original audio cues for retro handheld pacing.
+ * No copyrighted game music, sound recordings or vendor assets.
  */
-export function playCue(kind:'select'|'hit'|'win'|'lose',enabled:boolean):void {
-  if(!enabled || typeof window==='undefined')return;
-  const Context=window.AudioContext;
-  if(!Context)return;
+type Cue = 'select'|'confirm'|'encounter'|'throw'|'summon'|'attack'|'hit'|'win'|'lose'|'text';
+const sequence:Record<Cue,readonly number[]> = {
+  select:[590], confirm:[560,760], encounter:[380,490,710],
+  throw:[610,740,860], summon:[690,880,1040], attack:[300,470,670],
+  hit:[410,210], win:[540,680,810,1020], lose:[390,315,240], text:[780],
+};
+/** Audio contexts only start after a user gesture, and are always disposable. */
+export function playCue(kind:Cue,enabled:boolean):void{
+  if(!enabled||typeof window==='undefined')return;
+  const Audio=window.AudioContext;
+  if(!Audio)return;
   try{
-    const ctx=new Context();
-    const notes=kind==='win'?[523,659,784]:kind==='lose'?[330,275]:kind==='hit'?[420,190]:[510,650];
+    const ctx=new Audio();
+    const notes=sequence[kind];
+    const length=kind==='text'?0.025:0.09;
     notes.forEach((frequency,i)=>{
-      const at=ctx.currentTime+i*0.085;
-      const osc=ctx.createOscillator();
+      const t=ctx.currentTime+i*(kind==='win'?0.11:0.075);
+      const oscillator=ctx.createOscillator();
       const gain=ctx.createGain();
-      osc.type=kind==='hit'?'sawtooth':'square';
-      osc.frequency.setValueAtTime(frequency,at);
-      gain.gain.setValueAtTime(0.0001,at);
-      gain.gain.exponentialRampToValueAtTime(0.035,at+0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001,at+0.09);
-      osc.connect(gain);gain.connect(ctx.destination);
-      osc.start(at);osc.stop(at+0.1);
+      oscillator.type=kind==='hit'||kind==='attack'?'sawtooth':'square';
+      oscillator.frequency.setValueAtTime(frequency,t);
+      gain.gain.setValueAtTime(0.0001,t);
+      gain.gain.exponentialRampToValueAtTime(kind==='text'?0.009:0.026,t+0.009);
+      gain.gain.exponentialRampToValueAtTime(0.0001,t+length);
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+      oscillator.start(t);oscillator.stop(t+length+0.01);
     });
-    void new Promise(resolve=>setTimeout(resolve,Math.ceil(notes.length*85)+180))
+    void new Promise(resolve=>window.setTimeout(resolve,notes.length*140+200))
       .finally(()=>void ctx.close().catch(()=>{}));
-  }catch{/* Browsers can deny autoplay or audio contexts without affecting battle logic. */}
+  }catch{/* No audio permission must never interrupt a battle. */}
 }
