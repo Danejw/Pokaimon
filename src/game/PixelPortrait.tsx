@@ -3,9 +3,8 @@ import { modelSprites, type ModelId } from './pixelArt';
 import { spriteImageUrl } from './spriteRaster';
 
 /**
- * Pixel-perfect PNG data URLs are generated from the exact same authored
- * art matrices used by Phaser. One cached image replaces tens of thousands
- * of individual SVG <rect> DOM nodes in party and Field Guide portraits.
+ * Crisp low-resolution portraits come from the same deliberately drawn
+ * pixel matrices used by Phaser, without a separate portrait asset.
  */
 export function PixelPortrait({ model, className = '' }: { model: ModelId; className?: string }) {
   const art = modelSprites[model];
