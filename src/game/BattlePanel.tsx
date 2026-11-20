@@ -20,7 +20,7 @@ export function BattlePanel({ model, encounter, reducedMotion, onBack, onWin }: 
       <div><strong>{encounter.name}</strong> <small>Lv.{encounter.level}</small></div>
       <div className="hp-track" role="meter" aria-label="Task completion" aria-valuenow={totalProgress(battle)} aria-valuemin={0} aria-valuemax={100}>
         <span style={{ width: totalProgress(battle) + '%' }}/></div>
-      <small>{totalProgress(battle)}% resolved · stage {Math.min(battle.stageIndex + 1, encounter.stages.length)}/{TASK.stages.length}</small>
+      <small>{totalProgress(battle)}% resolved · stage {Math.min(battle.stageIndex + 1, encounter.stages.length)}/{encounter.stages.length}</small>
     </div>
     <div className="battle-visual"><BattleStage enemy={encounter.name} model={model.id} reducedMotion={reducedMotion} effect={battle.turn ? String(battle.turn) : ''}/></div>
     <div className="agent-bar"><strong>{model.displayName}</strong><span>AP {battle.ap}/{battle.maxAp} · TURN {battle.turn}</span></div>
