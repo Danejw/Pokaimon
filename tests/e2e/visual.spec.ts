@@ -168,3 +168,21 @@ test('focused move explains its real technique before the player commits', async
   await expect(page.locator('.move-lesson')).toContainText('No progress on this step');
   await expect(page.getByRole('button', { name: 'Code Execution' })).toBeFocused();
 });
+
+test('wild counter is visible after the second move and remains tied to the reducer event', async ({ page }) => {
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  const stage = page.getByTestId('phaser-stage');
+  await expect(stage).toHaveAttribute('data-phase', 'command');
+  await page.getByRole('button', { name: 'Deep Think' }).click();
+  await expect(stage).toHaveAttribute('data-phase', 'command');
+  await expect(page.locator('.wild-counter')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Code Execution' }).click();
+  await expect(stage).toHaveAttribute('data-phase', 'command');
+  await expect(page.locator('.wild-counter')).toContainText('TASK used Scope Shift!');
+  await expect(page.locator('.wild-counter')).toContainText('Extra verification is required.');
+  await page.getByRole('button', { name: 'Self-Correction' }).click();
+  await expect(stage).toHaveAttribute('data-phase', 'command');
+  await expect(page.locator('.wild-counter')).toHaveCount(0);
+});
