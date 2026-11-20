@@ -99,7 +99,7 @@ export function BattlePanel({
       : narration || 'What should ' + (model?.displayName ?? 'your AI') + ' do?';
 
   useEffect(() => {
-    if (reducedMotion || textSpeed === 'fast') {
+    if (reducedMotion || textSpeed === 'fast' || phase === 'result') {
       setTypedFeedback(message);
       return;
     }
@@ -112,7 +112,7 @@ export function BattlePanel({
       if (count >= message.length) window.clearInterval(timer);
     }, 24);
     return () => window.clearInterval(timer);
-  }, [message, reducedMotion, textSpeed, soundEnabled]);
+  }, [message, reducedMotion, textSpeed, soundEnabled, phase]);
 
   function selectModel(next: ModelDefinition): void {
     if (phase !== 'selection') return;
@@ -214,7 +214,9 @@ export function BattlePanel({
         <p aria-hidden="true">{typedFeedback}<span className="dialogue-caret" aria-hidden="true">▾</span></p>
         <span className="sr-only" role="status" aria-live="polite">{message}</span>
         {phase === 'command' && currentStage && <small className="stage-intel"><b>STEP {intel?.number}/{intel?.count}</b>{' · '}{currentStage.label}{' · '}{currentStage.hint}</small>}
-        {phase === 'result' && battle && <small>{battle.feedback}</small>}
+        {phase === 'result' && battle && <small>{battle.outcome === 'won'
+          ? 'All ' + encounter.stages.length + ' steps complete. Ready for another wild problem?'
+          : 'That approach ran out of AP. Review the unfinished step and retry.'}</small>}
         {(phase === 'encounter' || phase === 'selection') &&
           <small>Choose a companion to face this wild problem.</small>}
       </div>
