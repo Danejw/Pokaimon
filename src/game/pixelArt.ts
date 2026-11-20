@@ -251,12 +251,19 @@ export function paintSprite(graphics:Phaser.GameObjects.Graphics,art:PixelArt,po
       graphics.fillRect(x0+col*unit,y0+row*unit,unit,unit);
     }
   }
+  // Pose overlays add expressive features while preserving each creature's silhouette.
+  if(pose==='attack'){
+    graphics.fillStyle(0xffffff);graphics.fillRect(-unit*3,y0+unit*5,unit*2,unit);
+    graphics.fillStyle(0xf8db74);graphics.fillRect(unit*2,y0+unit*3,unit*2,unit*2);
+  }
   if(pose==='charge'){
     graphics.fillStyle(0xfff3b1);graphics.fillRect(-3,y0-7,6,6);
   }else if(pose==='victory'){
     graphics.fillStyle(0xffec95);graphics.fillRect(-22,y0-9,7,7);graphics.fillRect(19,y0-6,6,6);
+    graphics.fillRect(-12,y0-17,5,5);graphics.fillRect(9,y0-20,5,5);
   }else if(pose==='hurt'){
     graphics.fillStyle(0xff7d86);graphics.fillRect(-3,y0-7,6,6);
+    graphics.fillRect(-unit*3,y0+unit*7,unit*2,unit);
   }
 }
 export function createPixelCharacter(scene:Phaser.Scene,art:PixelArt,x:number,y:number):{container:Phaser.GameObjects.Container,paint:(pose?:ModelPose)=>void}{
