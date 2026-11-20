@@ -356,31 +356,68 @@ function hallucination(): PixelDrawing {
   return p.finish();
 }
 
-/** Back-view trainer with a readable visor, jacket and separated shoes. */
+/** Original three-quarter-view trainer with a clear human silhouette.
+ * Red/cream badge cap, swept dark hair, visible eyes, bright blue jacket,
+ * pale shirt, shoulder-strap backpack, gloves, jeans and high-top sneakers.
+ * Deliberate 32×38 authored pixels at the same 3px grid as other characters.
+ * No copied TV-character sprite or procedural sharpening.
+ */
 function trainer(): PixelDrawing {
-  const p = new Painter(30, 31, {
-    K:0x303245,D:0x2e6456,M:0x50a67a,L:0x8acb9a,
-    R:0xd95853,W:0xffeed0,S:0xf2c38f,B:0x72c6c4,
-  });
-  p.bands('K',[[1,9,20],[2,7,22],[3,6,23],
-    [4,5,24],[5,4,25],[6,4,25],[7,3,26],
-    [8,6,23],[9,7,22],[10,7,22],[11,8,21],
-    [12,8,21],[13,7,22],[14,5,24],[15,4,25],
-    [16,3,26],[17,3,26],[18,3,26],[19,3,26],
-    [20,4,25],[21,5,24],[22,7,22],[23,8,21],
-    [24,9,13],[24,16,20],[25,9,13],[25,16,20],
-    [26,9,13],[26,16,20],[27,8,13],[27,16,21],
-    [28,8,13],[28,16,21],[29,8,13],[29,16,21]]);
-  p.rect('R',8,2,15,3).rect('R',6,5,18,1);
-  p.rect('W',15,3,5,2).rect('D',6,6,18,1);
-  p.rect('S',9,9,12,4).rect('K',13,10,4,2);
-  p.rect('D',9,10,3,2).rect('D',18,10,3,2);
-  p.rect('M',7,15,16,7).rect('L',11,15,8,2);
-  p.rect('W',12,16,6,4).rect('D',12,20,6,2);
-  p.rect('B',5,16,3,5).rect('B',22,16,3,5);
-  p.rect('M',9,24,4,3).rect('M',17,24,4,3);
-  p.rect('D',9,27,4,1).rect('D',17,27,4,1);
-  return p.finish();
+  return {
+    pixelSize: 3,
+    palette: {
+      K:0x293246, // restrained dark outline
+      H:0x423b40, // swept dark hair
+      R:0xc64547, r:0xf26a58, // shaded vermilion cap
+      W:0xffeee0, // cream cap panel, undershirt, gloves and sneakers
+      S:0xf3bf8d, s:0xd38c65, // face light and warm shadows
+      N:0x31547c, B:0x4389bf, b:0x70b7d4, // three-tone blue jacket
+      G:0x5f8567, g:0xb6a368, // olive/canvas backpack
+      J:0x4a5573, // denim trousers
+      T:0x71d3c1, // original teal cap and shirt emblem
+      Y:0xf5ca6b, // zipper and belt details
+    },
+    pixels: [
+      '............KKKKKKKKKK..........',
+      '..........KKRRRRRRRRRRKK........',
+      '.........KRrrrrrrrrrrrrrK.......',
+      '........KRrrrrrWWWWWWrrrrK......',
+      '.......KRrrrrrrWWTTWWrrrrrK.....',
+      '.......KRrrrrrRWWTTWWRRRRRRK....',
+      '......KKKKKKKKKKKKKKKKKRRrrrrRK.',
+      '.......KKKKKKKKKKKKKKKKKKKKKKKKK',
+      '.........KKKKKKKKKKKKKKKKKKKKK..',
+      '.........HHHHHHHHHHHHHHHHHK.....',
+      '........KHHHHHHHHHHHHHHHHHHK....',
+      '........KHHHHHSSHHHHSHHHHHHK....',
+      '.........HHHHHSSSKWKSSKWKHHK....',
+      '.........HHHHHsSSKKKSSKKKSSK....',
+      '...........HHHsSSSSSSSSSSSsK....',
+      '............KKSssssssssssKK.....',
+      '.............KKssSSSSHHHsK......',
+      '...............KKKKKKKKK........',
+      '.............KKKKsssssKKK.......',
+      '..........KKKKKKKsssssKKKKKK....',
+      '.....KKKKKKKNggNNbbNNNNNNNNKKK..',
+      '.....KGKKKKKNggbbbbWWWWNBNKKKKK.',
+      '.....KGKbBBBNggKbbbWWWWNBNKBbBK.',
+      '.....KGKbBBBNggKbbbWTTWNBBKBbBK.',
+      '.....KGKbBBBNggKBNbWKWWNBBKBbBK.',
+      '.....KNKbBBBNggKBNKWKWWNBBKBbBK.',
+      '.....KGKBBBBNggKBNKWKWWNBBKBBBK.',
+      '.....KGKBBBBNBBBBNKWKWWNYYKBBBK.',
+      '.....KKWWWWWNBBBBNKWKWWNBNWWWWW.',
+      '.....KKWWWWWNBNNNNNNNNNNNNWWWWW.',
+      '.......NNNNNNNNNNNNNYYNNNNNNNNN.',
+      '........ssssKKKKKKKKKKKKKK.sss..',
+      '............KNJJJJJK.KNJJJJK....',
+      '............KNJbJJJK.KNJbJJK....',
+      '............KNJbJJJK.KNJbJJK....',
+      '............KJJJJJJK.KJJJJJK....',
+      '..........KWrrWWWWWK.KWWrrWWK...',
+      '.........KKbbbbbbbKK.KbbbbbbbK..',
+    ],
+  };
 }
 
 export const handDrawnModels = { astra:astra(), grok:grok(), fable:fable() };
