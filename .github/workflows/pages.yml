@@ -1,5 +1,5 @@
 name: Deploy Pokaimon Pages
-# Refresh isolated preview: 2x/3x high-detail original sprites and layered scenery.
+# Refresh isolated preview: 10x+ authored pixel detail, high-DPI renderer and cleaned shading.
 # Preview refresh: rebuild isolated pixel-art branch alongside unchanged production.
 on:
   push:
