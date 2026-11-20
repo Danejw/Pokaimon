@@ -203,3 +203,29 @@ test('decision prompt is complete when controls become actionable', async ({ pag
   await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
   await expect(page.locator('.retro-dialogue p')).toContainText('complete!');
 });
+
+test('enemy counter leaves every battle command visible in a 390x844 portrait viewport', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  const stage = page.getByTestId('phaser-stage');
+  await expect(stage).toHaveAttribute('data-phase', 'command');
+  await page.getByRole('button', { name: 'Deep Think' }).click();
+  await expect(stage).toHaveAttribute('data-phase', 'command');
+  await page.getByRole('button', { name: 'Code Execution' }).click();
+  await expect(stage).toHaveAttribute('data-phase', 'command');
+  await expect(page.locator('.wild-counter')).toBeVisible();
+  await expect(page.locator('.retro-dialogue p')).toContainText('Scope Shift');
+  const bounds = await page.evaluate(() => ({
+    pageHeight: document.documentElement.scrollHeight,
+    pageWidth: document.documentElement.scrollWidth,
+    viewportHeight: innerHeight,
+    viewportWidth: innerWidth,
+    menuBottom: document.querySelector('.tactical-help')!.getBoundingClientRect().bottom,
+  }));
+  expect(bounds.pageWidth).toBeLessThanOrEqual(bounds.viewportWidth + 1);
+  expect(bounds.pageHeight).toBeLessThanOrEqual(bounds.viewportHeight + 8);
+  expect(bounds.menuBottom).toBeLessThanOrEqual(bounds.viewportHeight);
+  await page.screenshot({ path: dir + '/counter-fit-' + testInfo.project.name + '.png', fullPage: true });
+});
