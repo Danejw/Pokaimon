@@ -6,7 +6,7 @@ test('home to arena to home, navigation remains usable', async ({ page }) => {
   await page.getByRole('button', { name: /PLAY/ }).click();
   await expect(page.getByText('A wild TASK appeared!')).toBeVisible();
   await expect(page.getByTestId('phaser-stage')).toBeVisible();
-  await page.getByRole('button', { name: /BACK TO HOME/ }).click();
+  await page.getByRole('button', { name: /HOME/ }).first().click();
   await expect(page.getByRole('heading', { name: /Master your models/i })).toBeVisible();
 });
 test('settings persist through reload', async ({ page }) => {
