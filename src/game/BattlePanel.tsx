@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
 import { BattleStage } from './BattleStage';
+import { playCue } from './sound';
 import { applyMove, createBattle, summarizeBattle, totalProgress } from '../battle/engine';
 import { movesFor } from '../content/core';
 import type { BattleState, ModelDefinition, EncounterDefinition } from '../battle/types';
 
-export function BattlePanel({ model, encounter, reducedMotion, onBack, onWin }: { model: ModelDefinition; encounter: EncounterDefinition; reducedMotion: boolean; onBack: () => void; onWin: (id: string) => void }) {
+export function BattlePanel({ model, encounter, reducedMotion, onBack, onWin, soundEnabled }: { model: ModelDefinition; encounter: EncounterDefinition; reducedMotion: boolean; onBack: () => void; onWin: (id: string) => void; soundEnabled: boolean }) {
   const [battle, setBattle] = useState<BattleState>(() => createBattle(encounter,model));
   useEffect(() => { if (battle.outcome === 'won') onWin(encounter.id); }, [battle.outcome, encounter.id, onWin]);
   const moves = movesFor(model);
   const stage = encounter.stages[battle.stageIndex];
   const latest = battle.events.slice(-4).reverse();
-  function useMove(id: string) { setBattle(prev => applyMove(prev, id, model, encounter)); }
+  function useMove(id: string) {
+    const next=applyMove(battle,id,model,encounter);
+    if(next===battle)return;
+    playCue(next.outcome==='won'?'win':next.outcome==='lost'?'lose':'hit',soundEnabled);
+    setBattle(next);
+  }
   return <section className="arena-page">
     <div className="section-top">
       <button className="back-button" onClick={onBack}>← CHALLENGES</button>

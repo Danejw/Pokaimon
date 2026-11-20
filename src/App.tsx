@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { probeAgui, type AguiProbeResult } from './integrations/agui/client';
 import { BattleStage } from './game/BattleStage';
 import { BattlePanel } from './game/BattlePanel';
 import { MODELS, MOVES, movesFor } from './content/core';
@@ -12,6 +13,8 @@ export function App(){
   const [screen,setScreen]=useState<Screen>('home');
   const [prefs,setPrefs]=useState<Preferences>(loadPreferences);
   const [progress,setProgress]=useState<Progress>(loadProgress);
+  const [aguiStatus,setAguiStatus]=useState<AguiProbeResult|null>(null);
+  const [testingAgui,setTestingAgui]=useState(false);
   const [model,setModel]=useState<ModelDefinition>(MODELS[0]);
   const [encounter,setEncounter]=useState<EncounterDefinition>(ENCOUNTERS[0]);
   useEffect(()=>{savePreferences(prefs)},[prefs]);
@@ -67,7 +70,7 @@ export function App(){
       })}</div>
       <p className="disclaimer">A weak matchup can still be tried, but may be impossible to win without the needed capability.</p>
     </section>}
-    {screen==='arena'&&<BattlePanel key={model.id+'-'+encounter.id} model={model} encounter={encounter} reducedMotion={prefs.reducedMotion} onBack={()=>setScreen('encounters')} onWin={recordWin}/>}
+    {screen==='arena'&&<BattlePanel key={model.id+'-'+encounter.id} model={model} encounter={encounter} reducedMotion={prefs.reducedMotion} soundEnabled={prefs.sound} onBack={()=>setScreen('encounters')} onWin={recordWin}/>}
     {screen==='guide'&&<section className="guide-page">
       <div className="section-top"><button className="back-button" onClick={()=>setScreen('home')}>← HOME</button><span>FIELD GUIDE</span></div>
       <h2>Know your moves</h2><p className="intro">This is a game about AI capability types. Abilities are educational simulations; provider-specific support must be verified before live use.</p>
@@ -85,6 +88,14 @@ export function App(){
       <label className="setting"><span><strong>Reduced motion</strong><small>Reduce sprite and UI animation</small></span><input aria-label="Reduced motion" type="checkbox" checked={prefs.reducedMotion} onChange={e=>update({reducedMotion:e.target.checked})}/></label>
       <label className="setting"><span><strong>Text speed</strong><small>Dialogue preference</small></span><select aria-label="Text speed" value={prefs.textSpeed} onChange={e=>update({textSpeed:e.target.value==='fast'?'fast':'normal'})}><option value="normal">Normal</option><option value="fast">Fast</option></select></label>
       <button className="secondary full" onClick={()=>setPrefs({...defaultPreferences})}>RESTORE DEFAULTS</button>
+      {(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1') && <div className="agui-diagnostic">
+        <h3>AG-UI simulator</h3><p>Test the local standards endpoint. This sends no requests to AI providers.</p>
+        <button className="secondary full" disabled={testingAgui} onClick={()=>{
+          setTestingAgui(true);setAguiStatus(null);
+          void probeAgui().then(setAguiStatus).finally(()=>setTestingAgui(false));
+        }}>{testingAgui?'CONNECTING...':'TEST AG-UI CONNECTION'}</button>
+        {aguiStatus && <p role="status">{aguiStatus.error?'AG-UI error: '+aguiStatus.error:aguiStatus.finished?'AG-UI simulation connected: '+aguiStatus.message:'AG-UI run unfinished'}</p>}
+      </div>}
       <button className="danger-button" onClick={()=>{setProgress(clearProgress());}}>RESET CAMPAIGN PROGRESS</button>
     </section>}
     <footer>POKAIMON · BUILD YOUR BATTLE INSTINCT</footer>
