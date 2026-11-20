@@ -1,5 +1,5 @@
 name: Deploy Pokaimon Pages
-# Refresh isolated preview: original chiptune audio and readable game typography.
+# Refresh isolated preview: 2x/3x high-detail original sprites and layered scenery.
 # Preview refresh: rebuild isolated pixel-art branch alongside unchanged production.
 on:
   push:
