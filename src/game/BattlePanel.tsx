@@ -7,6 +7,7 @@ import { BattleStage } from './BattleStage';
 import { PixelPortrait } from './PixelPortrait';
 import { animationDuration, type BattlePhase } from './encounterFlow';
 import { playCue } from './sound';
+import { setBattleMusic } from './music';
 
 export interface BattlePanelProps {
   encounter: EncounterDefinition;
@@ -36,6 +37,9 @@ export function BattlePanel({
   const [narration, setNarration] = useState('');
   const selectionButtons = useRef<Array<HTMLButtonElement | null>>([]);
   const moveButtons = useRef<Array<HTMLButtonElement | null>>([]);
+
+  useEffect(() => { if (phase === 'result') setBattleMusic(false, false); }, [phase]);
+  useEffect(() => () => setBattleMusic(false, false), []);
 
   // Visual phases are never authoritative for battle state.
   useEffect(() => {
@@ -127,6 +131,7 @@ export function BattlePanel({
     setTypedFeedback('');
     setNarration('');
     playCue('encounter', soundEnabled);
+    setBattleMusic(true, soundEnabled);
   }
 
   function onSelectionKey(event: KeyboardEvent<HTMLDivElement>): void {
