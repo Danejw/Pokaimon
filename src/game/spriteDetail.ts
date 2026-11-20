@@ -152,9 +152,8 @@ export function refineSprite<T extends SourcePixelArt>(source: T, subject: Sprit
       if (left !== key) expanded[py + Math.floor(factor / 2)][px] = light;
       if (below !== key) expanded[py + factor - 1][px + factor - 1] = shade;
       if (right !== key) expanded[py + factor - 1][px + factor - 1] = shade;
-      // Restrained internal texture avoids flat 2x2 blocks and checkerboard noise.
-      if ((x * 7 + y * 11) % 9 === 0) expanded[py][px] = light;
-      if ((x * 13 + y * 3) % 13 === 0) expanded[py + factor - 1][px] = shade;
+      // Keep interior color areas clean. The authored micro-details in the
+      // subsequent pass provide texture without accidental salt-and-pepper noise.
     }
   }
 
