@@ -89,7 +89,6 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
     private lastPhase:BattlePhase|null=null;
     private lastAttackSequence=0;
     private heroIdle=false;
-    private enemyIdle=false;
 
     constructor(){super('retro-battle');}
 
@@ -122,7 +121,6 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
       const art=enemySprites[enemyName]??enemySprites.TASK;
       this.enemy=createPixelCharacter(this,art,410,201);
       if(!initial.reducedMotion){
-        this.enemyIdle=true;
         this.tweens.add({targets:this.enemy.container,y:197,duration:600,yoyo:true,repeat:-1,ease:'Stepped'});
       }
       this.trainer=createPixelCharacter(this,trainerSprite,-66,281);
