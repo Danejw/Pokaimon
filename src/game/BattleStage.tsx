@@ -1,119 +1,289 @@
 import { useEffect, useRef } from 'react';
 import * as Phaser from 'phaser';
+import type { BattlePhase } from './encounterFlow';
+import { createPixelCharacter, enemySprites, modelSprites, trainerSprite, type ModelId } from './pixelArt';
 
-interface StageProps { active?: boolean; enemy?: string; model?: string; effect?: string; reducedMotion?: boolean; }
+export interface BattleStageProps {
+  enemy?: string;
+  model?: string | null;
+  phase?: BattlePhase;
+  attackSequence?: number;
+  attackType?: string;
+  outcome?: 'active' | 'won' | 'lost';
+  reducedMotion?: boolean;
+}
+interface Presentation {
+  model: string | null;
+  phase: BattlePhase;
+  attackSequence: number;
+  attackType: string;
+  outcome: 'active' | 'won' | 'lost';
+  reducedMotion: boolean;
+}
+const PRESENTATION_EVENT='pokaimon:presentation';
 
-function createScene(enemy: string, model: string): typeof Phaser.Scene {
+const COLORS:Record<string,number>={
+  reasoning:0xfce176, research:0x94dff7, coding:0xffaa69,
+  verification:0x7ad8ae, context:0xb9a6fa,
+};
+const MODEL_FX:Record<string,number>={astra:0x81f9e4,grok:0xb49aff,fable:0xffc078};
+
+function drawPlatform(g:Phaser.GameObjects.Graphics,x:number,y:number,width:number):void {
+  const half=width/2;
+  g.fillStyle(0x36464b);
+  g.fillRect(x-half+14,y+15,width-28,10);
+  g.fillRect(x-half+22,y+25,width-44,3);
+  g.fillStyle(0x3d8b63);
+  g.fillRect(x-half+12,y+9,width-24,13);
+  g.fillRect(x-half+20,y+3,width-40,7);
+  g.fillStyle(0x70c985);
+  g.fillRect(x-half+20,y-2,width-40,13);
+  g.fillRect(x-half+34,y-7,width-68,6);
+  g.fillStyle(0xa0dfa0);
+  for(let i=0;i<7;i++){
+    const px=Math.round(x-half+25+i*(width-48)/7);
+    g.fillRect(px,y-8+(i%3)*3,5,8);
+  }
+}
+
+function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene {
   return class BattleScene extends Phaser.Scene {
-    constructor() { super('battle'); }
-    create() {
-      const g = this.add.graphics();
-      // Original geometric pixel-inspired scene; no franchise imagery.
-      g.fillGradientStyle(0x25284f, 0x25284f, 0x6d4c78, 0x6d4c78, 1);
-      g.fillRect(0, 0, 360, 480);
-      g.fillStyle(0xe7ac80, 1);
-      g.fillRect(0, 310, 360, 170);
-      g.fillStyle(0xf4c996, 1);
-      g.fillEllipse(266, 218, 168, 32);
-      g.fillEllipse(95, 383, 174, 33);
-      g.fillStyle(0x5c3a6e, 0.18);
-      for (let i = 0; i < 25; i++) g.fillRect((i * 77 + 23) % 360, (i * 31 + 71) % 275, 4, 4);
-      g.fillStyle(0xe2a155, 1);
-      g.fillEllipse(265, 222, 125, 20);
-      g.fillEllipse(92, 388, 136, 20);
-      const enemyArt = this.add.container(266, 160);
-      const task = this.add.graphics();
-      if (enemy === 'BUG') {
-        task.fillStyle(0x28273d); task.fillEllipse(0,0,91,86);
-        task.fillStyle(0xdc7e9a); task.fillEllipse(0,0,80,76);
-        task.fillStyle(0x4c2d59); task.fillRect(-27,-12,13,17);task.fillRect(14,-12,13,17);
-        task.lineStyle(5,0x332844);task.lineBetween(-35,-39,-49,-57);task.lineBetween(35,-39,49,-57);
-        task.lineBetween(-35,9,-57,23);task.lineBetween(35,9,57,23);
-      } else if (enemy === 'RESEARCH REQUEST') {
-        task.fillStyle(0x332b4c); task.fillRoundedRect(-43,-58,86,101,10);
-        task.fillStyle(0xf5e0b6); task.fillRoundedRect(-38,-53,76,90,7);
-        task.fillStyle(0xffb97c); task.fillRect(-28,-33,56,9);
-        task.fillStyle(0x524b64);task.fillRect(-25,-8,20,6);task.fillRect(8,-8,20,6);
-        task.fillStyle(0x524b64);task.fillRect(-7,18,14,7);
-      } else if (enemy === 'MATH PROBLEM') {
-        task.fillStyle(0x322842);task.fillTriangle(0,-69,-56,37,56,37);
-        task.fillStyle(0xbda7ff);task.fillTriangle(0,-57,-45,31,45,31);
-        task.fillStyle(0x332842);task.fillCircle(-12,3,5);task.fillCircle(14,3,5);
-        task.fillRect(-16,21,32,5);
-      } else if (enemy === 'HALLUCINATION') {
-        task.fillStyle(0x2c2a4a);task.fillEllipse(0,-4,102,105);
-        task.fillStyle(0xd9d5ff);task.fillEllipse(0,-7,91,95);
-        task.fillStyle(0x70678c);task.fillCircle(-17,-14,6);task.fillCircle(17,-14,6);
-        task.fillStyle(0xec8eaa);task.fillRect(-10,9,20,6);
-        task.fillStyle(0xbfa9f1);task.fillCircle(38,-55,15);task.fillCircle(52,-70,7);
-      } else {
-        task.fillStyle(0x2d294b, 1); task.fillRoundedRect(-39, -59, 78, 103, 9);
-        task.fillStyle(0xfff7dd, 1); task.fillRoundedRect(-34, -64, 68, 96, 7);
-        task.fillStyle(0x666082, 1);
-        for (let i = 0; i < 3; i++) {task.fillRect(-23, -39 + i * 24, 11, 11);task.fillRect(-4, -35 + i * 24, 27, 4);}
-        task.fillStyle(0x2d294b); task.fillCircle(-17, 17, 4); task.fillCircle(17, 17, 4);
+    private trainer!:ReturnType<typeof createPixelCharacter>;
+    private enemy!:ReturnType<typeof createPixelCharacter>;
+    private hero!:ReturnType<typeof createPixelCharacter>;
+    private heroModel:string|null=null;
+    private lastPhase:BattlePhase|null=null;
+    private lastAttackSequence=0;
+    private heroIdle=false;
+
+    constructor(){super('retro-battle');}
+
+    create():void {
+      const g=this.add.graphics();
+      // Handheld style: sharp horizontal palette bands; no gradients or 3D.
+      g.fillStyle(0xffefdc);g.fillRect(0,0,360,78);
+      g.fillStyle(0xfde0b2);g.fillRect(0,78,360,54);
+      g.fillStyle(0xf6ca80);g.fillRect(0,132,360,34);
+      g.fillStyle(0xedb66b);g.fillRect(0,166,360,164);
+      g.fillStyle(0xf8d295);g.fillRect(0,186,360,12);g.fillRect(0,231,360,5);
+      g.fillStyle(0xf6be76);
+      for(let i=0;i<14;i++){g.fillRect(i*29,183+(i%3)*7,20,4);}
+      drawPlatform(g,261,209,170);
+      drawPlatform(g,93,291,168);
+      // Ground grass edges; intentionally chunked into large pixels.
+      g.fillStyle(0x448867);
+      for(let i=0;i<12;i++){g.fillRect(i*33,(i%2===0?310:317),11,20);}
+      g.fillStyle(0x78c58b);
+      for(let i=0;i<11;i++){g.fillRect(5+i*34,311+(i%3)*4,6,14);}
+
+      const art=enemySprites[enemyName]??enemySprites.TASK;
+      this.enemy=createPixelCharacter(this,art,410,201);
+      this.trainer=createPixelCharacter(this,trainerSprite,-66,281);
+      this.hero=createPixelCharacter(this,modelSprites.astra,89,283);
+      this.hero.container.setVisible(false);
+
+      const exclaim=this.add.graphics();
+      exclaim.fillStyle(0xffd54d);
+      exclaim.fillRect(287,91,8,17);exclaim.fillRect(289,112,7,7);
+      exclaim.fillRect(305,100,8,17);exclaim.fillRect(307,121,7,7);
+      exclaim.fillRect(321,113,8,17);
+      exclaim.setAlpha(0);
+      this.tweens.add({targets:exclaim,alpha:1,duration:100,delay:560,yoyo:true,hold:200,repeat:1,onComplete:()=>exclaim.destroy()});
+
+      this.game.events.on(PRESENTATION_EVENT,this.present,this);
+      this.events.once('shutdown',()=>this.game.events.off(PRESENTATION_EVENT,this.present,this));
+      this.present(initial);
+      this.game.canvas.setAttribute('aria-label','Retro pixel-art wild encounter: '+enemyName);
+    }
+
+    private flash(color=0xffffff,alpha=0.45):void{
+      const rect=this.add.rectangle(180,165,360,330,color,alpha).setDepth(20);
+      this.tweens.add({targets:rect,alpha:0,duration:120,onComplete:()=>rect.destroy()});
+    }
+
+    private sparks(x:number,y:number,color:number,count=12):void{
+      for(let i=0;i<count;i++){
+        const angle=i*2*Math.PI/count;
+        const length=24+(i%3)*11;
+        const part=this.add.rectangle(x,y,i%3?5:8,i%3?5:8,i%2?color:0xffffff).setDepth(15);
+        this.tweens.add({
+          targets:part,
+          x:x+Math.round(Math.cos(angle)*length/4)*4,
+          y:y+Math.round(Math.sin(angle)*length/4)*4,
+          alpha:0,duration:330+(i%3)*45,ease:'Linear',
+          onComplete:()=>part.destroy(),
+        });
       }
-      enemyArt.add(task);
-      const hero = this.add.container(95, 324);
-      const h = this.add.graphics();
-      if (model === 'grok') {
-        // Original angular signal-bot sprite; not an official vendor mascot.
-        h.fillStyle(0x27253f); h.fillRoundedRect(-42,-49,84,85,13);
-        h.fillStyle(0xaf9cf4); h.fillRoundedRect(-35,-45,70,73,12);
-        h.fillStyle(0x27253f); h.fillRect(-27,-68,12,25); h.fillRect(14,-68,12,25);
-        h.fillStyle(0x9df3d9); h.fillRect(-28,-18,56,21);
-        h.fillStyle(0x27253f); h.fillRect(-17,-14,10,9); h.fillRect(10,-14,10,9);
-        h.fillStyle(0xffd18a); h.fillRect(-9,14,18,5);
-      } else if (model === 'fable') {
-        // Original warm-orange library sprite with round ears.
-        h.fillStyle(0x4b3248); h.fillEllipse(-29,-42,30,50); h.fillEllipse(30,-42,30,50);
-        h.fillStyle(0xf4ae82); h.fillEllipse(-29,-42,20,37); h.fillEllipse(30,-42,20,37);
-        h.fillStyle(0x42354b); h.fillRoundedRect(-44,-47,88,83,23);
-        h.fillStyle(0xf5b183); h.fillRoundedRect(-39,-46,78,76,22);
-        h.fillStyle(0xffe5bd); h.fillEllipse(0,-14,60,44);
-        h.fillStyle(0x37304a); h.fillRect(-18,-23,8,10); h.fillRect(11,-23,8,10);
-        h.fillStyle(0xd57c86); h.fillCircle(-23,-9,6); h.fillCircle(23,-9,6);
-        h.lineStyle(3,0x42354b); h.lineBetween(-6,-7,0,-3); h.lineBetween(0,-3,7,-7);
-      } else {
-        // Original mint reasoning sprite with a geometric mind spark.
-        h.fillStyle(0x32294f); h.fillRoundedRect(-43,-44,86,74,22);
-        h.fillStyle(0x78e0d1); h.fillRoundedRect(-37,-49,74,69,20);
-        h.fillStyle(0xfaf4de); h.fillRoundedRect(-28,-42,57,46,14);
-        h.fillStyle(0x302d4d); h.fillRect(-16,-22,7,9); h.fillRect(11,-22,7,9);
-        h.fillStyle(0xe88ca0); h.fillCircle(-21,-8,5); h.fillCircle(23,-8,5);
-        h.lineStyle(3,0x3e3759); h.strokeCircle(1,-9,7);
-        h.fillStyle(0xfce49e); h.fillRect(-4,-60,8,8);
+    }
+
+    private throwCapsule(model:string,reduced:boolean):void{
+      this.trainer.paint('attack');
+      if(reduced){
+        this.trainer.container.setVisible(false);
+        return;
       }
-      hero.add(h);
-      // Character variants will use separate drawn sprites in Phase 2.
-      if (!this.game.registry.get('reducedMotion')) {
-        this.tweens.add({ targets: enemyArt, y: 154, duration: 850, yoyo: true, repeat: -1 });
-        this.tweens.add({ targets: hero, y: 319, duration: 1050, yoyo: true, repeat: -1 });
+      const capsule=this.add.graphics().setDepth(17);
+      capsule.fillStyle(0x2c3347);capsule.fillRect(-9,-10,18,20);
+      capsule.fillStyle(0xfbf6e0);capsule.fillRect(-6,-7,12,6);
+      capsule.fillStyle(0x55d2c4);capsule.fillRect(-6,0,12,7);
+      capsule.fillStyle(0xfad58e);capsule.fillRect(-2,-2,4,4);
+      capsule.setPosition(111,224);
+      const steps=[
+        {x:123,y:198},{x:136,y:172},{x:151,y:153},
+        {x:163,y:150},{x:170,y:159},{x:173,y:179},
+      ];
+      let index=0;
+      const advance=()=>{
+        if(index>=steps.length){
+          this.sparks(173,178,MODEL_FX[model]??0xa4fae0);
+          this.flash(0xfbf8e0,0.65);
+          capsule.destroy();return;
+        }
+        capsule.setPosition(steps[index].x,steps[index].y);
+        capsule.rotation=index*0.5;
+        index++;
+        this.time.delayedCall(67,advance);
+      };
+      advance();
+      this.tweens.add({targets:this.trainer.container,x:-75,duration:520,ease:'Linear'});
+    }
+
+    private summon(model:string,reduced:boolean):void{
+      this.trainer.container.setVisible(false);
+      this.hero.container.setVisible(true);
+      const id=(model in modelSprites?model:'astra') as ModelId;
+      if(this.heroModel!==id){
+        this.hero.container.removeAll(true);
+        const newHero=createPixelCharacter(this,modelSprites[id],89,283);
+        this.hero.container.destroy();
+        this.hero=newHero;
+        this.heroModel=id;
       }
-      this.game.registry.set('sceneReady', true);
-      this.game.canvas.setAttribute('aria-label', 'Pixel art arena with a friendly AI creature facing ' + enemy);
+      this.hero.paint('charge');
+      this.hero.container.setVisible(true);
+      this.hero.container.setPosition(89,283);
+      if(!reduced){
+        this.hero.container.setScale(0.05).setAlpha(0);
+        this.sparks(89,242,MODEL_FX[model]??0x87f8dc,16);
+        this.tweens.add({
+          targets:this.hero.container,scaleX:1,scaleY:1,alpha:1,duration:440,ease:'Linear',
+          onComplete:()=>{this.hero.paint('idle');this.beginIdle(reduced);},
+        });
+      }else{
+        this.hero.container.setScale(1).setAlpha(1);
+        this.hero.paint('idle');
+      }
+    }
+
+    private beginIdle(reduced:boolean):void{
+      if(this.heroIdle||reduced)return;
+      this.heroIdle=true;
+      this.tweens.add({targets:this.hero.container,y:278,duration:430,yoyo:true,repeat:-1,ease:'Stepped',onUpdate:()=>{
+        this.hero.container.y=Math.round(this.hero.container.y/2)*2;
+      }});
+    }
+
+    private attack(type:string,model:string,reduced:boolean):void{
+      this.hero.paint('attack');
+      const color=COLORS[type]??0x8af5dc;
+      if(reduced){
+        this.hero.paint('idle');
+        return;
+      }
+      const offset=model==='grok'?26:model==='fable'?18:15;
+      this.tweens.add({
+        targets:this.hero.container,x:89+offset,duration:100,yoyo:true,repeat:1,
+        onComplete:()=>this.hero.paint('idle'),
+      });
+      const count=model==='grok'?12:model==='fable'?8:10;
+      for(let i=0;i<count;i++){
+        const p=this.add.rectangle(143+(i%3)*3,225+(i%5)*5,model==='grok'?4:6,6,i%3===0?0xffffff:color).setDepth(12);
+        const wave=model==='fable'?(i%4)*8-13:model==='grok'?(i%5)*12-24:Math.sin(i)*22;
+        this.tweens.add({
+          targets:p,x:246+(i%3)*5,y:164+wave,alpha:0.8,
+          duration:180+(i%3)*65,ease:'Linear',
+          onComplete:()=>p.destroy(),
+        });
+      }
+      this.time.delayedCall(320,()=>{
+        this.sparks(265,162,color,8);
+        this.tweens.add({targets:this.enemy.container,x:252,duration:55,yoyo:true,repeat:3});
+        this.tweens.add({targets:this.enemy.container,alpha:0.35,duration:65,yoyo:true,repeat:2});
+        this.flash(color,0.18);
+      });
+    }
+
+    private present(p:Presentation):void{
+      const changed=p.phase!==this.lastPhase;
+      if(changed){
+        this.lastPhase=p.phase;
+        switch(p.phase){
+          case 'encounter':
+            this.trainer.container.setVisible(true);
+            this.hero.container.setVisible(false);
+            this.enemy.container.setVisible(true).setAlpha(1).setScale(1);
+            this.enemy.container.setPosition(p.reducedMotion?262:414,201);
+            this.trainer.container.setPosition(p.reducedMotion?88:-70,281);
+            if(!p.reducedMotion){
+              this.flash(0xffffff,0.28);
+              this.tweens.add({targets:this.enemy.container,x:262,duration:520,ease:'Linear'});
+              this.tweens.add({targets:this.trainer.container,x:88,duration:400,delay:240,ease:'Linear'});
+            }
+            break;
+          case 'throw':
+            if(p.model)this.throwCapsule(p.model,p.reducedMotion);
+            break;
+          case 'summon':
+            if(p.model)this.summon(p.model,p.reducedMotion);
+            break;
+          case 'result':
+            if(p.outcome==='won'){
+              if(!p.reducedMotion)this.sparks(260,155,0xffda72,18);
+              if(p.reducedMotion){this.enemy.container.setVisible(false);}
+              else this.tweens.add({targets:this.enemy.container,scaleY:0,alpha:0,duration:350,ease:'Linear',onComplete:()=>this.enemy.container.setVisible(false)});
+              this.hero.paint('victory');
+              if(!p.reducedMotion)this.tweens.add({targets:this.hero.container,y:262,duration:180,yoyo:true,repeat:2});
+            }else if(p.outcome==='lost'){
+              this.hero.paint('hurt');
+            }
+            break;
+          default: break;
+        }
+      }
+      if(p.phase==='attack'&&p.attackSequence!==this.lastAttackSequence){
+        this.lastAttackSequence=p.attackSequence;
+        this.attack(p.attackType,p.model??'astra',p.reducedMotion);
+      }
     }
   };
 }
 
-export function BattleStage({ enemy = 'TASK', model = 'astra', effect = '', reducedMotion = false }: StageProps) {
-  const node = useRef<HTMLDivElement | null>(null);
-  const game = useRef<Phaser.Game | null>(null);
-  useEffect(() => {
-    if (!node.current) return;
-    const instance = new Phaser.Game({
-      type: Phaser.CANVAS,
-      parent: node.current,
-      width: 360,
-      height: 480,
-      backgroundColor: '#25284f',
-      pixelArt: true,
-      scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, width: 360, height: 480 },
-      scene: [createScene(enemy, model)],
+export function BattleStage({
+  enemy='TASK',model=null,phase='encounter',
+  attackSequence=0,attackType='',outcome='active',reducedMotion=false,
+}:BattleStageProps){
+  const node=useRef<HTMLDivElement|null>(null);
+  const game=useRef<Phaser.Game|null>(null);
+  const presentation:Presentation={model,phase,attackSequence,attackType,outcome,reducedMotion};
+  const current=useRef(presentation);
+  current.current=presentation;
+
+  useEffect(()=>{
+    if(!node.current)return;
+    const instance=new Phaser.Game({
+      type:Phaser.CANVAS,parent:node.current,
+      width:360,height:330,backgroundColor:'#ffefdc',pixelArt:true,
+      scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH,width:360,height:330},
+      scene:[createScene(enemy,current.current)],
     });
-    instance.registry.set('reducedMotion', reducedMotion);
-    game.current = instance;
-    return () => { instance.destroy(true); if (game.current === instance) game.current = null; };
-  }, [enemy, model, reducedMotion]);
-  return <div className={'battle-stage ' + (effect && !reducedMotion ? 'stage-hit' : '')} ref={node} data-testid="phaser-stage" aria-label="Pokaimon battle battlefield" />;
+    game.current=instance;
+    return ()=>{instance.destroy(true);if(game.current===instance)game.current=null;};
+  },[enemy]);
+
+  useEffect(()=>{game.current?.events.emit(PRESENTATION_EVENT,presentation);},[
+    phase,model,attackSequence,attackType,outcome,reducedMotion,
+  ]);
+  return <div ref={node} className="battle-stage pixel-canvas" data-testid="phaser-stage"
+    data-phase={phase} data-model={model??'trainer'}
+    role="img" aria-label={'Pixel-art battle arena: wild '+enemy+', trainer and AI companion'}/>;
 }
