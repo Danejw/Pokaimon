@@ -20,13 +20,13 @@ Automated checks passed for every checkpoint. Phase 4 CI includes lint, typechec
 
 **Implementation status:** Web MVP code complete and passing CI. Battles simulate educational capability use; no real AI model executes a task and no paid inference occurs. The AG-UI server is runnable locally and is not deployed to static GitHub Pages.
 
-**Public deployment:** Blocked by GitHub Pages repository settings. The workflow cannot create the Pages site with its current integration permissions. The owner must set [Settings -> Pages -> Build and deployment -> GitHub Actions](https://github.com/Danejw/Pokaimon/settings/pages), then rerun [Deploy Pokaimon Pages](https://github.com/Danejw/Pokaimon/actions/workflows/pages.yml).
+**Public deployment:** **GitHub Pages successfully deployed** at https://danejw.github.io/Pokaimon/ . The [deployment workflow's second attempt](https://github.com/Danejw/Pokaimon/actions/runs/44680949777) completed successfully after GitHub Pages was enabled. Public URL and Pages deployment were confirmed in GitHub Actions logs; direct external HTTP verification was unavailable in this environment.
 
 **Manual QA:** Physical Android playback and design review remain pending. Automated mobile browser emulation is not proof of a real device playtest. Trademark clearance for public marketing, full audio/design polish, and a dependency lockfile also remain later quality tasks.
 
 ## How to test
 
-Once GitHub Pages is enabled and the deployment workflow reports success, the anticipated project URL is https://danejw.github.io/Pokaimon/ . Do not assume this address is live until verified.
+GitHub Actions confirmed publication at https://danejw.github.io/Pokaimon/ . Open it in a browser to complete the first real-device playtest.
 
 Open the app on Android, select PLAY -> TASK -> GPT-6.2 Astra, use Deep Think, Code Execution, Self-Correction and Self-Correction. Confirm victory and the lesson, then return to Challenges and verify BUG unlocks. Reload to confirm saved progress. Try six ineffective moves to trigger defeat and retry. Switch to Grok 4.7 or Claude Fable 5.2 to check their unique moves. Open Field Guide and Settings.
 

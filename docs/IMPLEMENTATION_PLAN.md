@@ -1,7 +1,7 @@
 # Pokaimon: Phased Implementation Plan
 
 **Document:** docs/IMPLEMENTATION_PLAN.md  
-**Status:** Phases 0–4 implemented, CI verified. Public Pages deployment and physical Android playtest remain outstanding. See [MVP Status](./MVP_STATUS.md).  
+**Status:** Phases 0–4 implemented, CI verified. GitHub Pages deployment completed successfully (https://github.com/Danejw/Pokaimon/actions/runs/44680949777); physical Android playtest remains outstanding. See [MVP Status](./MVP_STATUS.md).  
 **Baseline date:** 2026-11-19  
 **Product contract:** [Game Design Document](./GAME_DESIGN.md)
 

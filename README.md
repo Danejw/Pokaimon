@@ -26,8 +26,8 @@ The Vite app is served from `/Pokaimon/` to support GitHub Pages deployment. Vis
 - [Skills and agent guide](AGENTS.md)
 
 ## Release
-The Pages workflow builds on each push to main. The repo owner may need to enable **Settings → Pages → Build and deployment → GitHub Actions** once before deployment works. Runtime dependencies and testing are separate from the vendored coding-agent skills.
+**Play the browser MVP:** https://danejw.github.io/Pokaimon/ . GitHub Pages deployment completed successfully in [this run](https://github.com/Danejw/Pokaimon/actions/runs/44680949777). Runtime dependencies and testing are separate from the vendored coding-agent skills.
 
 Status: Phases 0 through 4 web-game code. Three playable model characters, five simulated educational encounters, persistent local campaign, and official AG-UI simulation transport. The game runs without signing in, API keys or paid inference.
 
-See [AG-UI protocol](docs/AGUI_PROTOCOL.md) for running the standalone simulation backend locally. GitHub Pages serves the static game only. The repository owner must enable GitHub Pages in repository Settings before the Pages workflow can publish the game.
+See [AG-UI protocol](docs/AGUI_PROTOCOL.md) for running the standalone simulation backend locally. GitHub Pages serves the static game only. GitHub Pages serves the static game; the local AG-UI Node server is not part of that deployment.
