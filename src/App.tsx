@@ -43,8 +43,8 @@ export function App(){
     setEncounter(pickWildEncounter(ENCOUNTERS,Math.random,override));
     setSessionId(id=>id+1);
     setScreen('battle');
-    playCue('encounter',prefs.sound);
     setBattleMusic(true,prefs.sound);
+    playCue('encounter',prefs.sound);
   };
   return <main className={'shell retro-shell' + (screen === 'battle' ? ' is-battling' : '')}>
     <header className="topline retro-header">
