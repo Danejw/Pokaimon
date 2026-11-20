@@ -1,35 +1,61 @@
-# Pokaimon: Agent Instructions
+# Pokaimon Coding Agent Guide
 
-Read [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md) for the product contract and [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) for the current phase and its acceptance tests. The repo's current code and tests are the source of truth for implemented behavior.
+This is the repository-wide entry point for AI coding agents. Keep it short and load detailed instructions only when a task needs them.
 
-## Project rules
-- Follow **one testable vertical slice at a time**; do not expand into future phases without a request.
-- Build a mobile-first, original pixel-art AI-literacy game with React + TypeScript + Phaser 4. Keep the battle reducer deterministic and separate from rendering.
-- AI model identities and capabilities are versioned and sourced. Fictional gameplay stats and outcomes are clearly labeled **simulated**. Never claim real model/tool execution when it has not occurred.
-- Use **AG-UI** for connected agent-to-frontend communication, with provider adapters behind it. Official current AG-UI specs at https://docs.ag-ui.com/ are authoritative; bundled CopilotKit guidance is a historical supplement.
-- Keep provider secrets and paid model execution server-side, explicitly authorized and verified.
-- Use original art, sprites, audio and distinct UI; do not copy copyrighted Pokémon assets or music.
-- Write tests before implementing each phase, run relevant checks, manually verify on Android-sized portrait layouts and desktop, and report pass/fail evidence.
+## Mission and source of truth
 
-## Choose the skill that matches the work
-Skills are vendored at `.agents/skills/<skill-name>/SKILL.md`. Read **only the relevant skill and its local references**.
+**Pokaimon:** A mobile-first, turn-based browser game where playable AI models battle real-world tasks. Gameplay teaches practical AI capabilities and model selection.
 
-| Work | Primary skill | Secondary when needed |
-| --- | --- | --- |
-| Phaser 2D scene and battle animation | `phaser-2d-game` | `web-game-foundations` |
-| Phaser canvas sizing, portrait and browser resizing | `scale-and-responsive` | `game-ui-frontend` |
-| Pixel creature animation strips | `sprite-pipeline` | `phaser-2d-game` |
-| Combat HUD, model selection, menus | `game-ui-frontend` | `vercel-react-best-practices` |
-| React implementation or performance | `vercel-react-best-practices` | `game-ui-frontend` |
-| Automated browser interaction, screenshots, regression checks | `playwright-cli` | `game-playtest` |
-| Structured gameplay feel and visual QA | `game-playtest` | `playwright-cli` |
-| Streaming protocol, events, AG-UI integration | `copilotkit-agui` | current official AG-UI docs |
-| Secure defaults / security review | `security-best-practices` | `security-threat-model` on explicit threat-model task |
-| Formal repository-grounded threat model | `security-threat-model` | `security-best-practices` |
+Before making changes, read the relevant sections of:
+- [Game Design](docs/GAME_DESIGN.md) for what to build, rules, terminology, educational goals, scope and non-goals.
+- [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) for the current phase, vertical slices, acceptance criteria, and Go/No-go.
+- Existing source code and tests. **Actual repository behavior is the source of truth for what exists.** If documentation disagrees with code, report and resolve the discrepancy before changing behavior.
 
-The shared 2D art scripts from the game studio skill are in `.agents/scripts/` (not at the repository root). The skill's relative `../../scripts/` references resolve correctly from its installed directory.
+## Implementation rules
 
-Skills are reference material, not a blanket instruction to add packages, spend credits, or implement out-of-scope systems. For skills that cover both React and Next.js, apply only the React/Vite-relevant parts. For Phaser skills, follow the project's chosen Phaser 4 API and verify changing version-specific advice.
+- Build **one small, complete, testable vertical slice** per task. Avoid future-phase scaffolding or unnecessary dependencies.
+- Initial stack: TypeScript, Vite, React, Phaser 4. Prefer a pure deterministic, independently tested battle reducer. Phaser renders animations; React provides menus and accessible controls.
+- Data-drive model definitions, shared capability moves, enemies and battle events. Validate IDs and references, and use deterministic seeds for reproducible battles.
+- Keep the game usable on portrait phones and desktop. Check touch, keyboard, reduced motion, mute, feedback, and reading order.
+- Every move should teach a real technique; label fictional balance/stat values and battle outcomes **Simulated**. Never imply that an AI model executed an external task without real evidence.
+- Keep sprites, characters, interface styling and music original. Brand/model names need accurate attribution without implied endorsement.
+- Use **AG-UI** at the eventual frontend-to-agent integration boundary. Use provider-specific adapters behind the server; keep the rules engine independent of both. The current official spec at https://docs.ag-ui.com/ overrides older bundled examples.
+- Never expose credentials in the client, call paid models without explicit authorization, or mark task completion without independent verification. Persistent computers and multi-agent orchestration are outside MVP.
 
-## Delivery
-For each implementation slice, report changed files/commit, exactly what is playable, actual automated and manual tests, any unverified assumptions, and Go/No-go against the relevant phase checklist. Do not mark a phase done if tests or gameplay verification are missing.
+## Workflow and verification
+
+1. Inspect current code and the relevant phase checklist. State assumptions when a behavior is not implemented yet.
+2. Write or update failing tests for the intended behavior first, including invalid and failure cases.
+3. Make the smallest change to pass the tests. Keep game mechanics out of UI and animation callbacks.
+4. Run the checks supported by the repo: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, and `npm run build` **once scripts exist**. Never report unexecuted checks as passing.
+5. For interactive changes, exercise the complete flow and inspect screenshots at Android portrait dimensions (at least 360 × 800 and 390 × 844) and desktop. Use Playwright and structured manual checks where available.
+6. Report changed paths/commit, what is playable, actual test evidence, remaining unknowns, and phase Go/No-go. Update documentation and checkboxes only when verified.
+
+Phase 0 begins with an empty application repository: do not invent existing package scripts, releases, or working UI.
+
+## Official skill routing
+
+Skills are under [`.agents/skills/`](.agents/skills/) with provenance in [`.agents/SOURCES.md`](.agents/SOURCES.md). Read the specific skill's `SKILL.md` and only needed references; do not load every skill into context.
+
+| Task | Use |
+| --- | --- |
+| Phaser scenes, render lifecycle, battle effects | `phaser-2d-game` |
+| Phaser scaling, orientation and portrait layouts | `scale-and-responsive` |
+| Sprite sheets, anchor/scale normalization | `sprite-pipeline` |
+| Game HUD, dialogues, menu/controls | `game-ui-frontend` |
+| React code, rendering and client performance | `vercel-react-best-practices` |
+| Browser automation and E2E testing | `playwright-cli` |
+| End-to-end gameplay feel and visual QA | `game-playtest` |
+| AG-UI event and streaming integration | `copilotkit-agui` + current https://docs.ag-ui.com/ |
+| Secure coding / requested security review | `security-best-practices` |
+| Explicit repository threat modeling | `security-threat-model` |
+| Cross-cutting browser-game architecture, only if needed | `web-game-foundations` |
+
+The sprite tools referenced by OpenAI's original skill are vendored under `.agents/scripts/`; its relative `../../scripts/` paths resolve from the installed skill folder. The AG-UI skill is archived upstream: current protocol docs take priority.
+
+## Change discipline
+
+- Favor modular, composable, reusable, interoperable, portable, verifiable and simple solutions.
+- Keep commit scope focused and preserve existing behavior unless a requested change needs otherwise.
+- Ask for authorization before spending credits, deploying, changing secrets, or affecting external accounts.
+- When unclear, choose the smallest reversible approach supported by the game design. Record substantive design decisions in `docs/`, not in an expanding root instruction file.
