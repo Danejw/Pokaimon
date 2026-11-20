@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BattleStage } from './game/BattleStage';
 import { BattlePanel } from './game/BattlePanel';
+import { PixelPortrait } from './game/PixelPortrait';
 import { pickWildEncounter } from './game/encounterFlow';
 import { playCue } from './game/sound';
+import { setBattleMusic } from './game/music';
 import { probeAgui, type AguiProbeResult } from './integrations/agui/client';
 import { MODELS, MOVES } from './content/core';
 import { ENCOUNTERS } from './content/encounters';
@@ -23,6 +25,7 @@ export function App(){
   const firstPlay=useRef(true);
   useEffect(()=>{savePreferences(prefs);},[prefs]);
   useEffect(()=>{saveProgress(progress);},[progress]);
+  useEffect(()=>{if(screen!=='battle'||!prefs.sound)setBattleMusic(false,false);},[screen,prefs.sound]);
   const recordWin=useCallback((id:string)=>setProgress(old=>markCleared(old,id)),[]);
   useEffect(()=>{
     function onKey(event:KeyboardEvent){
@@ -40,9 +43,10 @@ export function App(){
     setEncounter(pickWildEncounter(ENCOUNTERS,Math.random,override));
     setSessionId(id=>id+1);
     setScreen('battle');
+    setBattleMusic(true,prefs.sound);
     playCue('encounter',prefs.sound);
   };
-  return <main className="shell retro-shell">
+  return <main className={'shell retro-shell' + (screen === 'battle' ? ' is-battling' : '')}>
     <header className="topline retro-header">
       <span className="brandmark">✦</span>
       <span className="brand">POKAIMON</span>
@@ -75,10 +79,13 @@ export function App(){
       <p className="intro">Every move represents a real AI technique. Battle power and stats are simulated game rules.</p>
       <h3>YOUR AI TEAM</h3>
       {MODELS.map(m=><article className="guide-card" key={m.id}>
-        <strong>{m.displayName}</strong>
-        <small>{m.provider.toUpperCase()} · VER. {m.version}</small>
-        <p>{m.description}</p>
-        <a href={m.source} target="_blank" rel="noreferrer">OFFICIAL MODEL DOCUMENTATION ↗</a>
+        <span className="guide-portrait" aria-hidden="true"><PixelPortrait model={m.id as 'astra' | 'grok' | 'fable'} /></span>
+        <div className="guide-card-copy">
+          <strong>{m.displayName}</strong>
+          <small>{m.provider.toUpperCase()} · VER. {m.version}</small>
+          <p>{m.description}</p>
+          <a href={m.source} target="_blank" rel="noreferrer">OFFICIAL MODEL DOCUMENTATION ↗</a>
+        </div>
       </article>)}
       <h3>CAPABILITY MOVES</h3>
       {Object.values(MOVES).map(move=><article className="guide-card" key={move.id}>
