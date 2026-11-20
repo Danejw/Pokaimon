@@ -107,3 +107,17 @@ test('dialogue remains readable and effects reuse one audio context', async ({ p
   );
   expect(contextsAfter).toBe(contextsBefore);
 });
+
+test('Grok and Math reference pair retains readable original pixel art', async ({ page }, testInfo) => {
+  mkdirSync(dir, { recursive: true });
+  await page.goto('./?encounter=math');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await expect(page.getByRole('button', { name: 'Select Grok 4.7' })).toBeVisible();
+  await page.getByRole('button', { name: 'Select Grok 4.7' }).click();
+  await expect(page.getByRole('button', { name: 'Max Reasoning' })).toBeVisible();
+  await expect(page.locator('.enemy-status')).toContainText('MATH PROBLEM');
+  await expect(page.locator('.hero-status')).toContainText('Grok 4.7');
+  await page.screenshot({
+    path: dir + '/grok-math-' + testInfo.project.name + '.png', fullPage: true,
+  });
+});
