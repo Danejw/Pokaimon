@@ -19,9 +19,8 @@ concurrency:
 jobs:
   preview:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    # This isolated branch is not permitted by the main-only Pages environment protection.
+    # Deployment still requires the pages:write and id-token:write permissions.
     steps:
       - name: Checkout stable production source
         uses: actions/checkout@v4
