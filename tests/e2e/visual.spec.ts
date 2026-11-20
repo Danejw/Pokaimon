@@ -169,7 +169,8 @@ test('focused move explains its real technique before the player commits', async
   await expect(page.getByRole('button', { name: 'Code Execution' })).toBeFocused();
 });
 
-test('wild counter is visible after the second move and remains tied to the reducer event', async ({ page }) => {
+test('wild counter is visible after the second move and remains tied to the reducer event', async ({ page }, testInfo) => {
+  mkdirSync(dir, { recursive: true });
   await page.goto('./?encounter=task');
   await page.getByRole('button', { name: /PLAY/i }).click();
   await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
@@ -182,6 +183,9 @@ test('wild counter is visible after the second move and remains tied to the redu
   await expect(stage).toHaveAttribute('data-phase', 'command');
   await expect(page.locator('.wild-counter')).toContainText('TASK used Scope Shift!');
   await expect(page.locator('.wild-counter')).toContainText('Extra verification is required.');
+  await page.screenshot({ path: dir + '/wild-counter-' + testInfo.project.name + '.png', fullPage: true });
+  const noHorizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1);
+  expect(noHorizontalOverflow).toBe(true);
   await page.getByRole('button', { name: 'Self-Correction' }).click();
   await expect(stage).toHaveAttribute('data-phase', 'command');
   await expect(page.locator('.wild-counter')).toHaveCount(0);
