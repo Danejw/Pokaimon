@@ -178,6 +178,9 @@ export function BattlePanel({
   const showHero = ['summon', 'command', 'attack', 'result'].includes(phase);
   const moves = model ? movesFor(model) : [];
   const intel = battle ? getStageIntel(battle, encounter) : null;
+  const counterEvent = battle?.events.find(event =>
+    event.turn === battle.turn && event.kind === 'ENEMY_ACTED' &&
+    event.message.includes(' used '));
   const forecasts = battle ? moves.map(move => forecastMove(battle, move, encounter)) : [];
 
   return <section className="retro-battle" aria-label={'Wild ' + encounter.name + ' encounter'}>
@@ -265,6 +268,9 @@ export function BattlePanel({
             </small></span>
           </button>)}
         </div>
+        {counterEvent && <div className="wild-counter" role="status" aria-live="polite">
+          <b>{counterEvent.message}</b>
+        </div>}
         <div className="move-lesson" role="status" aria-live="polite">
           <b>{moves[selectedMove]?.name}:</b>{' '}{moves[selectedMove]?.description}{' '}
           <span>{forecasts[selectedMove]?.status === 'effective'
