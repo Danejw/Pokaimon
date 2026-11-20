@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: \${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,6 +24,22 @@ jobs:
       - run: npm install -g npm@11
       - run: npm install --no-audit --no-fund --legacy-peer-deps
       - run: npm run build
+      # Build the PR branch into a separate URL without merging it or replacing main.
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/authentic-pixel-handheld-ui
+          path: pixel-preview
+          persist-credentials: false
+      - name: Build isolated visual preview
+        working-directory: pixel-preview
+        run: |
+          npm install --no-audit --no-fund --legacy-peer-deps
+          npm run typecheck
+          npx vite build --base=/Pokaimon/preview/
+      - name: Include preview alongside production
+        run: |
+          mkdir -p dist/preview
+          cp -R pixel-preview/dist/. dist/preview/
       - uses: actions/configure-pages@v5
         with: { enablement: true }
       - uses: actions/upload-pages-artifact@v3
