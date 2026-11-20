@@ -248,3 +248,24 @@ h1,h2,h3{margin:0}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* During battles the entire phone becomes the handheld screen: no app-site chrome. */
+.retro-shell.is-battling{
+  background:#e5ead5;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.retro-shell.is-battling > .retro-header,
+.retro-shell.is-battling > .retro-footer{display:none}
+.retro-shell.is-battling .retro-footnote{display:none}
+@media (max-width:480px){
+  .retro-shell.is-battling{border-left:0;border-right:0;padding-left:4px;padding-right:4px}
+  .retro-shell.is-battling .retro-topbar{height:30px}
+}
+@media (max-height:780px){
+  .retro-shell.is-battling .retro-dialogue{min-height:70px;padding-top:7px;padding-bottom:6px}
+  .retro-shell.is-battling .party-slot{min-height:56px;padding-top:3px;padding-bottom:3px}
+  .retro-shell.is-battling .party-avatar{height:42px}
+  .retro-shell.is-battling .retro-help{padding-top:3px;padding-bottom:2px}
+  .retro-shell.is-battling .retro-move{min-height:52px;padding-top:4px;padding-bottom:4px}
+}

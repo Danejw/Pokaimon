@@ -45,3 +45,21 @@ test('keyboard and reduced-motion pathways remain playable', async ({ page }) =>
   await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
   await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
 });
+
+test('entire player choice menu fits a portrait phone viewport without page scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await expect(page.getByRole('button', { name: 'Select Claude Fable 5.2' })).toBeVisible();
+  const fits = await page.evaluate(() =>
+    document.documentElement.scrollHeight <= window.innerHeight + 8 &&
+    document.documentElement.scrollWidth <= window.innerWidth + 1,
+  );
+  expect(fits).toBe(true);
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await expect(page.getByRole('button', { name: 'Self-Correction' })).toBeVisible();
+  const moveFits = await page.evaluate(() =>
+    document.documentElement.scrollHeight <= window.innerHeight + 8,
+  );
+  expect(moveFits).toBe(true);
+});

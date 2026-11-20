@@ -43,7 +43,7 @@ export function App(){
     setScreen('battle');
     playCue('encounter',prefs.sound);
   };
-  return <main className="shell retro-shell">
+  return <main className={'shell retro-shell' + (screen === 'battle' ? ' is-battling' : '')}>
     <header className="topline retro-header">
       <span className="brandmark">✦</span>
       <span className="brand">POKAIMON</span>
