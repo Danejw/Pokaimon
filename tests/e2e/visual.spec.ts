@@ -147,5 +147,11 @@ test('tactical preview matches real stage progress and earns the four-turn medal
   await expect(stage).toHaveAttribute('data-phase','command');
   await page.getByRole('button', { name:'Self-Correction' }).click();
   await expect(page.getByText('TACTICAL CLEAR')).toBeVisible();
+  await expect(page.locator('.retro-dialogue p')).toContainText('TASK completed!');
+  await expect(page.locator('.retro-dialogue small')).toContainText('All 3 steps complete.');
+  const dialogueHeight = await page.locator('.retro-dialogue').evaluate(node =>
+    node.getBoundingClientRect().height
+  );
+  expect(dialogueHeight).toBeLessThan(140);
   await page.screenshot({ path:dir+'/tactical-win-'+testInfo.project.name+'.png',fullPage:true });
 });
