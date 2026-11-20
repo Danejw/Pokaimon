@@ -39,7 +39,6 @@ export function BattlePanel({
   const moveButtons = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => { if (phase === 'result') setBattleMusic(false, false); }, [phase]);
-  useEffect(() => () => setBattleMusic(false, false), []);
 
   // Visual phases are never authoritative for battle state.
   useEffect(() => {
