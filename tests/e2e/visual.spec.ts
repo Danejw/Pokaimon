@@ -89,9 +89,14 @@ test('dialogue remains readable and effects reuse one audio context', async ({ p
   const move = page.getByRole('button', { name: 'Deep Think' });
   await expect(move).toBeVisible();
   await expect(move).toHaveCSS('font-family', /Chakra Petch/);
-  await move.click();
-  const contexts = await page.evaluate(() =>
+  // Phaser owns additional contexts; compare before and after SFX instead.
+  const contextsBefore = await page.evaluate(() =>
     (window as Window & { __pokaimonAudioContexts?: number }).__pokaimonAudioContexts ?? 0
   );
-  expect(contexts).toBe(1);
+  expect(contextsBefore).toBeGreaterThan(0);
+  await move.click();
+  const contextsAfter = await page.evaluate(() =>
+    (window as Window & { __pokaimonAudioContexts?: number }).__pokaimonAudioContexts ?? 0
+  );
+  expect(contextsAfter).toBe(contextsBefore);
 });
