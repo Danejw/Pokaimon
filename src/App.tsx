@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BattleStage } from './game/BattleStage';
 import { BattlePanel } from './game/BattlePanel';
-import { MODELS, MOVES, movesFor } from './content/core';
+import { MODELS, movesFor } from './content/core';
 import type { ModelDefinition } from './battle/types';
 import { defaultPreferences, loadPreferences, savePreferences, type Preferences } from './storage/preferences';
 
