@@ -1,4 +1,5 @@
 name: Deploy Pokaimon Pages
+# Preview refresh: rebuild isolated pixel-art branch alongside unchanged production.
 on:
   push:
     branches: [main]
