@@ -99,7 +99,7 @@ export function BattlePanel({
       : narration || 'What should ' + (model?.displayName ?? 'your AI') + ' do?';
 
   useEffect(() => {
-    if (reducedMotion || textSpeed === 'fast' || phase === 'result') {
+    if (reducedMotion || textSpeed === 'fast' || phase === 'result' || phase === 'command') {
       setTypedFeedback(message);
       return;
     }
