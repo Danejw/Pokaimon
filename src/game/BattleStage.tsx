@@ -29,54 +29,80 @@ const COLORS:Record<string,number>={
 const MODEL_FX:Record<string,number>={astra:0x81f9e4,grok:0xb49aff,fable:0xffc078};
 
 function drawPlatform(g:Phaser.GameObjects.Graphics,x:number,y:number,width:number):void {
-  const half=width/2;
-  g.fillStyle(0x36464b);
-  g.fillRect(x-half+14,y+15,width-28,10);
-  g.fillRect(x-half+22,y+25,width-44,3);
-  g.fillStyle(0x3d8b63);
-  g.fillRect(x-half+12,y+9,width-24,13);
-  g.fillRect(x-half+20,y+3,width-40,7);
-  g.fillStyle(0x70c985);
-  g.fillRect(x-half+20,y-2,width-40,13);
-  g.fillRect(x-half+34,y-7,width-68,6);
-  g.fillStyle(0xa0dfa0);
-  for(let i=0;i<7;i++){
-    const px=Math.round(x-half+25+i*(width-48)/7);
-    g.fillRect(px,y-8+(i%3)*3,5,8);
+  const half=width/2, left=Math.round(x-half);
+  // Multi-layer soil, undercut edge, and roots use smaller handcrafted pixel steps.
+  g.fillStyle(0x283f48);g.fillRect(left+13,y+18,width-26,8);
+  g.fillRect(left+25,y+26,width-50,3);
+  g.fillStyle(0x6b664e);g.fillRect(left+18,y+18,width-36,5);
+  g.fillStyle(0x9d8056);g.fillRect(left+23,y+16,width-46,4);
+  g.fillStyle(0x367554);g.fillRect(left+9,y+9,width-18,12);
+  g.fillRect(left+16,y+3,width-32,9);
+  g.fillStyle(0x4b9a6e);g.fillRect(left+13,y+1,width-26,14);
+  g.fillRect(left+22,y-5,width-44,11);
+  g.fillStyle(0x71c987);g.fillRect(left+21,y-7,width-42,11);
+  g.fillRect(left+31,y-11,width-62,7);
+  // Separate blades, rim light and individual stone flecks add finer pixel detail.
+  for(let i=0;i<21;i++){
+    const px=Math.round(left+17+i*(width-34)/21);
+    g.fillStyle(i%4===0?0xb4e6a8:i%3===0?0x8edc97:0x6abb7c);
+    g.fillRect(px,y-9+(i%4)*2,2+(i%3),4+(i%3)*2);
+    if(i%4===0){g.fillStyle(0x39775d);g.fillRect(px+2,y+13,3,2);}
+    if(i%3===0){g.fillStyle(0xd6aa6f);g.fillRect(px+1,y+21,3,2);}
   }
+  g.fillStyle(0xe1e4a5);
+  for(let i=0;i<9;i++)
+    g.fillRect(left+29+i*(width-60)/9,y-4+(i%3)*2,2,2);
 }
 
-/** Layered, deterministic pixel scenery shared by every battle encounter. */
+/** Layered deterministic 1-6px scenery, keeping the original 360x330 canvas. */
 function drawScenery(g:Phaser.GameObjects.Graphics):void {
-  // Distant ridge and broken treeline use integer coordinates for crisp scaling.
-  g.fillStyle(0xd6b89a);
-  for(let x=0;x<360;x+=12){
-    const ridge=110+Math.round(Math.sin(x*0.035)*13)+Math.round(Math.sin(x*0.11)*5);
-    g.fillRect(x,ridge,12,170-ridge);
+  // Mountains now step in 6px pieces, with two-tone shadow ridges.
+  for(let x=0;x<360;x+=6){
+    const ridge=109+Math.round(Math.sin(x*0.035)*13)+Math.round(Math.sin(x*0.11)*5);
+    g.fillStyle(0xd7ba9a);g.fillRect(x,ridge,6,171-ridge);
+    g.fillStyle(0xbfa492);g.fillRect(x,ridge+9,3,4);
+    if(x%18===0){g.fillStyle(0xf0d3a8);g.fillRect(x+2,ridge+3,4,2);}
   }
-  g.fillStyle(0x82b99a);
-  for(let x=0;x<360;x+=9){
+  // Distant trees have irregular crowns, narrow trunks and separated canopies.
+  for(let x=0;x<360;x+=6){
     const top=153+Math.round(Math.sin(x*0.075)*9);
-    g.fillRect(x,top,9,179-top);
+    g.fillStyle(0x93bca2);g.fillRect(x,top,6,180-top);
+    g.fillStyle(0x7db397);g.fillRect(x+3,top+6,3,174-top);
+    if(x%24===0){g.fillStyle(0xc4d1aa);g.fillRect(x+2,top-5,3,9);}
   }
-  g.fillStyle(0x4f9779);
   for(let x=0;x<360;x+=18){
-    const top=170+(x%54===0?-11:0);
-    g.fillRect(x+3,top,9,13);
-    g.fillRect(x,top+6,15,7);
+    const top=171+(x%54===0?-11:0);
+    g.fillStyle(0x447e65);g.fillRect(x+7,top+9,4,13);
+    g.fillStyle(0x4f9877);
+    g.fillRect(x+4,top,10,13);
+    g.fillRect(x,top+5,18,7);
+    g.fillStyle(0x75b38c);
+    g.fillRect(x+7,top-3,6,4);
+    g.fillRect(x+2,top+5,4,3);
   }
-  // Staggered foreground tufts and sunlit ground pixels.
-  for(let i=0;i<34;i++){
+  // Dry-ground highlights, individual stones and grass in several scales.
+  for(let i=0;i<70;i++){
     const x=(i*67+19)%354;
     const y=198+(i*43)%119;
-    g.fillStyle(i%3===0?0xf8d99a:0xd6a568);
-    g.fillRect(x,y,7,3);
-    if(i%4===0){
-      g.fillStyle(0x599c6c);
-      g.fillRect(x+2,y-5,3,8);
-      g.fillRect(x-2,y-2,4,3);
-      g.fillRect(x+5,y-3,4,3);
+    g.fillStyle(i%3===0?0xffe0a2:0xd5a06b);
+    g.fillRect(x,y,3+(i%3),1+(i%2));
+    if(i%5===0){
+      g.fillStyle(0x9b7655);
+      g.fillRect(x+4,y+2,3,2);
     }
+    if(i%3===0){
+      g.fillStyle(i%2===0?0x488b65:0x68ac77);
+      g.fillRect(x+2,y-7,2,9);
+      g.fillRect(x-1,y-4,3,2);
+      g.fillRect(x+4,y-5,3,2);
+    }
+  }
+  // Floating pixel motes remain static and do not compete with attack effects.
+  g.fillStyle(0xfff7dd);
+  for(let i=0;i<12;i++){
+    const x=(i*71+29)%351;
+    const y=30+(i*31)%90;
+    g.fillRect(x,y,2+(i%2),2);
   }
 }
 
