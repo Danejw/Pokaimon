@@ -1,48 +1,60 @@
 import { describe, expect, it } from 'vitest';
 import { modelSprites, enemySprites, trainerSprite } from '../src/game/pixelArt';
 import { refineSprite } from '../src/game/spriteDetail';
+import { ultraDetailSprite } from '../src/game/ultraDetail';
 
-describe('high-detail original pixel art', () => {
-  it('repaints actual source pixels on at least twice the resolution in both axes', () => {
-    const base = { pixelSize: 4, palette: { K: 0x223344, A: 0x55aa99 }, pixels: ['KAA', 'AAA'] };
-    const fine = refineSprite(base, 'astra');
-    expect(fine.pixels).toHaveLength(4);
-    expect(fine.pixels.every(row => row.length === 6)).toBe(true);
-    expect(fine.pixelSize).toBe(2);
-    expect(fine.pixels.join('')).toMatch(/[a-z]/);
-    expect(fine.pixels[0][0]).toBe('K');
-    expect(base.pixels).toEqual(['KAA', 'AAA']); // no source mutation
+describe('Pokaimon authored high-density pixel art', () => {
+  it('keeps the initial 2x/3x detail masters readable and unchanged', () => {
+    const base = { pixelSize: 4, palette: { K: 0x223344, A: 0x55aa99 },
+      pixels: ['KAA', 'AAA'] };
+    const first = refineSprite(base, 'astra');
+    expect(first.pixels).toHaveLength(4);
+    expect(first.pixels.every(row => row.length === 6)).toBe(true);
+    expect(first.pixelSize).toBe(2);
+    expect(first.pixels[0][0]).toBe('K');
+    expect(base.pixels).toEqual(['KAA', 'AAA']);
   });
 
-  it('repaints the small original 3px sprites on a 3x lattice', () => {
-    const base = { pixelSize: 3, palette: { K: 0x223344, A: 0x55aa99 }, pixels: ['KA', 'AA'] };
-    const fine = refineSprite(base, 'trainer');
-    expect(fine.pixels).toHaveLength(6);
-    expect(fine.pixels[0]).toHaveLength(6);
-    expect(fine.pixelSize).toBe(1);
+  it('adds 16x addressable pixels over the previous detailed lattice', () => {
+    const master = { pixelSize: 4, palette: { K: 0x223344, A: 0x55aa99 },
+      pixels: Array.from({ length: 19 }, () => 'A'.repeat(23)) };
+    const previous = refineSprite(master, 'astra');
+    const latest = ultraDetailSprite(previous, 'astra');
+    expect(latest.pixels.length).toBe(previous.pixels.length * 4);
+    expect(latest.pixels[0].length).toBe(previous.pixels[0].length * 4);
+    expect(latest.pixels.length * latest.pixels[0].length)
+      .toBe(previous.pixels.length * previous.pixels[0].length * 16);
+    expect(latest.pixelSize).toBe(previous.pixelSize / 4);
+    expect(latest.pixels.join('')).toMatch(/[0-9]/);
+    expect(latest.pixels.join('')).toMatch(/[\uE100-\uE1FF]/);
+    expect(master.pixels).toEqual(Array.from({ length: 19 }, () => 'A'.repeat(23)));
   });
 
-  it('shares palette-complete, finely shaded creatures with consistent display bounds', () => {
-    const artSet = [trainerSprite, ...Object.values(modelSprites), ...Object.values(enemySprites)];
-    expect(artSet).toHaveLength(9);
-    for (const art of artSet) {
+  it('updates every character and enemy to the 16x higher-density artwork', () => {
+    const all = [trainerSprite, ...Object.values(modelSprites), ...Object.values(enemySprites)];
+    expect(all).toHaveLength(9);
+    for (const art of all) {
       const width = art.pixels[0].length;
-      expect(width).toBeGreaterThanOrEqual(35);
-      expect(art.pixels.length).toBeGreaterThanOrEqual(28);
+      const height = art.pixels.length;
+      expect(width).toBeGreaterThanOrEqual(140);
+      expect(height).toBeGreaterThanOrEqual(50);
       expect(art.pixels.every(row => row.length === width)).toBe(true);
-      expect(art.pixelSize).toBeLessThanOrEqual(2);
-      expect(width * (art.pixelSize ?? 3)).toBeLessThanOrEqual(120);
-      expect(art.pixels.length * (art.pixelSize ?? 3)).toBeLessThanOrEqual(105);
+      expect(art.pixelSize).toBeLessThanOrEqual(.5);
+      expect(width * (art.pixelSize ?? 1)).toBeLessThanOrEqual(120);
+      expect(height * (art.pixelSize ?? 1)).toBeLessThanOrEqual(105);
       const colors = new Set(art.pixels.join('').replaceAll('.', ''));
-      expect(colors.size).toBeGreaterThanOrEqual(7);
-      for (const key of colors) expect(art.palette[key]).toBeDefined();
+      expect(colors.size).toBeGreaterThanOrEqual(10);
+      for (const char of colors) expect(art.palette[char]).toBeDefined();
+      expect(art.pixels.join('')).toMatch(/[\uE100-\uE1FF]/);
     }
   });
 
-  it('keeps companions visually distinct in the same source used by battle and portraits', () => {
-    expect(modelSprites.astra.pixels.join('')).not.toEqual(modelSprites.grok.pixels.join(''));
-    expect(modelSprites.grok.pixels.join('')).not.toEqual(modelSprites.fable.pixels.join(''));
-    for (const model of Object.values(modelSprites))
-      expect(model.pixels.join('')).toMatch(/[0-9]/);
+  it('retains unique authored color details for all three playable companions', () => {
+    expect(modelSprites.astra.pixels.join('')).not.toBe(modelSprites.grok.pixels.join(''));
+    expect(modelSprites.fable.pixels.join('')).not.toBe(modelSprites.astra.pixels.join(''));
+    for (const art of Object.values(modelSprites)) {
+      expect(art.pixels.join('')).toMatch(/[0-9]/);
+      expect(art.palette['0']).toBeDefined();
+    }
   });
 });
