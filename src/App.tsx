@@ -4,6 +4,7 @@ import { BattlePanel } from './game/BattlePanel';
 import { PixelPortrait } from './game/PixelPortrait';
 import { pickWildEncounter } from './game/encounterFlow';
 import { playCue } from './game/sound';
+import { setBattleMusic } from './game/music';
 import { probeAgui, type AguiProbeResult } from './integrations/agui/client';
 import { MODELS, MOVES } from './content/core';
 import { ENCOUNTERS } from './content/encounters';
@@ -24,6 +25,7 @@ export function App(){
   const firstPlay=useRef(true);
   useEffect(()=>{savePreferences(prefs);},[prefs]);
   useEffect(()=>{saveProgress(progress);},[progress]);
+  useEffect(()=>{if(screen!=='battle'||!prefs.sound)setBattleMusic(false,false);},[screen,prefs.sound]);
   const recordWin=useCallback((id:string)=>setProgress(old=>markCleared(old,id)),[]);
   useEffect(()=>{
     function onKey(event:KeyboardEvent){
@@ -42,6 +44,7 @@ export function App(){
     setSessionId(id=>id+1);
     setScreen('battle');
     playCue('encounter',prefs.sound);
+    setBattleMusic(true,prefs.sound);
   };
   return <main className={'shell retro-shell' + (screen === 'battle' ? ' is-battling' : '')}>
     <header className="topline retro-header">
