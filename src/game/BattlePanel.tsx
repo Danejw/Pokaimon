@@ -8,6 +8,7 @@ import { PixelPortrait } from './PixelPortrait';
 import { animationDuration, type BattlePhase } from './encounterFlow';
 import { playCue } from './sound';
 import { setBattleMusic } from './music';
+import type { Difficulty } from '../storage/preferences';
 import { battleMedal, forecastMove, getStageIntel } from '../battle/tactics';
 
 export interface BattlePanelProps {
@@ -15,6 +16,7 @@ export interface BattlePanelProps {
   reducedMotion: boolean;
   soundEnabled: boolean;
   textSpeed: 'normal' | 'fast';
+  difficulty: Difficulty;
   onHome: () => void;
   onNext: () => void;
   onWin: (id: string) => void;
@@ -26,7 +28,7 @@ interface AttackAction {
 }
 
 export function BattlePanel({
-  encounter, reducedMotion, soundEnabled, textSpeed, onHome, onNext, onWin,
+  encounter, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onWin,
 }: BattlePanelProps) {
   const [phase, setPhase] = useState<BattlePhase>('encounter');
   const [model, setModel] = useState<ModelDefinition | null>(null);
@@ -103,7 +105,7 @@ export function BattlePanel({
       : phase === 'result' && battle?.outcome === 'won' ? encounter.name + ' completed!'
       : phase === 'result' ? 'Your team ran out of moves!'
       : phase === 'command' && counterEvent ? encounter.name + ' used ' + encounter.special + '! Choose your response.'
-      : phase === 'command' && currentStage ? 'Choose a move for ' + currentStage.label + '.'
+      : phase === 'command' && currentStage ? (difficulty === 'hard' ? 'Choose your next move.' : 'Choose a move for ' + currentStage.label + '.')
       : narration || 'What should ' + (model?.displayName ?? 'your AI') + ' do?';
 
   useEffect(() => {
@@ -219,7 +221,7 @@ export function BattlePanel({
       <div className="retro-dialogue pixel-box">
         <p aria-hidden="true">{typedFeedback}<span className="dialogue-caret" aria-hidden="true">▾</span></p>
         <span className="sr-only" role="status" aria-live="polite">{message}</span>
-        {phase === 'command' && currentStage && <small className="stage-intel"><b>STEP {intel?.number}/{intel?.count}</b>{' · '}{currentStage.label}{' · '}{currentStage.hint}</small>}
+        {phase === 'command' && currentStage && <small className="stage-intel"><b>STEP {intel?.number}/{intel?.count}</b>{' · '}{currentStage.label}{difficulty === 'easy' ? ' · ' + currentStage.hint : ''}</small>}
         {phase === 'result' && battle && <small>{battle.outcome === 'won'
           ? 'All ' + encounter.stages.length + ' steps complete. Ready for another wild problem?'
           : 'That approach ran out of AP. Review the unfinished step and retry.'}</small>}
@@ -241,8 +243,8 @@ export function BattlePanel({
             </span>
             <span className="party-details">
               <strong>{m.displayName}</strong>
-              <small>{m.provider.toUpperCase()} · {viable ? 'READY TO BATTLE' : 'DIFFICULT MATCHUP'}</small>
-              {!viable && <span className="party-warning">NEEDS {missingForModel(encounter, m).join(', ')}</span>}
+              <small>{m.provider.toUpperCase()} · {difficulty === 'easy' ? (viable ? 'READY TO BATTLE' : 'DIFFICULT MATCHUP') : 'CHOOSE YOUR COMPANION'}</small>
+              {difficulty === 'easy' && !viable && <span className="party-warning">NEEDS {missingForModel(encounter, m).join(', ')}</span>}
               <span className="party-ap" aria-hidden="true"><span /></span>
             </span>
             <b className="party-level">Lv.50</b>
@@ -258,31 +260,29 @@ export function BattlePanel({
           {moves.map((move, i) => <button key={move.id}
             ref={node => { moveButtons.current[i] = node; }}
             className={'retro-move ' + (selectedMove === i ? 'is-selected' : '') +
-              (forecasts[i]?.status === 'effective' ? ' is-effective' : ' is-mismatch')}
+              (difficulty === 'easy' ? (forecasts[i]?.status === 'effective' ? ' is-effective' : ' is-mismatch') : '')}
             onFocus={() => setSelectedMove(i)}
             onClick={() => useMove(move)} disabled={!battle || battle.ap < move.cost}
-            aria-label={move.name} title={move.description + ' ' + move.lesson +
-              ' Simulated stage forecast: ' + (forecasts[i]?.status === 'effective'
-                ? '+' + forecasts[i].gain + ' progress.' : 'No stage progress.')}>
+            aria-label={move.name} title={difficulty === 'easy' ? move.description + ' ' + move.lesson : undefined}>
             <span className="retro-arrow" aria-hidden="true">▶</span>
             <span className="move-copy"><strong>{move.name}</strong><small>{move.category.toUpperCase()} · {move.cost} AP
-              <b className={'move-forecast ' + (forecasts[i]?.status === 'effective' ? 'fits' : 'misses')}
-                aria-hidden="true">{forecasts[i]?.status === 'effective' ? '+' + forecasts[i].gain : '×'}</b>
+              {difficulty === 'easy' && <b className={'move-forecast ' + (forecasts[i]?.status === 'effective' ? 'fits' : 'misses')}
+                aria-hidden="true">{forecasts[i]?.status === 'effective' ? '+' + forecasts[i].gain : '×'}</b>}
             </small></span>
           </button>)}
         </div>
         {counterEvent && <div className="wild-counter" role="status" aria-live="polite">
           <b>{counterEvent.message}</b>
         </div>}
-        <div className="move-lesson" role="status" aria-live="polite">
+        {difficulty !== 'hard' && <div className="move-lesson" role="status" aria-live="polite">
           <b>{moves[selectedMove]?.name}:</b>{' '}{moves[selectedMove]?.description}{' '}
-          <span>{forecasts[selectedMove]?.status === 'effective'
+          {difficulty === 'easy' && <span>{forecasts[selectedMove]?.status === 'effective'
             ? 'Fits this step (simulated +' + forecasts[selectedMove].gain + ').'
-            : 'No progress on this step.'}</span>
-        </div>
-        <div className="retro-help tactical-help">{intel?.incomingSpecial
+            : 'No progress on this step.'}</span>}
+        </div>}
+        {difficulty === 'easy' && <div className="retro-help tactical-help">{intel?.incomingSpecial
           ? 'WILD COUNTER NEXT: ' + intel.incomingSpecial.toUpperCase()
-          : 'MATCH MOVE TYPE TO THE CURRENT STEP'}</div>
+          : 'MATCH MOVE TYPE TO THE CURRENT STEP'}</div>}
       </div>}
 
       {phase === 'attack' && <div className="action-wait" role="status">ATTACKING<span className="blink">▾</span></div>}
