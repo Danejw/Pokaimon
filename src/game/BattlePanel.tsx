@@ -89,6 +89,12 @@ export function BattlePanel({
     if (battle?.outcome === 'won') onWin(encounter.id);
   }, [battle?.outcome, encounter.id, onWin]);
 
+  const currentStage = battle && battle.stageIndex < encounter.stages.length
+    ? encounter.stages[battle.stageIndex] : null;
+  const counterEvent = battle?.events.find(event =>
+    event.turn === battle.turn && event.kind === 'ENEMY_ACTED' &&
+    event.message.includes(' used '));
+
   const message = (phase === 'encounter' || phase === 'selection')
     ? 'A wild ' + encounter.name + ' appeared!'
     : (phase === 'throw' || phase === 'summon')
@@ -96,6 +102,8 @@ export function BattlePanel({
       : phase === 'attack' ? (model?.displayName ?? 'AI') + ' used ' + attack?.move.name + '!'
       : phase === 'result' && battle?.outcome === 'won' ? encounter.name + ' completed!'
       : phase === 'result' ? 'Your team ran out of moves!'
+      : phase === 'command' && counterEvent ? encounter.name + ' used ' + encounter.special + '! Choose your response.'
+      : phase === 'command' && currentStage ? 'Choose a move for ' + currentStage.label + '.'
       : narration || 'What should ' + (model?.displayName ?? 'your AI') + ' do?';
 
   useEffect(() => {
@@ -173,14 +181,9 @@ export function BattlePanel({
   }
 
   const hp = 100 - (battle ? totalProgress(battle) : 0);
-  const currentStage = battle && battle.stageIndex < encounter.stages.length
-    ? encounter.stages[battle.stageIndex] : null;
   const showHero = ['summon', 'command', 'attack', 'result'].includes(phase);
   const moves = model ? movesFor(model) : [];
   const intel = battle ? getStageIntel(battle, encounter) : null;
-  const counterEvent = battle?.events.find(event =>
-    event.turn === battle.turn && event.kind === 'ENEMY_ACTED' &&
-    event.message.includes(' used '));
   const forecasts = battle ? moves.map(move => forecastMove(battle, move, encounter)) : [];
 
   return <section className="retro-battle" aria-label={'Wild ' + encounter.name + ' encounter'}>
