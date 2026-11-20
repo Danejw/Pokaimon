@@ -190,3 +190,16 @@ test('wild counter is visible after the second move and remains tied to the redu
   await expect(stage).toHaveAttribute('data-phase', 'command');
   await expect(page.locator('.wild-counter')).toHaveCount(0);
 });
+
+
+test('decision prompt is complete when controls become actionable', async ({ page }) => {
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
+  // Command phase must never expose clickable moves under half-typed narration.
+  await expect(page.locator('.retro-dialogue p')).toContainText('What should GPT-6.2 Astra do?');
+  await page.getByRole('button', { name: 'Deep Think' }).click();
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
+  await expect(page.locator('.retro-dialogue p')).toContainText('complete!');
+});
