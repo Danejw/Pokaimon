@@ -327,3 +327,9 @@ h1,h2,h3{margin:0}
   .tactical-help{font-size:11px}
   .battle-medal{font-size:12px}
 }
+
+/* Selected move: a readable, keyboard/touch-accessible explanation, not a hover-only tooltip. */
+.move-lesson{margin:7px 2px 2px;padding:6px 8px;background:#f8f0d5;border-left:4px solid #558b79;color:#293d49;font:600 13px/1.25 'Chakra Petch',system-ui,sans-serif;min-height:47px}
+.move-lesson b{color:#32645d}
+.move-lesson span{color:#755943}
+@media(max-height:780px){.move-lesson{font-size:12px;line-height:1.15;padding:4px 7px;min-height:38px}}
