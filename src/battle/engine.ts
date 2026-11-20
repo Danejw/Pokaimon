@@ -1,0 +1,77 @@
+import type { BattleState, BattleEvent, EncounterDefinition, ModelDefinition, MoveDefinition } from './types';
+import { MOVES, INITIAL_MODEL, TASK } from '../content/core';
+
+const TURN_LIMIT = 8;
+const AP_LIMIT = 6;
+function addEvent(events: BattleEvent[], turn: number, kind: BattleEvent['kind'], message: string, amount?: number): void {
+  events.push({ seq: events.length, turn, kind, message, ...(amount === undefined ? {} : { amount }) });
+}
+export function createBattle(encounter: EncounterDefinition = TASK, model: ModelDefinition = INITIAL_MODEL, seed = 1): BattleState {
+  return {
+    encounterId: encounter.id, modelId: model.id, seed, turn: 0, ap: AP_LIMIT, maxAp: AP_LIMIT,
+    stageIndex: 0, goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
+    outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
+    events: [{ seq: 0, turn: 0, kind: 'ENCOUNTER_STARTED', message: encounter.name + ' appeared!' },
+      { seq: 1, turn: 0, kind: 'CHARACTER_SELECTED', message: model.displayName + ' entered battle.' }],
+  };
+}
+export function applyMove(
+  state: BattleState, moveId: string,
+  model: ModelDefinition = INITIAL_MODEL, encounter: EncounterDefinition = TASK,
+  moves: Record<string,MoveDefinition> = MOVES,
+): BattleState {
+  if (state.outcome !== 'active' || state.modelId !== model.id || state.encounterId !== encounter.id) return state;
+  const move = moves[moveId];
+  if (!move || !model.moveIds.includes(moveId) || state.ap < move.cost || move.cost < 1) return state;
+  const next: BattleState = {
+    ...state, turn: state.turn + 1, ap: state.ap - move.cost, progress: [...state.progress], goals: [...state.goals], events: [...state.events],
+  };
+  const stage = encounter.stages[next.stageIndex];
+  addEvent(next.events, next.turn, 'MOVE_USED', model.displayName + ' used ' + move.name + '!');
+  let feedback = '';
+  if (!stage.accepts.includes(move.category)) {
+    feedback = move.name + ' cannot advance ' + stage.label + '. ' + stage.hint;
+    addEvent(next.events, next.turn, 'STAGE_PROGRESS_CHANGED', 'No progress. ' + stage.hint, 0);
+  } else {
+    const remaining = next.goals[next.stageIndex] - next.progress[next.stageIndex];
+    const gain = Math.min(remaining, move.power);
+    next.progress[next.stageIndex] += gain;
+    feedback = move.name + ' advanced ' + stage.label + ' by ' + gain + '. ' + move.lesson;
+    addEvent(next.events, next.turn, 'STAGE_PROGRESS_CHANGED', stage.label + ' +' + gain, gain);
+    if (next.progress[next.stageIndex] >= next.goals[next.stageIndex]) {
+      addEvent(next.events, next.turn, 'STAGE_COMPLETED', stage.label + ' complete!');
+      next.stageIndex++;
+      feedback = stage.label + ' complete! ' + move.lesson;
+    }
+  }
+  if (next.stageIndex >= encounter.stages.length) {
+    next.outcome = 'won';
+    addEvent(next.events, next.turn, 'BATTLE_WON', encounter.name + ' completed!');
+    next.feedback = feedback + ' ' + encounter.name + ' completed!';
+    return next;
+  }
+  if (next.turn === 2) {
+    next.goals[next.stageIndex] += 14;
+    addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' used ' + encounter.special + '! More work is required.');
+    feedback += ' ' + encounter.name + ' used ' + encounter.special + '!';
+  } else {
+    addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' is watching your next move.');
+  }
+  if (next.ap <= 0 || next.turn >= TURN_LIMIT) {
+    next.outcome = 'lost';
+    addEvent(next.events, next.turn, 'BATTLE_LOST', 'Out of action points! Try a different approach.');
+    feedback += ' Out of action points! Try again.';
+  }
+  next.feedback = feedback;
+  return next;
+}
+export function totalProgress(state: BattleState): number {
+  const done = state.progress.reduce((n, value) => n + value, 0);
+  const goal = state.goals.reduce((n, value) => n + value, 0);
+  return goal ? Math.max(0, Math.min(100, Math.round(done / goal * 100))) : 0;
+}
+export function summarizeBattle(state: BattleState, encounter: EncounterDefinition = TASK): string {
+  if (state.outcome === 'won') return 'Victory! ' + encounter.lesson;
+  if (state.outcome === 'lost') return 'Defeat. The unfinished stage was ' + (encounter.stages[state.stageIndex]?.label ?? 'unknown') + '. Match your move to that stage and try again.';
+  return encounter.stages[state.stageIndex]?.hint ?? '';
+}

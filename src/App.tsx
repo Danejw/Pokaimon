@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BattleStage } from './game/BattleStage';
+import { BattlePanel } from './game/BattlePanel';
 import { defaultPreferences, loadPreferences, savePreferences, type Preferences } from './storage/preferences';
 
 type Screen = 'home' | 'arena' | 'settings';
@@ -16,7 +17,7 @@ export function App() {
   const update = (part: Partial<Preferences>) => setPrefs(old => ({ ...old, ...part }));
   return (
     <main className="shell">
-      <header className="topline"><span className="brandmark">✦</span><span className="brand">POKAIMON</span><span className="edition">ALPHA 0.1</span></header>
+      <header className="topline"><span className="brandmark">✦</span><span className="brand">POKAIMON</span><span className="edition">ALPHA 0.2</span></header>
       {screen === 'home' && <section className="home-page">
         <p className="eyebrow">THE AI BATTLE LAB</p>
         <h1>Master your <em>models.</em></h1>
@@ -25,12 +26,7 @@ export function App() {
         <div className="home-actions"><button className="primary" onClick={() => setScreen('arena')}>PLAY <span>▶</span></button><button className="secondary" onClick={() => setScreen('settings')}>SETTINGS ⚙</button></div>
         <p className="disclaimer">Original game concept · AI simulations, not live model execution</p>
       </section>}
-      {screen === 'arena' && <section className="arena-page">
-        <div className="section-top"><button className="back-button" onClick={() => setScreen('home')}>← HOME</button><span className="sim-tag">GAME PREVIEW</span></div>
-        <BattleStage reducedMotion={prefs.reducedMotion}/>
-        <div className="dialogue-box"><p>A wild TASK appeared!</p><small>The first playable battle arrives in Phase 1.</small></div>
-        <button className="secondary full" onClick={() => setScreen('home')}>BACK TO HOME</button>
-      </section>}
+      {screen === 'arena' && <BattlePanel reducedMotion={prefs.reducedMotion} onBack={() => setScreen('home')}/>}
       {screen === 'settings' && <section className="settings-page">
         <div className="section-top"><button className="back-button" onClick={() => setScreen('home')}>← HOME</button><span>OPTIONS</span></div>
         <h2>Settings</h2><p className="intro">Make the game comfortable for you.</p>
