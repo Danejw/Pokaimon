@@ -26,3 +26,13 @@ Build the most satisfying, legible, original, mobile-first Pokémon-like AI capa
 - Add a meaningful next vertical slice, not decorative complexity. Candidate: a concise first-battle interactive tutorial, or optional mastery challenge with a clear goal, grounded in screenshot/playtest evidence.
 - Avoid adding fictitious model rankings, real-provider integrations, paid APIs, login, or sprawling extra screens.
 - Keep this log evidence-first and link actual CI runs and screenshots. Update PR #3 as appropriate; leave it draft.
+
+## Pass 2: Readable move teaching at decision time (Nov 20, ~04:00 HST)
+
+**Evidence and rationale:** Inspected the actual command JSX and move definitions. The only explanation of a move's technique was hidden in the HTML `title` tooltip, which is inaccessible on touch and hard to discover with a keyboard. All current moves cost exactly one AP, so an initial idea to test navigation among unaffordable moves was invalid; that test was replaced before shipping. This is a focused, evidence-based educational UX improvement, not a new gameplay system.
+
+**Changed:** `src/game/BattlePanel.tsx` shows the currently selected move's plain-language description and its actual forecasted stage fit, with a live status region. `src/style.css` styles the compact explanation; `tests/e2e/visual.spec.ts` checks that focus updates the guidance without executing a move. Kept the deterministic reducer, model definitions and stage calculations unchanged.
+
+**Verification:** New test committed before implementation, and branch CI/preview Actions were triggered by commits. The final commit still needs its own complete CI result and screenshot inspection. Do not treat earlier passing runs as evidence for this change. Check the 390x844 and 360x800 command screenshots for overflow from the extra line. If it overflows, shrink or replace the existing tactical help line rather than removing the educational description. Preview should be considered unverified until the latest Pages run succeeds.
+
+**Next:** Review latest CI and screenshots. If the lesson is cramped, combine it with the existing tactical help strip, then rerun tests and screenshot checks. Keep PR #3 draft.
