@@ -126,6 +126,9 @@ test('Grok and Math reference pair retains readable original pixel art', async (
 test('tactical preview matches real stage progress and earns the four-turn medal', async ({ page }, testInfo) => {
   mkdirSync(dir, { recursive:true });
   await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /SETTINGS/i }).click();
+  await page.getByRole('combobox', { name: 'Difficulty' }).selectOption('easy');
+  await page.getByRole('button', { name: /HOME/i }).click();
   await page.getByRole('button', { name: /PLAY/i }).click();
   await page.getByRole('button', { name:'Select GPT-6.2 Astra' }).click();
   const stage = page.getByTestId('phaser-stage');
@@ -158,6 +161,9 @@ test('tactical preview matches real stage progress and earns the four-turn medal
 
 test('focused move explains its real technique before the player commits', async ({ page }) => {
   await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /SETTINGS/i }).click();
+  await page.getByRole('combobox', { name: 'Difficulty' }).selectOption('easy');
+  await page.getByRole('button', { name: /HOME/i }).click();
   await page.getByRole('button', { name: /PLAY/i }).click();
   await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
   await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
