@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BattleStage } from './BattleStage';
 import { applyMove, createBattle, summarizeBattle, totalProgress } from '../battle/engine';
-import { MOVES, INITIAL_MODEL, TASK, movesFor } from '../content/core';
+import { INITIAL_MODEL, TASK, movesFor } from '../content/core';
 import type { BattleState } from '../battle/types';
 
 export function BattlePanel({ reducedMotion, onBack }: { reducedMotion: boolean; onBack: () => void }) {
