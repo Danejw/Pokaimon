@@ -1,0 +1,70 @@
+name: Pokaimon Next Preview
+
+# A disposable experiment: publish main unchanged at /Pokaimon/ and the
+# experimental branch at /Pokaimon/next/. Never publish experiment at root.
+on:
+  push:
+    branches: [feat/overnight-gameplay-polish]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    # This isolated branch is not permitted by the main-only Pages environment protection.
+    # Deployment still requires the pages:write and id-token:write permissions.
+    steps:
+      - name: Checkout stable production source
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: stable
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g npm@11
+      - name: Build stable production root
+        working-directory: stable
+        run: |
+          npm install --no-audit --no-fund --legacy-peer-deps
+          npm run build
+      - name: Checkout the isolated experiment
+        uses: actions/checkout@v4
+        with:
+          ref: feat/overnight-gameplay-polish
+          path: experiment
+          persist-credentials: false
+      - name: Verify experiment before publishing
+        working-directory: experiment
+        run: |
+          npm install --no-audit --no-fund --legacy-peer-deps
+          npm run lint
+          npm run typecheck
+          npm run test
+          npm run test:agui
+          npx vite build --base=/Pokaimon/next/
+      - name: Place experiment below /next/ without changing main
+        run: |
+          mkdir -p stable/dist/next
+          cp -R experiment/dist/. stable/dist/next/
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: stable/dist
+      # GitHub's artifact listing may lag immediately after a successful upload.
+      # Allow metadata to propagate before deploy-pages queries it.
+      - name: Wait for Pages artifact metadata
+        run: sleep 15
+      - id: deployment
+        uses: actions/deploy-pages@v4

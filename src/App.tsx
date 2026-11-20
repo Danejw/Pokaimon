@@ -66,11 +66,10 @@ export function App(){
         <button className="secondary retro-secondary" onClick={()=>setScreen('guide')}>FIELD GUIDE</button>
       </div>
       <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ SETTINGS</button>
-      <p className="disclaimer">ORIGINAL PIXEL-ART SIMULATOR · NO LIVE MODEL EXECUTION</p>
     </section>}
 
     {screen==='battle'&&<BattlePanel key={sessionId} encounter={encounter}
-      reducedMotion={prefs.reducedMotion} soundEnabled={prefs.sound} textSpeed={prefs.textSpeed}
+      reducedMotion={prefs.reducedMotion} soundEnabled={prefs.sound} textSpeed={prefs.textSpeed} difficulty={prefs.difficulty}
       onHome={()=>setScreen('home')} onNext={launchEncounter} onWin={recordWin}/>}
 
     {screen==='guide'&&<section className="guide-page retro-page">
@@ -105,6 +104,10 @@ export function App(){
     {screen==='settings'&&<section className="settings-page retro-page">
       <div className="section-top"><button className="back-button" onClick={()=>setScreen('home')}>◀ HOME</button><span>OPTIONS</span></div>
       <h2>Settings</h2><p className="intro">SET UP YOUR HANDHELD EXPERIENCE.</p>
+      <label className="setting"><span><strong>Difficulty</strong><small>Choose how much battle guidance you see</small></span>
+        <select aria-label="Difficulty" value={prefs.difficulty} onChange={e=>update({difficulty:e.target.value as Preferences['difficulty']})}>
+          <option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
+      <p className="difficulty-description">{prefs.difficulty==='easy'?'Move effectiveness, simulated damage, and step hints are shown.':prefs.difficulty==='medium'?'Learn move techniques through trial and error. Damage and recommended moves are hidden.':'No move forecasts, step hints, or tactical warnings. Read the battle and experiment.'}</p>
       <label className="setting"><span><strong>Sound</strong><small>Retro sound effects</small></span>
         <input aria-label="Sound" type="checkbox" checked={prefs.sound} onChange={e=>update({sound:e.target.checked})}/></label>
       <label className="setting"><span><strong>Reduced motion</strong><small>Skip elaborate attack effects</small></span>
@@ -124,6 +127,5 @@ export function App(){
         </div>}
       <button className="danger-button" onClick={()=>setProgress(clearProgress())}>RESET FIELD GUIDE PROGRESS</button>
     </section>}
-    <footer className="retro-footer">POKAIMON · BUILD YOUR BATTLE INSTINCT</footer>
   </main>;
 }

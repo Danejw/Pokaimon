@@ -15,8 +15,13 @@ describe('preferences', () => {
   it('saves and reloads valid settings', () => {
     const storage = new Map<string,string>();
     vi.stubGlobal('localStorage', { getItem: (k: string) => storage.get(k) ?? null, setItem: (k: string, v: string) => storage.set(k,v) });
-    savePreferences({ sound: false, reducedMotion: true, textSpeed: 'fast' });
-    expect(loadPreferences()).toEqual({ sound: false, reducedMotion: true, textSpeed: 'fast' });
+    savePreferences({ sound: false, reducedMotion: true, textSpeed: 'fast', difficulty: 'hard' });
+    expect(loadPreferences()).toEqual({ sound: false, reducedMotion: true, textSpeed: 'fast', difficulty: 'hard' });
+    vi.unstubAllGlobals();
+  });
+  it('defaults older saved settings to medium', () => {
+    vi.stubGlobal('localStorage', { getItem: () => JSON.stringify({ sound: false, textSpeed: 'fast' }), setItem: () => {} });
+    expect(loadPreferences().difficulty).toBe('medium');
     vi.unstubAllGlobals();
   });
 });

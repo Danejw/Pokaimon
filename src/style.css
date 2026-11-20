@@ -286,3 +286,54 @@ h1,h2,h3{margin:0}
 @media (prefers-reduced-motion:reduce){
   .party-slot,.retro-move{transition:none}
 }
+
+
+/* Night-lab experiment: stage tactics and clean information hierarchy. */
+.stage-intel b{
+  color:#326b5e;font-weight:800;
+  white-space:nowrap;
+}
+.move-copy{flex:1;min-width:0;display:block}
+.retro-move .move-copy small{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:2px;white-space:nowrap;
+  font-size:clamp(10px,2.55vw,12px);
+}
+.move-forecast{
+  margin-left:auto;flex:none;
+  font:800 12px/1 'Chakra Petch',system-ui,sans-serif;
+  padding:2px 3px;
+  background:#e4f5d4;
+  color:#2f7056;
+  border:1px solid #8fbd91;
+}
+.move-forecast.misses{
+  color:#8b6570;background:#eee6df;border-color:#c9b5a7;
+}
+.retro-move.is-effective:not(.is-selected){border-bottom-color:#639c7e}
+.retro-move.is-mismatch:not(.is-selected){border-bottom-color:#9b8c91}
+.tactical-help{color:#3c755f;min-height:23px}
+.battle-medal{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:8px;background:#fff0bd;
+  border:3px solid #be9b5b;box-shadow:inset 0 0 0 2px #fff9db;
+  color:#76542e;padding:7px 8px;margin:0 0 10px;
+  font:800 13px 'Chakra Petch',system-ui,sans-serif;
+}
+.battle-medal span{font-size:12px;color:#786c55;white-space:nowrap}
+@media (max-width:375px){
+  .retro-move .move-copy small{font-size:10px}
+  .move-forecast{font-size:11px;padding:2px}
+  .tactical-help{font-size:11px}
+  .battle-medal{font-size:12px}
+}
+
+/* Selected move: a readable, keyboard/touch-accessible explanation, not a hover-only tooltip. */
+.move-lesson{margin:7px 2px 2px;padding:6px 8px;background:#f8f0d5;border-left:4px solid #558b79;color:#293d49;font:600 13px/1.25 'Chakra Petch',system-ui,sans-serif;min-height:47px}
+.move-lesson b{color:#32645d}
+.move-lesson span{color:#755943}
+@media(max-height:780px){.move-lesson{font-size:12px;line-height:1.15;padding:4px 7px;min-height:38px}}
+
+/* Make the enemy's deterministic counter readable at the next decision. */
+.wild-counter{margin:5px 2px 0;padding:5px 7px;border-left:4px solid #bd7651;background:#f7e3cb;color:#7a4535;font:700 12px/1.2 'Chakra Petch',system-ui,sans-serif}
+@media(max-height:780px){.wild-counter{font-size:11px;padding:3px 6px}}

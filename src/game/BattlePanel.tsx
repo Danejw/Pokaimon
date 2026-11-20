@@ -8,12 +8,15 @@ import { PixelPortrait } from './PixelPortrait';
 import { animationDuration, type BattlePhase } from './encounterFlow';
 import { playCue } from './sound';
 import { setBattleMusic } from './music';
+import type { Difficulty } from '../storage/preferences';
+import { battleMedal, forecastMove, getStageIntel } from '../battle/tactics';
 
 export interface BattlePanelProps {
   encounter: EncounterDefinition;
   reducedMotion: boolean;
   soundEnabled: boolean;
   textSpeed: 'normal' | 'fast';
+  difficulty: Difficulty;
   onHome: () => void;
   onNext: () => void;
   onWin: (id: string) => void;
@@ -25,7 +28,7 @@ interface AttackAction {
 }
 
 export function BattlePanel({
-  encounter, reducedMotion, soundEnabled, textSpeed, onHome, onNext, onWin,
+  encounter, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onWin,
 }: BattlePanelProps) {
   const [phase, setPhase] = useState<BattlePhase>('encounter');
   const [model, setModel] = useState<ModelDefinition | null>(null);
@@ -88,6 +91,12 @@ export function BattlePanel({
     if (battle?.outcome === 'won') onWin(encounter.id);
   }, [battle?.outcome, encounter.id, onWin]);
 
+  const currentStage = battle && battle.stageIndex < encounter.stages.length
+    ? encounter.stages[battle.stageIndex] : null;
+  const counterEvent = battle?.events.find(event =>
+    event.turn === battle.turn && event.kind === 'ENEMY_ACTED' &&
+    event.message.includes(' used '));
+
   const message = (phase === 'encounter' || phase === 'selection')
     ? 'A wild ' + encounter.name + ' appeared!'
     : (phase === 'throw' || phase === 'summon')
@@ -95,10 +104,12 @@ export function BattlePanel({
       : phase === 'attack' ? (model?.displayName ?? 'AI') + ' used ' + attack?.move.name + '!'
       : phase === 'result' && battle?.outcome === 'won' ? encounter.name + ' completed!'
       : phase === 'result' ? 'Your team ran out of moves!'
+      : phase === 'command' && counterEvent ? encounter.name + ' used ' + encounter.special + '! Choose your response.'
+      : phase === 'command' && currentStage ? (difficulty === 'hard' ? 'Choose your next move.' : 'Choose a move for ' + currentStage.label + '.')
       : narration || 'What should ' + (model?.displayName ?? 'your AI') + ' do?';
 
   useEffect(() => {
-    if (reducedMotion || textSpeed === 'fast') {
+    if (reducedMotion || textSpeed === 'fast' || phase === 'result' || phase === 'command') {
       setTypedFeedback(message);
       return;
     }
@@ -111,7 +122,7 @@ export function BattlePanel({
       if (count >= message.length) window.clearInterval(timer);
     }, 24);
     return () => window.clearInterval(timer);
-  }, [message, reducedMotion, textSpeed, soundEnabled]);
+  }, [message, reducedMotion, textSpeed, soundEnabled, phase]);
 
   function selectModel(next: ModelDefinition): void {
     if (phase !== 'selection') return;
@@ -172,10 +183,10 @@ export function BattlePanel({
   }
 
   const hp = 100 - (battle ? totalProgress(battle) : 0);
-  const currentStage = battle && battle.stageIndex < encounter.stages.length
-    ? encounter.stages[battle.stageIndex] : null;
   const showHero = ['summon', 'command', 'attack', 'result'].includes(phase);
   const moves = model ? movesFor(model) : [];
+  const intel = battle ? getStageIntel(battle, encounter) : null;
+  const forecasts = battle ? moves.map(move => forecastMove(battle, move, encounter)) : [];
 
   return <section className="retro-battle" aria-label={'Wild ' + encounter.name + ' encounter'}>
     <div className="retro-topbar">
@@ -210,8 +221,10 @@ export function BattlePanel({
       <div className="retro-dialogue pixel-box">
         <p aria-hidden="true">{typedFeedback}<span className="dialogue-caret" aria-hidden="true">▾</span></p>
         <span className="sr-only" role="status" aria-live="polite">{message}</span>
-        {phase === 'command' && currentStage && <small>{currentStage.label} · {currentStage.hint}</small>}
-        {phase === 'result' && battle && <small>{battle.feedback}</small>}
+        {phase === 'command' && currentStage && <small className="stage-intel"><b>STEP {intel?.number}/{intel?.count}</b>{' · '}{currentStage.label}{difficulty === 'easy' ? ' · ' + currentStage.hint : ''}</small>}
+        {phase === 'result' && battle && <small>{battle.outcome === 'won'
+          ? 'All ' + encounter.stages.length + ' steps complete. Ready for another wild problem?'
+          : 'That approach ran out of AP. Review the unfinished step and retry.'}</small>}
         {(phase === 'encounter' || phase === 'selection') &&
           <small>Choose a companion to face this wild problem.</small>}
       </div>
@@ -230,8 +243,8 @@ export function BattlePanel({
             </span>
             <span className="party-details">
               <strong>{m.displayName}</strong>
-              <small>{m.provider.toUpperCase()} · {viable ? 'READY TO BATTLE' : 'DIFFICULT MATCHUP'}</small>
-              {!viable && <span className="party-warning">NEEDS {missingForModel(encounter, m).join(', ')}</span>}
+              <small>{m.provider.toUpperCase()} · {difficulty === 'easy' ? (viable ? 'READY TO BATTLE' : 'DIFFICULT MATCHUP') : 'CHOOSE YOUR COMPANION'}</small>
+              {difficulty === 'easy' && !viable && <span className="party-warning">NEEDS {missingForModel(encounter, m).join(', ')}</span>}
               <span className="party-ap" aria-hidden="true"><span /></span>
             </span>
             <b className="party-level">Lv.50</b>
@@ -246,15 +259,30 @@ export function BattlePanel({
         <div className="command-grid" onKeyDown={onMovesKey} aria-label="Move selection">
           {moves.map((move, i) => <button key={move.id}
             ref={node => { moveButtons.current[i] = node; }}
-            className={'retro-move ' + (selectedMove === i ? 'is-selected' : '')}
+            className={'retro-move ' + (selectedMove === i ? 'is-selected' : '') +
+              (difficulty === 'easy' ? (forecasts[i]?.status === 'effective' ? ' is-effective' : ' is-mismatch') : '')}
             onFocus={() => setSelectedMove(i)}
             onClick={() => useMove(move)} disabled={!battle || battle.ap < move.cost}
-            aria-label={move.name} title={move.description + ' ' + move.lesson}>
+            aria-label={move.name} title={difficulty === 'easy' ? move.description + ' ' + move.lesson : undefined}>
             <span className="retro-arrow" aria-hidden="true">▶</span>
-            <span><strong>{move.name}</strong><small>{move.category.toUpperCase()} · {move.cost} AP</small></span>
+            <span className="move-copy"><strong>{move.name}</strong><small>{move.category.toUpperCase()} · {move.cost} AP
+              {difficulty === 'easy' && <b className={'move-forecast ' + (forecasts[i]?.status === 'effective' ? 'fits' : 'misses')}
+                aria-hidden="true">{forecasts[i]?.status === 'effective' ? '+' + forecasts[i].gain : '×'}</b>}
+            </small></span>
           </button>)}
         </div>
-        <div className="retro-help">ARROWS / WASD TO MOVE · ENTER TO USE</div>
+        {counterEvent && <div className="wild-counter" role="status" aria-live="polite">
+          <b>{counterEvent.message}</b>
+        </div>}
+        {difficulty !== 'hard' && <div className="move-lesson" role="status" aria-live="polite">
+          <b>{moves[selectedMove]?.name}:</b>{' '}{moves[selectedMove]?.description}{' '}
+          {difficulty === 'easy' && <span>{forecasts[selectedMove]?.status === 'effective'
+            ? 'Fits this step (simulated +' + forecasts[selectedMove].gain + ').'
+            : 'No progress on this step.'}</span>}
+        </div>}
+        {difficulty === 'easy' && <div className="retro-help tactical-help">{intel?.incomingSpecial
+          ? 'WILD COUNTER NEXT: ' + intel.incomingSpecial.toUpperCase()
+          : 'MATCH MOVE TYPE TO THE CURRENT STEP'}</div>}
       </div>}
 
       {phase === 'attack' && <div className="action-wait" role="status">ATTACKING<span className="blink">▾</span></div>}
@@ -263,6 +291,8 @@ export function BattlePanel({
 
       {phase === 'result' && battle && <div className="retro-result">
         <h2>{battle.outcome === 'won' ? 'VICTORY!' : 'TRY AGAIN'}</h2>
+        {battleMedal(battle) && <div className="battle-medal" role="status"><b>{battleMedal(battle)}</b>
+          <span>{battle.turn} TURNS · {battle.maxAp - battle.ap} AP USED</span></div>}
         <p>{summarizeBattle(battle, encounter)}</p>
         <div className="result-buttons">
           <button onClick={retry}>↻ RETRY BATTLE</button>
