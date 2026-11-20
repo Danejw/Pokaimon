@@ -284,5 +284,6 @@ export function BattleStage({
     phase,model,attackSequence,attackType,outcome,reducedMotion,
   ]);
   return <div ref={node} className="battle-stage pixel-canvas" data-testid="phaser-stage"
+    data-phase={phase} data-model={model??'trainer'}
     role="img" aria-label={'Pixel-art battle arena: wild '+enemy+', trainer and AI companion'}/>;
 }

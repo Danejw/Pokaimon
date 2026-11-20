@@ -13,9 +13,11 @@ async function summon(page: Page, model: string) {
 test('a wild encounter chooses the model after the trainer arrives and summons it', async ({ page }) => {
   await startTask(page);
   await expect(page.getByTestId('phaser-stage')).toBeVisible();
-  await summon(page, 'GPT-6.2 Astra');
-  await expect(page.getByText(/GO! GPT-6.2 Astra/i).first()).toBeVisible();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await expect(page.getByText(/Go! GPT-6.2 Astra/i).first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-model', 'astra');
 });
 test('model attacks resolve through the existing battle reducer, victory is saved', async ({ page }) => {
   await startTask(page);
