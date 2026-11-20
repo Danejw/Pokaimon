@@ -18,6 +18,13 @@ test('pixel handheld screens render with consistent model portrait sprites', asy
   await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
   await expect(page.locator('.enemy-status')).toBeVisible();
   await expect(page.locator('.hero-status')).toBeVisible();
+  // The canvas now has 4x physical pixels for actual quarter-pixel sprite detail,
+  // while the browser still displays the same responsive logical battle area.
+  const dimensions = await page.locator('.battle-stage canvas').evaluate(canvas => {
+    const element = canvas as HTMLCanvasElement;
+    return { width: element.width, height: element.height };
+  });
+  expect(dimensions).toEqual({ width: 1440, height: 1320 });
   await page.screenshot({ path: dir + '/battle-' + testInfo.project.name + '.png', fullPage: true });
 
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
