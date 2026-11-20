@@ -42,10 +42,11 @@ describe('battle tactics as readable game feedback', () => {
     const s1=applyMove(s0,'deep-think');
     const s2=applyMove(s1,'deep-think'); // ineffective waste
     const s3=applyMove(s2,'code-execution');
-    const s4=applyMove(s3,'self-correction');
+    const s4=applyMove(s3,'code-execution');
     const s5=applyMove(s4,'self-correction');
-    expect(s5.outcome).toBe('won');
-    expect(battleMedal(s5)).toBe('MISSION CLEAR');
+    const s6=applyMove(s5,'self-correction');
+    expect(s6.outcome).toBe('won');
+    expect(battleMedal(s6)).toBe('MISSION CLEAR');
     const fast=['deep-think','code-execution','self-correction','self-correction'].reduce(
       (s,id)=>applyMove(s,id),createBattle());
     expect(battleMedal(fast)).toBe('TACTICAL CLEAR');
