@@ -63,3 +63,35 @@ test('entire player choice menu fits a portrait phone viewport without page scro
   );
   expect(moveFits).toBe(true);
 });
+
+test('dialogue remains readable and effects reuse one audio context', async ({ page }) => {
+  await page.addInitScript(() => {
+    const NativeContext = window.AudioContext;
+    if (!NativeContext) return;
+    Object.defineProperty(window, 'AudioContext', {
+      configurable: true,
+      value: class extends NativeContext {
+        constructor() {
+          super();
+          const tracked = window as Window & { __pokaimonAudioContexts?: number };
+          tracked.__pokaimonAudioContexts = (tracked.__pokaimonAudioContexts ?? 0) + 1;
+        }
+      },
+    });
+  });
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  const dialogue = page.locator('.retro-dialogue p');
+  await expect(dialogue).toHaveCSS('font-family', /Chakra Petch/);
+  const size = await dialogue.evaluate(node => Number.parseFloat(getComputedStyle(node).fontSize));
+  expect(size).toBeGreaterThanOrEqual(16);
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  const move = page.getByRole('button', { name: 'Deep Think' });
+  await expect(move).toBeVisible();
+  await expect(move).toHaveCSS('font-family', /Chakra Petch/);
+  await move.click();
+  const contexts = await page.evaluate(() =>
+    (window as Window & { __pokaimonAudioContexts?: number }).__pokaimonAudioContexts ?? 0
+  );
+  expect(contexts).toBe(1);
+});
