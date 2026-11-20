@@ -58,14 +58,24 @@ export function BattlePanel({
       return () => window.clearTimeout(timer);
     }
     if (phase === 'attack' && model && battle && attack) {
+      // The impact sound follows the on-screen collision, before damage resolves.
+      const impactTimer = window.setTimeout(
+        () => playCue('hit', soundEnabled, attack.move.category),
+        reducedMotion ? 20 : 350,
+      );
       const timer = window.setTimeout(() => {
         const next = applyMove(battle, attack.move.id, model, encounter);
         setBattle(next);
         setNarration(next.feedback);
-        playCue(next.outcome === 'won' ? 'win' : next.outcome === 'lost' ? 'lose' : 'hit', soundEnabled);
+        if (next.outcome === 'won' || next.outcome === 'lost') {
+          playCue(next.outcome === 'won' ? 'win' : 'lose', soundEnabled);
+        }
         setPhase(next.outcome === 'active' ? 'command' : 'result');
       }, animationDuration('attack', reducedMotion));
-      return () => window.clearTimeout(timer);
+      return () => {
+        window.clearTimeout(impactTimer);
+        window.clearTimeout(timer);
+      };
     }
   }, [phase, model, battle, attack, encounter, reducedMotion, soundEnabled]);
 
@@ -97,14 +107,15 @@ export function BattlePanel({
     const timer = window.setInterval(() => {
       count = Math.min(message.length, count + 3);
       setTypedFeedback(message.slice(0, count));
+      if (count % 15 === 0 && count < message.length) playCue('text', soundEnabled);
       if (count >= message.length) window.clearInterval(timer);
     }, 24);
     return () => window.clearInterval(timer);
-  }, [message, reducedMotion, textSpeed]);
+  }, [message, reducedMotion, textSpeed, soundEnabled]);
 
   function selectModel(next: ModelDefinition): void {
     if (phase !== 'selection') return;
-    playCue('confirm', soundEnabled);
+    playCue('throw', soundEnabled);
     setModel(next);
     setBattle(createBattle(encounter, next));
     setSelectedMove(0);
@@ -115,7 +126,7 @@ export function BattlePanel({
 
   function useMove(move: MoveDefinition): void {
     if (phase !== 'command' || !model || !battle || battle.outcome !== 'active' || battle.ap < move.cost) return;
-    playCue('attack', soundEnabled);
+    playCue('attack', soundEnabled, move.category);
     setAttack(old => ({ seq: (old?.seq ?? 0) + 1, move }));
     setPhase('attack');
   }
