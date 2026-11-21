@@ -1,6 +1,6 @@
 # Adding new AI models to Pokaimon
 
-**Status:** Phase 5 registry foundation. The three historical game characters remain playable. Their preexisting links and dates are retained as **unreviewed references**, not confirmed capability evidence. The pipeline NEVER makes model calls or publishes candidates automatically.
+**Status:** Phase 5 registry and onboarding foundation. All four playable model identities and selected factual capabilities were checked against official provider pages on November 20, 2026. Game moves/stats remain fictional; no provider was invoked. The pipeline NEVER makes model calls or publishes candidates automatically.
 
 ## 1. Create a review-only candidate
 
