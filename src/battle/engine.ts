@@ -108,9 +108,9 @@ function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFe
         feedback += ' Echo Chamber blocked by source inspection!';
       } else {
         next.hydra = { ...next.hydra, falseConfidence:1 };
-        next.goals[next.stageIndex] += 16;
+        next.goals[next.stageIndex] += 20;
         addEvent(next.events,next.turn,'ENEMY_ACTED',
-          'Echo Chamber amplified an unchecked claim. +16 verification required.',16);
+          'Echo Chamber amplified an unchecked claim. +20 verification required.',20);
         feedback += ' Echo Chamber! The unverified claim needs a stronger check.';
       }
     } else {
