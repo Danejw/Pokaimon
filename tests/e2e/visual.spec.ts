@@ -142,7 +142,7 @@ test('tactical preview matches real stage progress and earns the four-turn medal
   await expect(stage).toHaveAttribute('data-phase','command');
   await expect(page.locator('.stage-intel')).toContainText('STEP 2/3');
   await expect(page.getByRole('button', { name:'Code Execution' })).toHaveClass(/is-effective/);
-  await expect(page.locator('.tactical-help')).toContainText('SCOPE SHIFT');
+  await expect(page.locator('.battle-intent')).toContainText('Scope Shift');
   await page.getByRole('button', { name:'Code Execution' }).click();
   await expect(stage).toHaveAttribute('data-phase','command');
   await expect(page.locator('.stage-intel')).toContainText('STEP 3/3');
