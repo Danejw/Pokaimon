@@ -420,6 +420,70 @@ function trainer(): PixelDrawing {
   };
 }
 
+
+/** The Workshop's immense deadline stack, with a crown of new requirements. */
+function scopeGiant(): PixelDrawing {
+  const p=new Painter(42,36,{
+    K:0x30344a,S:0x64758b,M:0x93a9b7,L:0xd5e3d9,
+    W:0xfffaf0,R:0xdf8355,Y:0xffcf67,T:0x58c6aa,
+  });
+  p.rect('K',5,8,32,25).rect('S',7,9,28,21).rect('M',9,11,24,18);
+  p.rect('K',10,3,22,6).rect('R',12,4,18,3).rect('Y',17,1,8,3);
+  p.rect('K',12,12,18,14).rect('L',13,13,16,11);
+  p.rect('W',14,15,14,7);
+  p.rect('K',16,16,4,4).rect('K',23,16,4,4);
+  p.rect('W',17,16,2,2).rect('W',24,16,2,2);
+  p.rect('K',19,22,5,2).rect('T',18,25,7,2);
+  p.rect('K',8,27,26,2).rect('W',10,28,22,2).rect('K',12,30,18,1);
+  p.rect('K',6,31,9,4).rect('K',27,31,9,4);
+  p.rect('R',8,33,6,1).rect('R',28,33,6,1);
+  p.rect('Y',2,13,4,4).rect('Y',36,13,4,4);
+  p.rect('K',2,17,4,3).rect('K',36,17,4,3);
+  return p.finish();
+}
+
+/** The Evidence Lab's broken signal ghost with three conflicting antennas. */
+function falseSignal(): PixelDrawing {
+  const p=new Painter(42,36,{
+    K:0x32364d,D:0x63619c,M:0x938ad2,L:0xdad2f8,
+    W:0xfffbf2,R:0xf08491,Y:0xffd176,T:0x74cce0,
+  });
+  p.rect('K',16,1,10,4).rect('Y',19,0,4,4);
+  p.rect('K',7,5,28,5).rect('D',9,6,24,3);
+  p.rect('K',4,10,34,19).rect('D',6,11,30,17).rect('M',8,13,26,13);
+  p.rect('L',10,14,22,12).rect('W',11,16,20,8);
+  p.rect('K',12,17,7,5).rect('K',23,17,7,5);
+  p.rect('T',13,18,5,3).rect('T',24,18,5,3);
+  p.rect('W',13,18,2,1).rect('W',24,18,2,1);
+  p.rect('K',18,23,6,2).rect('R',17,25,8,2);
+  p.rect('K',6,28,8,2).rect('K',28,28,8,2);
+  p.rect('D',7,30,8,2).rect('D',27,30,8,2);
+  p.rect('K',4,2,4,5).rect('R',5,1,2,4);
+  p.rect('K',34,2,4,5).rect('R',35,1,2,4);
+  p.rect('Y',0,15,4,3).rect('Y',38,15,4,3);
+  return p.finish();
+}
+
+/** Logic Arena's original faceted trial automaton. */
+function adaptiveTrial(): PixelDrawing {
+  const p=new Painter(42,36,{
+    K:0x2e344b,D:0x4d6385,M:0x6f93b0,L:0xcad7de,
+    W:0xfaf7e8,R:0xe57d75,Y:0xf3c565,T:0x58ddce,
+  });
+  p.rect('K',9,3,24,29).rect('D',10,5,22,25);
+  p.rect('M',12,7,18,21).rect('L',14,9,14,16);
+  p.rect('K',13,10,16,14).rect('W',14,12,14,10);
+  p.rect('K',15,14,4,5).rect('K',23,14,4,5);
+  p.rect('T',16,15,2,2).rect('T',24,15,2,2);
+  p.rect('K',18,20,6,2).rect('Y',20,22,2,2);
+  p.rect('K',4,9,5,8).rect('M',5,10,3,6).rect('K',33,9,5,8).rect('M',34,10,3,6);
+  p.rect('K',3,22,6,6).rect('R',4,23,4,4).rect('K',33,22,6,6).rect('R',34,23,4,4);
+  p.rect('K',11,31,8,5).rect('K',23,31,8,5);
+  p.rect('Y',13,33,4,1).rect('Y',25,33,4,1);
+  p.rect('Y',17,0,8,3).rect('K',19,3,4,4);
+  return p.finish();
+}
+
 export const handDrawnModels = { astra:astra(), grok:grok(), fable:fable() };
 export const handDrawnEnemies: Record<string, PixelDrawing> = {
   'TASK':task(),
@@ -427,5 +491,11 @@ export const handDrawnEnemies: Record<string, PixelDrawing> = {
   'RESEARCH REQUEST':research(),
   'MATH PROBLEM':math(),
   'HALLUCINATION':hallucination(),
+  'RUSH RIVAL':bug(),
+  'CITATION SPECTER':hallucination(),
+  'CLOCKWORK RIVAL':math(),
+  'SCOPE GIANT':scopeGiant(),
+  'FALSE SIGNAL':falseSignal(),
+  'ADAPTIVE TRIAL':adaptiveTrial(),
 };
 export const handDrawnTrainer = trainer();
