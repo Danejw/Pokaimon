@@ -149,3 +149,62 @@ test('research followed by verification earns a clear simulated combo reward', a
   await expect(page.locator('.battle-combo')).toContainText('RESEARCH + VERIFY');
   await page.screenshot({ path: 'test-results/visual/evidence-combo-' + testInfo.project.name + '.png', fullPage:true });
 });
+
+test('ModelDex and selected squad persist across reload and control battle selection', async ({ page }, testInfo) => {
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: 'MODELDEX' }).click();
+  await expect(page.getByRole('heading', { name: 'ModelDex' })).toBeVisible();
+  await expect(page.locator('.dex-entry')).toHaveCount(3);
+  await expect(page.getByText('MOVES DISCOVERED')).toBeVisible();
+  await page.screenshot({ path:'test-results/visual/modeldex-'+testInfo.project.name+'.png', fullPage:true });
+  await page.getByRole('button', { name: 'EDIT TEAM' }).click();
+  await expect(page.getByRole('heading', { name: 'Build your team' })).toBeVisible();
+  await page.getByRole('checkbox', { name: 'Team Grok 4.7' }).uncheck();
+  await page.getByRole('checkbox', { name: 'Team Claude Fable 5.2' }).uncheck();
+  await page.getByRole('button', { name: 'SAVE TEAM' }).click();
+  await expect(page.getByRole('status')).toContainText('TEAM SAVED');
+  await page.screenshot({ path:'test-results/visual/team-'+testInfo.project.name+'.png', fullPage:true });
+  await page.reload();
+  await page.getByRole('button', { name: 'TEAM' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Team GPT-6.2 Astra' })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'Team Grok 4.7' })).not.toBeChecked();
+  await page.getByRole('button', { name: /HOME/i }).click();
+  await page.getByRole('button', { name: /^▶ PLAY$/ }).click();
+  await expect(page.getByRole('button', { name: 'Select GPT-6.2 Astra' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Select Grok 4.7' })).toHaveCount(0);
+});
+
+test('three saved clears unlock an alternate combat loadout', async ({ page }, testInfo) => {
+  await page.addInitScript(() => localStorage.setItem('pokaimon:progress:v2', JSON.stringify({
+    schema:2,cleared:['task','bug','research'],teamIds:['astra','grok','fable'],
+    discoveredMoves:[],winsByModel:{astra:2},useAlternateLoadout:false,
+  })));
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: 'TEAM' }).click();
+  await expect(page.getByText('TACTICAL LOADOUT UNLOCKED')).toBeVisible();
+  await page.getByRole('checkbox', { name: 'Alternate Astra loadout' }).check();
+  await page.getByRole('button', { name: /HOME/i }).click();
+  await page.getByRole('button', { name: 'MODELDEX' }).click();
+  const astra=page.locator('.dex-entry').first();
+  await astra.getByText('FOUR CAPABILITY MOVES').click();
+  await expect(astra).toContainText('Code Review');
+  await expect(astra).not.toContainText('Code Execution');
+  await page.screenshot({ path:'test-results/visual/mastery-'+testInfo.project.name+'.png', fullPage:true });
+  await page.getByRole('button', { name: /HOME/i }).click();
+  await page.getByRole('button', { name: /^▶ PLAY$/ }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await expect(page.getByRole('button', { name: 'Code Review' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Code Execution' })).toHaveCount(0);
+});
+
+test('team builder prevents a softlocked single-model squad', async ({ page }) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: 'TEAM' }).click();
+  await page.getByRole('checkbox', { name: 'Team GPT-6.2 Astra' }).uncheck();
+  await page.getByRole('checkbox', { name: 'Team Claude Fable 5.2' }).uncheck();
+  await page.getByRole('button', { name: 'SAVE TEAM' }).click();
+  await expect(page.getByRole('status')).toContainText('cannot solve every current wild task');
+  await page.reload();
+  await page.getByRole('button', { name: 'TEAM' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Team GPT-6.2 Astra' })).toBeChecked();
+});
