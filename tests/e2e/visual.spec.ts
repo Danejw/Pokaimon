@@ -31,7 +31,7 @@ test('pixel handheld screens render with consistent model portrait sprites', asy
 
   await page.getByRole('button', { name: /HOME/i }).click();
   await page.getByRole('button', { name: /FIELD GUIDE/i }).click();
-  await expect(page.locator('.guide-portrait .pixel-portrait')).toHaveCount(3);
+  await expect(page.locator('.guide-portrait .pixel-portrait')).toHaveCount(4);
   await page.screenshot({ path: dir + '/guide-' + testInfo.project.name + '.png', fullPage: true });
 });
 
