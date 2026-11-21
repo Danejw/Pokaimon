@@ -1,6 +1,6 @@
 # Battle Evolution execution tracker
 
-**Status:** PLAN COMPLETE / IMPLEMENTATION NOT STARTED. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
+**Status:** PHASE 1 IMPLEMENTATION IN PROGRESS / PHASES 2–5 PLANNED. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
 No checkboxes below represent implemented work. Update after verifying commits, CI and actual browser playthroughs, not upon writing documentation.
 
 ## Phase 1: Battle System 2.0
@@ -61,3 +61,16 @@ Next slice:
 ```
 
 **Do not mark a phase finished because its implementation PR merged.** Verify actual behavior. No commitment to dates, paid services, AI provider execution or overworld gameplay.
+
+
+## Phase 1 evidence (Nov 20, 2026)
+
+**Branch HEAD before gameplay:** `6a78c186`, open Draft PR #4. The plan documents were committed; stable `main` remained at `70be65c`.
+
+**Implemented so far, not a verified release:** `src/battle/types.ts`, `src/battle/engine.ts`, `src/content/core.ts`, `src/battle/tactics.ts`, `src/game/BattlePanel.tsx`, `src/style.css` now include three-companion squad switching (one turn / zero AP), one high-impact two-AP research move, deterministic Code Review guard against turn-two specials, a Research → Verification combo, a compact switch panel and attack telegraph. Pure reducer tests, a 3×5 reachability test, and browser win/guard/combo/squad screenshots were added. This does not include a Phase 2 team editor.
+
+**Observed CI and correction:** Initial browser run [44843995345](https://github.com/Danejw/Pokaimon/actions/runs/44843995345) passed lint/typecheck/unit/AG-UI/build and 42/44 browser tests, failing only the new switched-win test. Its script expected a second Self-Correction after the deterministic battle had already won on turn six; corrected in `7896450`, and parallel unit test aligned in `1dfcdbc`. A separate earlier baseline run [44843273861](https://github.com/Danejw/Pokaimon/actions/runs/44843273861) showed six **stale** browser expectations introduced by earlier versions: old dialogue copy, a locator to a Help section hidden by Medium, and assuming Settings persisted as the active screen on reload. Those expectations were updated in `5810b1a` to reflect actual behavior. No assertions on reducer outcomes were weakened.
+
+**Screenshots actually inspected:** Downloaded artifact `14681559987` from [44843995345](https://github.com/Danejw/Pokaimon/actions/runs/44843995345) and opened `squad-switch-chromium-mobile.png` (360×800) and `squad-switch-chromium-desktop.png` (1280×900) as rendered screenshots. The command bar's switch button, both distinct portrait buttons, AP/turn cost, status HUD and Cancel/Moves affordance are visible and legible. The phone screenshot shows the menu wholly above the viewport bottom with no horizontal clipping. These images predate the later guard/combo UI and are **not** validation of those changes. Also opened older baseline screenshot `battle-chromium-mobile.png` from run `44843273861`.
+
+**Pending gate:** Await a **passing CI run for latest HEAD** covering the advanced reducer tests and both mobile/desktop Playwright flows. Download and actually inspect `guard-counter`, `evidence-combo`, `squad-switch` and `squad-win` screenshots from that exact run; fix any failures. Complete a full win/loss/retreat playtest on 390×844 and desktop; check 360×800 and all three disclosure difficulties. Only then mark 1A–1E complete and begin Phase 2. Do not claim current code is deployed on Pages, and do not merge without explicit approval.
