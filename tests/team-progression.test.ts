@@ -14,7 +14,7 @@ describe('model collection, team and versioned progress', () => {
   it('creates a usable squad of the three starter models on a fresh device',()=>{
     stubStorage();
     const p=loadProgress();
-    expect(p.schema).toBe(3);
+    expect(p.schema).toBe(4);
     expect(p.teamIds).toEqual(MODELS.map(model=>model.id));
     expect(rosterForProgress(p).length).toBe(3);
     vi.unstubAllGlobals();
@@ -25,7 +25,7 @@ describe('model collection, team and versioned progress', () => {
     expect(p.cleared).toEqual(['task','bug']);
     expect(p.teamIds).toEqual(MODELS.map(m=>m.id));
     saveProgress(p);
-    expect(JSON.parse(data.get('pokaimon:progress:v3')??'{}').schema).toBe(3);
+    expect(JSON.parse(data.get('pokaimon:progress:v4')??'{}').schema).toBe(4);
     expect(loadProgress()).toEqual(p);
     vi.unstubAllGlobals();
   });
