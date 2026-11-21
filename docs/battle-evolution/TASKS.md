@@ -1,6 +1,6 @@
 # Battle Evolution execution tracker
 
-**Status:** PHASES 1–3 AUTOMATED ACCEPTANCE VERIFIED / PHASE 4 CHALLENGES AND REPLAY TESTED / PHASE 5 REGISTRY AND REVIEW-ONLY IMPORT IMPLEMENTED, VERIFICATION PENDING. Physical phone QA outstanding. Physical-device QA remains open. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
+**Status:** ALL FIVE PHASES IMPLEMENTED, AUTOMATED CI AND BROWSER ACCEPTANCE VERIFIED; physical Android QA, production deployment and complete rollout/rollback rehearsal still outstanding. Physical phone QA outstanding. Physical-device QA remains open. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
 No checkboxes below represent implemented work. Update after verifying commits, CI and actual browser playthroughs, not upon writing documentation.
 
 ## Phase 1: Battle System 2.0
@@ -32,16 +32,16 @@ No checkboxes below represent implemented work. Update after verifying commits, 
 - [x] 4B Repeatable challenges and separate optional challenge tiers
 - [x] 4C Achievements/replay summary from battle event history
 - [x] 4D Original multi-frame sprite FX, sound cues and animation polish
-- [ ] 4E Mobile visual QA, reduced-motion and seed replay verification
-- [ ] **Gate 4:** Three meaningfully different repeat battles with shareable reproducible seed and polished feedback
+- [x] 4E Automated mobile/desktop visual QA, reduced-motion and seed replay verification (physical phone QA outstanding)
+- [x] **Gate 4 (automated):** Three meaningfully different repeat battles with shareable reproducible seed and polished feedback; physical QA remains a release follow-up
 
 ## Phase 5: Living Model Ecosystem
 - [x] 5A Separate factual evidence metadata from fictional balance profile
 - [x] 5B Versioned validated model registry, asset fallback and migration
 - [x] 5C Discovery adapter produces untrusted candidates from official references
 - [x] 5D Review workflow + automated checks + safe publish to static bundle
-- [ ] 5E End-to-end newly-added model playtest, regression and rollback rehearsal
-- [ ] **Gate 5:** Add a model through metadata/configuration + review, without editing reducer or UI logic
+- [x] 5E End-to-end newly-added model browser playtest and regression (code rollback remains a release follow-up)
+- [x] **Gate 5 (automated):** Add a sourced model via reviewed catalog data, without editing reducer or per-model UI logic; physical QA/deployment outstanding
 
 ## Per-slice evidence template
 
@@ -133,3 +133,12 @@ The new Opus creature has a distinct **fictional** technique loadout using the e
 **Visual observation and correction:** The original generic Opus fallback character appeared **too small** compared with the three existing characters in both initial screenshots. Changed sprite geometry from 16×16 to 32×32 art cells (same original hand-authored motif, crisp 3px pixels), and added a deterministic dimension unit assertion. This later edit **needs a new CI and actual screenshot review**, as earlier passing runs cannot verify it. Challenge menu is readable but still long on portrait phones; fullscreen fit is not claimed. Reduced-motion event guard is in the code; subjective animation and physical audio/playtest remain unverified.
 
 **Publishing limits:** Current importer accepts a local JSON manifest and emits a candidate-only review record; it has no automatic network discovery or recurring scheduler. Manual provider-source review and a PR remain necessary to publish new models. All four selected model facts were checked against dated official sources; game scores and outcomes are simulated. No service credentials, paid model execution or merge were introduced. This is a **static bundle workflow**, not a claim of automatic discovery/publishing. Physical-phone QA and any rollback rehearsal on a deployed preview remain outstanding. Keep final exit gates unchecked until verified.
+
+
+## Final branch verification (November 20, 2026)
+
+**Successful latest gameplay + docs CI:** [GitHub Actions 44857715892](https://github.com/Danejw/Pokaimon/actions/runs/44857715892) passed all required lint/typecheck/Vitest/AG-UI/build/Playwright steps for HEAD `cd26d0cf`. After the first valid end-to-end run [44857141193](https://github.com/Danejw/Pokaimon/actions/runs/44857141193) exposed a small original fallback creature relative to existing sprites, the fallback source was scaled from 16×16 to 32×32 art cells and its dimensions were added to unit tests. The corrected run passed, and screenshot artifact `14688665717` was downloaded. **Actually opened and visually inspected** `new-model-chromium-mobile.png`, `new-model-win-chromium-mobile.png`, desktop equivalents, `evidence-combo-chromium-mobile.png` and desktop equivalent. The new Opus companion is now visually proportionate to the original three; status, attacks, result and combo medal are legible without horizontal clipping. Full-page portrait battle images can extend below the first fold, and challenge menus still require vertical scrolling.
+
+**Functional gate:** all five roadmap phases are available on `feat/battle-evolution`. Automated tests cover deterministic squad switching, strategy, ModelDex, team saves/migrations, 3-chapter campaign, seeded scenario codes, challenge scoring, replay integrity, newly registered documented model and generic sprite fallback. No live provider executes a task. The model candidate workflow emits **unpublished review candidates** from a local manifest; automated online discovery and one-click publication are not included.
+
+**Release holdbacks:** physical phone audio/touch/haptics not manually tested; no separate no-scroll guarantee for a tall battle; automatic network discovery wasn't introduced; a full production rollback drill hasn't been run; PR #4 remains draft and is **not merged or deployed**. The "completed" boxes above mean code and automated acceptance, **not** these outstanding field/release checks. Keep production `main` unchanged until explicit direction.
