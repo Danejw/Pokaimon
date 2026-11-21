@@ -147,6 +147,7 @@ test('research followed by verification earns a clear simulated combo reward', a
   await page.getByRole('button', { name: 'Self-Correction' }).click();
   await expect(page.getByRole('heading', { name: 'VICTORY!' })).toBeVisible();
   await expect(page.locator('.battle-combo')).toContainText('RESEARCH + VERIFY');
+  await expect(page.getByTestId('phaser-stage')).not.toHaveAttribute('data-combo-sequence', '0');
   await page.screenshot({ path: 'test-results/visual/evidence-combo-' + testInfo.project.name + '.png', fullPage:true });
 });
 
