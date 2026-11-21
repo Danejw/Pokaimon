@@ -80,7 +80,7 @@ export const LEGACY_MODELS: readonly ModelCatalogEntry[] = [
     palette:'#b6a0d8',balance:{focus:4,tempo:3,precision:4,patch:'1'},
   },
 ];
-export const MODEL_CATALOG: readonly ModelCatalogEntry[] = [...LEGACY_MODELS,...generatedModels as ModelCatalogEntry[]];
+export const MODEL_CATALOG: readonly ModelCatalogEntry[] = [...LEGACY_MODELS,...(generatedModels as unknown as ModelCatalogEntry[])];
 
 export function validateCatalog(entries: readonly ModelCatalogEntry[], moves: Record<string,MoveDefinition>): string[] {
   const errors: string[]=[];
