@@ -2,17 +2,19 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { BattleStage } from './game/BattleStage';
 import { BattlePanel } from './game/BattlePanel';
 import { PixelPortrait } from './game/PixelPortrait';
+import { ModelDex, TeamEditor } from './game/TeamHub';
+import { rosterForProgress } from './content/team';
 import { pickWildEncounter } from './game/encounterFlow';
 import { playCue } from './game/sound';
 import { setBattleMusic } from './game/music';
 import { probeAgui, type AguiProbeResult } from './integrations/agui/client';
 import { MODELS, MOVES } from './content/core';
 import { ENCOUNTERS } from './content/encounters';
-import type { EncounterDefinition } from './battle/types';
+import type { EncounterDefinition, BattleState } from './battle/types';
 import { defaultPreferences, loadPreferences, savePreferences, type Preferences } from './storage/preferences';
-import { clearProgress, loadProgress, markCleared, saveProgress, type Progress } from './storage/progress';
+import { clearProgress, loadProgress, recordBattleProgress, saveProgress, setTeam, setAlternateLoadout, type Progress } from './storage/progress';
 
-type Screen='home'|'battle'|'guide'|'settings';
+type Screen='home'|'battle'|'guide'|'settings'|'modeldex'|'team';
 
 export function App(){
   const [screen,setScreen]=useState<Screen>('home');
@@ -26,7 +28,9 @@ export function App(){
   useEffect(()=>{savePreferences(prefs);},[prefs]);
   useEffect(()=>{saveProgress(progress);},[progress]);
   useEffect(()=>{if(screen!=='battle'||!prefs.sound)setBattleMusic(false,false);},[screen,prefs.sound]);
-  const recordWin=useCallback((id:string)=>setProgress(old=>markCleared(old,id)),[]);
+  const recordBattle=useCallback((id:string,battle:BattleState)=>setProgress(old=>recordBattleProgress(old,id,battle)),[]);
+  const roster = rosterForProgress(progress);
+  const activeTeam = progress.teamIds.map(id=>roster.find(model=>model.id===id)).filter((model):model is typeof roster[number]=>!!model);
   useEffect(()=>{
     function onKey(event:KeyboardEvent){
       if(event.key==='Escape'&&event.target instanceof HTMLElement &&
@@ -63,14 +67,21 @@ export function App(){
       </div>
       <div className="home-actions">
         <button className="primary retro-primary" onClick={launchEncounter}>▶ PLAY</button>
-        <button className="secondary retro-secondary" onClick={()=>setScreen('guide')}>FIELD GUIDE</button>
+        <button className="secondary retro-secondary" onClick={()=>setScreen('modeldex')}>MODELDEX</button>
       </div>
-      <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ SETTINGS</button>
+      <div className="home-submenu"><button className="text-button retro-text-button" onClick={()=>setScreen('team')}>TEAM</button>
+        <button className="text-button retro-text-button" onClick={()=>setScreen('guide')}>FIELD GUIDE</button>
+        <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ SETTINGS</button></div>
     </section>}
 
-    {screen==='battle'&&<BattlePanel key={sessionId} encounter={encounter}
+    {screen==='battle'&&<BattlePanel key={sessionId} encounter={encounter} roster={activeTeam}
       reducedMotion={prefs.reducedMotion} soundEnabled={prefs.sound} textSpeed={prefs.textSpeed} difficulty={prefs.difficulty}
-      onHome={()=>setScreen('home')} onNext={launchEncounter} onWin={recordWin}/>}
+      onHome={()=>setScreen('home')} onNext={launchEncounter} onFinish={recordBattle}/>}
+
+    {screen==='modeldex'&&<ModelDex progress={progress} onHome={()=>setScreen('home')} onTeam={()=>setScreen('team')}/>}
+    {screen==='team'&&<TeamEditor progress={progress} onHome={()=>setScreen('home')}
+      onSetTeam={ids=>setProgress(old=>setTeam(old,ids))}
+      onSetAlternate={enabled=>setProgress(old=>setAlternateLoadout(old,enabled))}/>}
 
     {screen==='guide'&&<section className="guide-page retro-page">
       <div className="section-top"><button className="back-button" onClick={()=>setScreen('home')}>◀ HOME</button><span>FIELD GUIDE</span></div>
