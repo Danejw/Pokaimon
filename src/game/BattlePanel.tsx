@@ -277,7 +277,7 @@ export function BattlePanel({
             onClick={() => selectModel(m)}>
             <span className="party-cursor" aria-hidden="true">{selectedIndex === index ? '▶' : ''}</span>
             <span className={'party-avatar party-' + m.id} aria-hidden="true">
-              <PixelPortrait model={m.id as 'astra' | 'grok' | 'fable'} />
+              <PixelPortrait model={m.id} />
             </span>
             <span className="party-details">
               <strong>{m.displayName}</strong>
@@ -299,7 +299,7 @@ export function BattlePanel({
           {companions.map((companion, index) => <button key={companion.id}
             ref={node => { switchButtons.current[index] = node; }}
             onClick={() => changeCompanion(companion)} aria-label={'Switch to ' + companion.displayName}>
-            <span className="squad-icon" aria-hidden="true"><PixelPortrait model={companion.id as 'astra' | 'grok' | 'fable'} /></span>
+            <span className="squad-icon" aria-hidden="true"><PixelPortrait model={companion.id} /></span>
             <span><b>{companion.displayName}</b><small>0 AP · 1 TURN</small></span>
           </button>)}
         </div> : <><div className="command-grid" onKeyDown={onMovesKey} aria-label="Move selection">
