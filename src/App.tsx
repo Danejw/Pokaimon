@@ -149,7 +149,7 @@ export function App(){
       <p className="intro">Every move represents a real AI technique. Battle power and stats are simulated game rules.</p>
       <h3>YOUR AI TEAM</h3>
       {MODELS.map(m=><article className="guide-card" key={m.id}>
-        <span className="guide-portrait" aria-hidden="true"><PixelPortrait model={m.id as 'astra' | 'grok' | 'fable'} /></span>
+        <span className="guide-portrait" aria-hidden="true"><PixelPortrait model={m.id} /></span>
         <div className="guide-card-copy">
           <strong>{m.displayName}</strong>
           <small>{m.provider.toUpperCase()} · VER. {m.version}</small>
