@@ -1,4 +1,5 @@
 import type { BattleState, EncounterDefinition, MoveDefinition } from './types';
+import { MODELS } from '../content/core';
 
 /**
  * Deterministic on-screen intel for the game's simulated task battles.
@@ -27,7 +28,10 @@ export function forecastMove(
   const remaining = Math.max(0, state.goals[state.stageIndex] - state.progress[state.stageIndex]);
   const comboBonus = move.category === 'verification' && state.lastMoveCategory === 'research' &&
     state.lastMoveTurn === state.turn ? 12 : 0;
-  const gain = Math.min(remaining, move.power + comboBonus);
+  const passive=MODELS.find(model=>model.id===state.modelId)?.passiveId;
+  const bonus=passive==='analysis-boost' && state.turn===0 && move.category==='reasoning' ? 8 :
+    passive==='verification-link' && comboBonus>0 ? 8 : 0;
+  const gain = Math.min(remaining, move.power + comboBonus + bonus);
   return { status:'effective', gain, finishesStage:gain >= remaining };
 }
 
