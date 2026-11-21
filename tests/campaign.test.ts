@@ -62,6 +62,31 @@ describe('three-chapter campaign and rival bosses', () => {
     const alternate=applyMove(state,'context-recall',grok,rival.encounter);
     expect(alternate.events.some(e=>e.kind==='RIVAL_ACTED')).toBe(false);
   });
+  it('applies all three different boss mechanics once with a visible event',()=>{
+    const scope=getCampaignMission('workshop-boss')!.encounter;
+    const scopeAfter=applyMove(applyMove(createBattle(scope,INITIAL_MODEL),
+      'deep-think',INITIAL_MODEL,scope),'code-execution',INITIAL_MODEL,scope);
+    expect(scopeAfter.bossPhaseTriggered).toBe(true);
+    expect(scopeAfter.goals[2]).toBe(scope.stages[2].goal+12+14);
+    expect(scopeAfter.events.filter(e=>e.kind==='BOSS_PHASE_CHANGED')).toHaveLength(1);
+
+    const signal=getCampaignMission('evidence-boss')!.encounter;
+    const signalAfter=applyMove(applyMove(createBattle(signal,INITIAL_MODEL),
+      'deep-think',INITIAL_MODEL,signal),'deep-research',INITIAL_MODEL,signal);
+    expect(signalAfter.bossPhaseTriggered).toBe(true);
+    expect(signalAfter.stageIndex).toBe(1);
+    expect(signalAfter.progress[1]).toBe(signal.stages[1].goal-16);
+    const signalRecovered=applyMove(signalAfter,'deep-research',INITIAL_MODEL,signal);
+    expect(signalRecovered.stageIndex).toBe(2);
+    expect(signalRecovered.events.filter(e=>e.kind==='BOSS_PHASE_CHANGED')).toHaveLength(1);
+
+    const logic=getCampaignMission('logic-boss')!.encounter;
+    const logicAfter=applyMove(applyMove(createBattle(logic,INITIAL_MODEL),
+      'deep-think',INITIAL_MODEL,logic),'deep-think',INITIAL_MODEL,logic);
+    expect(logicAfter.bossPhaseTriggered).toBe(true);
+    expect(logicAfter.ap).toBe(3);
+    expect(logicAfter.events.filter(e=>e.kind==='BOSS_PHASE_CHANGED')).toHaveLength(1);
+  });
   it('migrates v2 saves to v3 without losing team or mastery',()=>{
     const data=new Map([['pokaimon:progress:v2',JSON.stringify({
       schema:2,cleared:['task','bug','research'],teamIds:['astra'],
