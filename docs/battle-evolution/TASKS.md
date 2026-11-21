@@ -107,3 +107,20 @@ Next slice:
 **Verification pending:** The changes above still need a green **final-head** CI run and new mobile/desktop screenshot review. No verified new real-world model was added. Factual capability approval, real-world source checks and a full reviewed release/rollback demonstration remain 5D–5E follow-ups. Do not state Phase 5 complete yet.
 
 **Safety:** Every change is on `feat/battle-evolution`; production `main` has not been changed. Draft PR #4 remains open; no paid model APIs, backend, or unattended publication were introduced.
+
+
+## Phase 4 game feel and Phase 5 source-backed playable model follow-up
+
+**Phase 4 visible effect:** Added a brief, original dual pixel-burst to `BattleStage.tsx` that triggers only from the reducer's `COMBO_TRIGGERED` event, with existing combo sound played in `BattlePanel.tsx`. Reduced-motion skips the new flash and particles. The Playwright combo flow now checks the `data-combo-sequence` event signal. Actual motion/audio quality and the newest mobile screenshots still require inspection; static screenshots cannot establish animation smoothness.
+
+**Phase 5 evidence review on November 20:** Checked each model identity and conservative stated capabilities against the corresponding provider's official pages. Sources:
+- GPT-6.2 Astra: https://developers.openai.com/api/docs/models/gpt-6.2-astra (identity `gpt-6.2-astra`, text/image, reasoning, software and tools)
+- Grok 4.7: https://docs.x.ai/developers/models and https://x.ai/news/grok-4-7 (identity `grok-4.7`, coding, reasoning and tool use)
+- Claude Fable 5.2: https://platform.claude.com/docs/en/models/fable-5-2/overview (identity `claude-fable-5-2`, text/image, reasoning and agent workflows)
+- **New playable Claude Opus 5.5:** https://platform.claude.com/docs/en/models/opus-5-5/overview (identity `claude-opus-5-5`, text/image, adaptive thinking, tool use)
+
+The new Opus creature has a distinct **fictional** technique loadout using the existing move registry and a small original pixel-art fallback. Its registration required editing only the catalog data; the reducer, ModelDex and Phaser use generic IDs and art fallback. Gameplay power scores and matchups are not factual benchmarks; no model API was invoked.
+
+**Tests added or adjusted:** `tests/model-catalog.test.ts` verifies provenance/balance separation, review gate and fallback; `tests/model-candidate.test.ts` rejects malicious/invalid manifest inputs; `tests/roster.test.ts` and team progress tests include the fourth catalog entry while preserving three-member teams; `tests/e2e/battle.spec.ts` includes Opus ModelDex → team editor → battle → win and screenshots; `tests/model-catalog.test.ts` includes replay restoration with a newly registered model. The old Phase 4 replay fixture had passed the entire four-model catalog to a three-member replay schema and caused one Vitest failure on [CI 44857020568](https://github.com/Danejw/Pokaimon/actions/runs/44857020568). The fixture now uses the valid first three-member squad, and a separate new-model replay regression test was added. **The corrected code has not yet passed its final-head CI gate at the time of this note.**
+
+**Pending:** Finish latest head CI, download fresh screenshots (challenge victory, new model on mobile and desktop, combo result), inspect visual regressions, record remaining mobile screen-height tradeoffs, and verify full on-device audio/touch. Source review has been completed for four model identities, but future release discovery is still a manual local-manifest-to-candidate workflow rather than an unattended scheduled discovery system. No automatic model publication or main merge has occurred.
