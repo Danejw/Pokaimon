@@ -204,10 +204,10 @@ test('decision prompt is complete when controls become actionable', async ({ pag
   await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
   await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
   // Command phase must never expose clickable moves under half-typed narration.
-  await expect(page.locator('.retro-dialogue p')).toContainText('What should GPT-6.2 Astra do?');
+  await expect(page.locator('.retro-dialogue p')).toContainText('Choose a move for Understand & plan.');
   await page.getByRole('button', { name: 'Deep Think' }).click();
   await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
-  await expect(page.locator('.retro-dialogue p')).toContainText('complete!');
+  await expect(page.locator('.retro-dialogue p')).toContainText('Choose a move for Apply a solution.');
 });
 
 test('enemy counter leaves every battle command visible in a 390x844 portrait viewport', async ({ page }, testInfo) => {
@@ -228,7 +228,7 @@ test('enemy counter leaves every battle command visible in a 390x844 portrait vi
     pageWidth: document.documentElement.scrollWidth,
     viewportHeight: innerHeight,
     viewportWidth: innerWidth,
-    menuBottom: document.querySelector('.tactical-help')!.getBoundingClientRect().bottom,
+    menuBottom: document.querySelector('.command-panel')!.getBoundingClientRect().bottom,
   }));
   expect(bounds.pageWidth).toBeLessThanOrEqual(bounds.viewportWidth + 1);
   expect(bounds.pageHeight).toBeLessThanOrEqual(bounds.viewportHeight + 8);
@@ -251,6 +251,7 @@ test('difficulty defaults to medium, persists, and controls battle spoilers', as
   await page.getByRole('button', { name: /SETTINGS/i }).click();
   await page.getByRole('combobox', { name: 'Difficulty' }).selectOption('hard');
   await page.reload();
+  await page.getByRole('button', { name: /SETTINGS/i }).click();
   await expect(page.getByRole('combobox', { name: 'Difficulty' })).toHaveValue('hard');
   await page.getByRole('button', { name: /HOME/i }).click();
   await page.getByRole('button', { name: /PLAY/i }).click();
