@@ -271,3 +271,35 @@ test('difficulty defaults to medium, persists, and controls battle spoilers', as
   await expect(page.locator('.move-forecast')).toHaveCount(4);
   await expect(page.locator('.move-lesson')).toContainText('Fits this step');
 });
+
+test('desktop handheld frame has outer margins and follows page content height', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('./');
+  const measure = () => page.evaluate(() => {
+    const shell = document.querySelector('.retro-shell')!.getBoundingClientRect();
+    const root = document.querySelector('#root')!.getBoundingClientRect();
+    const home = document.querySelector('.home-page')?.getBoundingClientRect();
+    return {
+      shellTop: shell.top,
+      shellBottom: shell.bottom,
+      shellHeight: shell.height,
+      rootHeight: root.height,
+      homeBottom: home?.bottom ?? 0,
+      viewportHeight: innerHeight,
+      horizontalOverflow: document.documentElement.scrollWidth > innerWidth + 1,
+    };
+  });
+  const home = await measure();
+  expect(home.shellTop).toBeGreaterThanOrEqual(12);
+  expect(home.viewportHeight - home.shellBottom).toBeGreaterThanOrEqual(12);
+  expect(home.shellBottom - home.homeBottom).toBeLessThan(25);
+  expect(home.horizontalOverflow).toBe(false);
+  await page.screenshot({ path: dir + '/desktop-home-content-height.png', fullPage: true });
+
+  await page.getByRole('button', { name: 'CAMPAIGN' }).click();
+  const campaign = await measure();
+  expect(campaign.shellTop).toBeGreaterThanOrEqual(12);
+  expect(campaign.shellHeight).toBeGreaterThan(home.shellHeight);
+  expect(campaign.horizontalOverflow).toBe(false);
+  await page.screenshot({ path: dir + '/desktop-campaign-content-height.png', fullPage: true });
+});
