@@ -249,7 +249,6 @@ export function BattlePanel({
     <div className="retro-topbar">
       <button className="retro-back" onClick={onHome}>◀ HOME</button>
       <span className="battle-chapter">{encounter.mechanic === 'hydra' ? 'INTELLIGENCE TRIAL' : challenge ? 'CHALLENGE BATTLE' : 'WILD ENCOUNTER'} <span aria-hidden="true">✦</span></span>
-      <small>SIMULATION</small>
     </div>
 
     {challenge && <div className="challenge-objective" role="status">{challenge.title.toUpperCase()} · {challenge.tier.toUpperCase()}</div>}
@@ -284,8 +283,7 @@ export function BattlePanel({
         {phase === 'result' && battle && <small>{battle.outcome === 'won'
           ? 'All ' + encounter.stages.length + ' steps complete. Ready for another wild problem?'
           : 'That approach ran out of AP. Review the unfinished step and retry.'}</small>}
-        {(phase === 'encounter' || phase === 'selection') &&
-          <small>Choose a companion to face this wild problem.</small>}
+        {phase === 'selection' && <small>Choose a companion to face this wild problem.</small>}
       </div>
 
       {phase === 'selection' && <div className="retro-menu party-panel" onKeyDown={onSelectionKey}
@@ -302,7 +300,7 @@ export function BattlePanel({
             </span>
             <span className="party-details">
               <strong>{m.displayName}</strong>
-              <small>{m.provider.toUpperCase()} · {difficulty === 'easy' ? (viable ? 'READY TO BATTLE' : 'DIFFICULT MATCHUP') : 'CHOOSE YOUR COMPANION'}</small>
+              <small>{m.provider.toUpperCase()}{difficulty === 'easy' && !viable ? ' · DIFFICULT MATCHUP' : ''}</small>
               {difficulty === 'easy' && !viable && <span className="party-warning">NEEDS {missingForModel(encounter, m).join(', ')}</span>}
               <span className="party-ap" aria-hidden="true"><span /></span>
             </span>
@@ -373,7 +371,7 @@ export function BattlePanel({
         {!switching && difficulty !== 'hard' && <div className="move-lesson" role="status" aria-live="polite">
           <b>{moves[selectedMove]?.name}:</b>{' '}{moves[selectedMove]?.description}{' '}
           {difficulty === 'easy' && <span>{forecasts[selectedMove]?.status === 'effective'
-            ? 'Fits this step (simulated +' + forecasts[selectedMove].gain + ').'
+            ? 'Fits this step (+' + forecasts[selectedMove].gain + ').'
             : 'No progress on this step.'}{moves[selectedMove]?.tacticalEffect === 'guard' ? ' Can block an incoming counter.' : ''}</span>}
         </div>}
         {!switching && difficulty === 'easy' && !intel?.incomingSpecial && <div className="retro-help tactical-help">{intel?.incomingSpecial
@@ -409,6 +407,5 @@ export function BattlePanel({
       </div>}
     </div>
 
-    <p className="retro-footnote">SIMULATED BATTLE · REAL AI METHODS · ORIGINAL GAME ART</p>
   </section>;
 }

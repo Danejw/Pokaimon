@@ -12,31 +12,27 @@ export function ModelDex({progress,onHome,onTeam}:Navigation&{progress:Progress;
   return <section className="modeldex-page retro-page">
     <div className="section-top"><button className="back-button" onClick={onHome}>◀ HOME</button><span>MODELDEX</span></div>
     <h2>ModelDex</h2>
-    <p className="intro">Meet your AI companions. Move powers and strengths are simulated game rules. Actual capabilities need independent evidence.</p>
+    <p className="intro">Meet your AI companions.</p>
     <div className="modeldex-actions"><button className="secondary" onClick={onTeam}>EDIT TEAM</button><span>{progress.discoveredMoves.length}/{Object.keys(MOVES).length} MOVES DISCOVERED</span></div>
     {roster.map(model=><article className="dex-entry guide-card" key={model.id}>
       <div className="guide-portrait"><PixelPortrait model={model.id}/></div>
       <div className="guide-card-copy">
         <strong>{model.displayName}</strong>
-        <small>{model.provider.toUpperCase()} · VER. {model.version}</small>
+        <small>{model.provider.toUpperCase()}</small>
         {getCatalogEntry(model.id)?.firstSeenAt && <small className="evolution-new">✦ NEW EVOLUTION · {getCatalogEntry(model.id)?.firstSeenAt}</small>}
         {getCatalogEntry(model.id)?.evolvesFrom && <small>EVOLVES FROM {roster.find(older=>older.id===getCatalogEntry(model.id)?.evolvesFrom)?.displayName??getCatalogEntry(model.id)?.evolvesFrom}</small>}
         {getCatalogEntry(model.id)?.familyId && <small>EVOLUTION FAMILY · {getCatalogEntry(model.id)?.familyId?.toUpperCase()}</small>}
         {model.passiveId && <small>GAME PASSIVE · {model.passiveId.toUpperCase().replaceAll('-',' ')}</small>}
-        <small>{progress.teamIds.includes(model.id)?'IN YOUR TEAM':'AVAILABLE'} · {progress.winsByModel[model.id]??0} UNIQUE TASK CLEARS</small>
-        <p>{model.description}</p>
-        <p>GAME BALANCE · FOCUS {model.focus} · TEMPO {model.tempo} · PRECISION {model.precision}</p>
+        {(progress.teamIds.includes(model.id) || (progress.winsByModel[model.id]??0)>0) && <small>{[progress.teamIds.includes(model.id)?'IN YOUR TEAM':'', (progress.winsByModel[model.id]??0)>0 ? (progress.winsByModel[model.id]+' TASK CLEARS') : ''].filter(Boolean).join(' · ')}</small>}
         <details className="dex-moves"><summary>FOUR CAPABILITY MOVES</summary>
           {model.moveIds.map(id=>{const move=MOVES[id];return <p key={id}>
             <b>{progress.discoveredMoves.includes(id)?'✓ DISCOVERED':'? UNTRIED'} · {move.name}</b>
             <span> {move.category.toUpperCase()} · {move.cost} AP. {move.description}</span>
           </p>;})}
         </details>
-        <small>{getCatalogEntry(model.id)?.facts.reviewStatus === 'reviewed' ? 'EVIDENCE REVIEWED ' : 'REFERENCE RECORDED '} {model.verifiedAt}{getCatalogEntry(model.id)?.facts.reviewStatus === 'pending' ? ' · VERIFICATION PENDING' : ''}</small>
         <a href={model.source} target="_blank" rel="noreferrer">OFFICIAL MODEL DOCUMENTATION ↗</a>
       </div>
     </article>)}
-    <p className="disclaimer">LOCAL SIMULATION · GAME BALANCE IS NOT A REAL PROVIDER RANKING.</p>
   </section>;
 }
 
@@ -75,7 +71,7 @@ export function TeamEditor({progress,onHome,onSetTeam,onSetAlternate}:Navigation
       <button className="primary" onClick={commit}>SAVE TEAM</button>
       <button className="secondary" onClick={()=>{setChosen(MODELS.slice(0,3).map(m=>m.id));setNotice('All starters selected. Save to apply.');}}>RESTORE STARTERS</button>
     </div>
-    <p className="team-message" role="status">{notice||'Each selected team must be capable of completing all current wild encounters.'}</p>
+    {notice && <p className="team-message" role="status">{notice}</p>}
     <div className="team-reward">
       <h3>MASTERY REWARD</h3>
       <strong>{alternateUnlocked?'TACTICAL LOADOUT UNLOCKED':'TACTICAL LOADOUT LOCKED'}</strong>

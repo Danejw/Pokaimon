@@ -144,14 +144,14 @@ export function App(){
     {screen==='guide'&&<section className="guide-page retro-page">
       <div className="section-top"><button className="back-button" onClick={()=>setScreen('home')}>◀ HOME</button><span>FIELD GUIDE</span></div>
       <h2>Know your moves</h2>
-      <p className="intro">Every move represents a real AI technique. Battle power and stats are simulated game rules.</p>
+      <p className="intro">Learn when to use each move. Battles run on game rules, with no live AI calls.</p>
       <h3>YOUR AI TEAM</h3>
       {MODELS.map(m=><article className="guide-card" key={m.id}>
         <span className="guide-portrait" aria-hidden="true"><PixelPortrait model={m.id} /></span>
         <div className="guide-card-copy">
           <strong>{m.displayName}</strong>
           <small>{m.provider.toUpperCase()} · VER. {m.version}</small>
-          <p>{m.description}</p>
+          
           <a href={m.source} target="_blank" rel="noreferrer">OFFICIAL MODEL DOCUMENTATION ↗</a>
         </div>
       </article>)}
@@ -172,11 +172,11 @@ export function App(){
 
     {screen==='settings'&&<section className="settings-page retro-page">
       <div className="section-top"><button className="back-button" onClick={()=>setScreen('home')}>◀ HOME</button><span>OPTIONS</span></div>
-      <h2>Settings</h2><p className="intro">SET UP YOUR HANDHELD EXPERIENCE.</p>
+      <h2>Settings</h2>
       <label className="setting"><span><strong>Difficulty</strong><small>Choose how much battle guidance you see</small></span>
         <select aria-label="Difficulty" value={prefs.difficulty} onChange={e=>update({difficulty:e.target.value as Preferences['difficulty']})}>
           <option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
-      <p className="difficulty-description">{prefs.difficulty==='easy'?'Move effectiveness, simulated damage, and step hints are shown.':prefs.difficulty==='medium'?'Learn move techniques through trial and error. Damage and recommended moves are hidden.':'No move forecasts, step hints, or tactical warnings. Read the battle and experiment.'}</p>
+      <p className="difficulty-description">{prefs.difficulty==='easy'?'Move effectiveness, damage, and step hints are shown.':prefs.difficulty==='medium'?'Learn move techniques through trial and error. Damage and recommended moves are hidden.':'No move forecasts, step hints, or tactical warnings. Read the battle and experiment.'}</p>
       <label className="setting"><span><strong>Sound</strong><small>Retro sound effects</small></span>
         <input aria-label="Sound" type="checkbox" checked={prefs.sound} onChange={e=>update({sound:e.target.checked})}/></label>
       <label className="setting"><span><strong>Reduced motion</strong><small>Skip elaborate attack effects</small></span>
@@ -187,12 +187,12 @@ export function App(){
       <button className="secondary full" onClick={()=>setPrefs({...defaultPreferences})}>RESTORE DEFAULTS</button>
       {(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')&&
         <div className="agui-diagnostic">
-          <h3>AG-UI SIMULATION</h3><p>Check the local standards endpoint. No AI provider calls.</p>
+          <h3>AG-UI CONNECTION</h3><p>Check the local standards endpoint. No AI provider calls.</p>
           <button className="secondary full" disabled={testingAgui} onClick={()=>{
             setTestingAgui(true);setAguiStatus(null);
             void probeAgui().then(setAguiStatus).finally(()=>setTestingAgui(false));
           }}>{testingAgui?'CONNECTING...':'TEST AG-UI CONNECTION'}</button>
-          {aguiStatus&&<p role="status">{aguiStatus.error?'AG-UI error: '+aguiStatus.error:aguiStatus.finished?'AG-UI simulation connected: '+aguiStatus.message:'AG-UI run unfinished'}</p>}
+          {aguiStatus&&<p role="status">{aguiStatus.error?'AG-UI error: '+aguiStatus.error:aguiStatus.finished?'AG-UI connected: '+aguiStatus.message:'AG-UI run unfinished'}</p>}
         </div>}
       <button className="danger-button" onClick={()=>setProgress(clearProgress())}>RESET FIELD GUIDE PROGRESS</button>
     </section>}

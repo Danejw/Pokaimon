@@ -303,7 +303,7 @@ test('precision audit awards a verified challenge badge and replay after a real 
   await expect(page.locator('.challenge-achievements')).toContainText('1/3 CHALLENGES CLEARED');
   await expect(page.getByText('FIRST CHALLENGE')).toBeVisible();
   await page.locator('.challenge-replay summary').click();
-  await expect(page.locator('.challenge-replay')).toContainText('Reconstructed from your action log');
+  await expect(page.locator('.challenge-replay ol li').first()).toBeVisible();
   await page.reload();
   await page.getByRole('button',{name:'CHALLENGES'}).click();
   await expect(page.locator('.challenge-achievements')).toContainText('1/3 CHALLENGES CLEARED');

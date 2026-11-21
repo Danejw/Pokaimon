@@ -75,7 +75,7 @@ export const LEGACY_MODELS: readonly ModelCatalogEntry[] = [
       sourceUrl:'https://platform.claude.com/docs/en/models/opus-5-5/overview',
       recordedAt:'2026-11-20',reviewStatus:'reviewed',
       verifiedCapabilities:['text','image-input','tool-use','adaptive-thinking']},
-    description:'A simulated coding-and-research tactician. Real model features are documented separately; battle strengths are fictional.',
+    description:'Coding and research moves.',
     moveIds:['extended-thinking','deep-research','code-review','self-correction'],
     palette:'#b6a0d8',balance:{focus:4,tempo:3,precision:4,patch:'1'},
   },

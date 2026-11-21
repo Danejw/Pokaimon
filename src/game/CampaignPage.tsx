@@ -32,6 +32,5 @@ export function CampaignPage({progress,onHome,onLaunch}:{
       {isChapterComplete(chapter,cleared)&&
         <p className="chapter-award">★ {chapter.title.toUpperCase()} EMBLEM EARNED</p>}
     </section>)}
-    <p className="disclaimer">CAMPAIGN OUTCOMES ARE SIMULATED. COMPLETED MISSIONS UNLOCK THE NEXT CHALLENGE.</p>
   </section>;
 }

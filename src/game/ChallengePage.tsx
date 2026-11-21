@@ -19,7 +19,7 @@ export function ChallengePage({progress,onHome,onLaunch}:{
     }
     try {
       await navigator.clipboard.writeText(value);
-      setNotice('Challenge code copied.');
+      setNotice('Code copied.');
     } catch {
       setNotice('Clipboard unavailable. Select the code to copy manually.');
     }
@@ -69,7 +69,7 @@ export function ChallengePage({progress,onHome,onLaunch}:{
     })}
     <div className="challenge-import">
       <h3>REPLAY A CHALLENGE CODE</h3>
-      <label htmlFor="challenge-import-input">Paste a PK1 code to repeat the same simulated scenario and seed.</label>
+      <label htmlFor="challenge-import-input">Paste a PK1 code to replay a challenge.</label>
       <div className="challenge-code-row">
         <input id="challenge-import-input" aria-label="Paste challenge code" value={code} maxLength={90} onChange={event=>setCode(event.target.value)}/>
         <button onClick={()=>{
@@ -81,11 +81,10 @@ export function ChallengePage({progress,onHome,onLaunch}:{
           onLaunch(parsed,known?.id??null);
         }}>PLAY CODE</button>
       </div>
-      <p role="status">{notice}</p>
+      {notice && <p role="status" className={notice === 'Code copied.' ? 'sr-only' : undefined}>{notice}</p>}
     </div>
     {last&&<details className="challenge-replay">
       <summary>LAST BATTLE REPLAY · {last.outcome.toUpperCase()} · {last.turn} TURNS</summary>
-      <p>Reconstructed from your action log and verified against the recorded result. Game simulation only.</p>
       <ol>{last.events.filter(event=>event.kind==='MOVE_USED'||event.kind==='MODEL_SWITCHED')
         .map(event=><li key={event.seq}>{event.message}</li>)}</ol>
     </details>}
@@ -93,6 +92,5 @@ export function ChallengePage({progress,onHome,onLaunch}:{
       <h3>YOUR BADGES</h3>
       {progress.achievements.map(id=><span key={id}>★ {id.replaceAll('-',' ').toUpperCase()}</span>)}
     </section>}
-    <p className="disclaimer">SIMULATED CHALLENGE MODIFIERS AFFECT RULES. EASY/MEDIUM/HARD SETTINGS AFFECT GUIDANCE ONLY.</p>
   </section>;
 }
