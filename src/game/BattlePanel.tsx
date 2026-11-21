@@ -20,7 +20,7 @@ export interface BattlePanelProps {
   difficulty: Difficulty;
   onHome: () => void;
   onNext: () => void;
-  onWin: (id: string, battle: BattleState) => void;
+  onFinish: (id: string, battle: BattleState) => void;
 }
 
 interface AttackAction {
@@ -29,7 +29,7 @@ interface AttackAction {
 }
 
 export function BattlePanel({
-  encounter, roster = MODELS, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onWin,
+  encounter, roster = MODELS, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onFinish,
 }: BattlePanelProps) {
   const [phase, setPhase] = useState<BattlePhase>('encounter');
   const [model, setModel] = useState<ModelDefinition | null>(null);
@@ -94,8 +94,8 @@ export function BattlePanel({
   }, [phase, switching]);
 
   useEffect(() => {
-    if (battle?.outcome === 'won') onWin(encounter.id, battle);
-  }, [battle?.outcome, encounter.id, onWin]);
+    if (battle && battle.outcome !== 'active') onFinish(encounter.id, battle);
+  }, [battle?.outcome, encounter.id, onFinish]);
 
   const currentStage = battle && battle.stageIndex < encounter.stages.length
     ? encounter.stages[battle.stageIndex] : null;
