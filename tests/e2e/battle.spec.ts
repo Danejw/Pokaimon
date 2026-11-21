@@ -269,6 +269,6 @@ test('rival punishes repeating a tactic without hiding the outcome', async ({ pa
   await page.getByRole('button', { name: 'Select Grok 4.7' }).click();
   await page.getByRole('button', { name: 'Max Reasoning' }).click();
   await page.getByRole('button', { name: 'Max Reasoning' }).click();
-  await expect(page.locator('.wild-counter')).toContainText('anticipated that repeated reasoning move');
+  await expect(page.locator('.rival-counter')).toContainText('anticipated that repeated reasoning move');
   await page.screenshot({ path:'test-results/visual/rival-counter-'+testInfo.project.name+'.png', fullPage:true });
 });
