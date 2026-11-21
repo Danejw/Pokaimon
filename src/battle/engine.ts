@@ -13,7 +13,7 @@ export function createBattle(encounter: EncounterDefinition = TASK, model: Model
     goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
     outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
     events: [{ seq: 0, turn: 0, kind: 'ENCOUNTER_STARTED', message: encounter.name + ' appeared!' },
-      { seq: 1, turn: 0, kind: 'CHARACTER_SELECTED', message: model.displayName + ' entered battle.' }],
+      { seq: 1, turn: 0, kind: 'CHARACTER_SELECTED', message: model.displayName + ' entered battle.', modelId:model.id }],
   };
 }
 export function applyMove(
@@ -28,7 +28,8 @@ export function applyMove(
     ...state, turn: state.turn + 1, ap: state.ap - move.cost, progress: [...state.progress], goals: [...state.goals], events: [...state.events],
   };
   const stage = encounter.stages[next.stageIndex];
-  addEvent(next.events, next.turn, 'MOVE_USED', model.displayName + ' used ' + move.name + '!');
+  next.events.push({seq: next.events.length,turn:next.turn,kind:'MOVE_USED',
+    message:model.displayName+' used '+move.name+'!',modelId:model.id,moveId});
   let feedback = '';
   const matches = stage.accepts.includes(move.category);
   const comboBonus = matches && move.category === 'verification' &&
@@ -118,7 +119,8 @@ export function switchModel(
   const next: BattleState = { ...state, modelId: targetModelId,
     lastMoveCategory: null, lastMoveTurn: -1, turn: state.turn + 1,
     progress: [...state.progress], goals: [...state.goals], events: [...state.events] };
-  addEvent(next.events, next.turn, 'MODEL_SWITCHED', 'Go! ' + nextModel.displayName + '! One turn used, no AP spent.');
+  next.events.push({seq:next.events.length,turn:next.turn,kind:'MODEL_SWITCHED',
+    message:'Go! '+nextModel.displayName+'! One turn used, no AP spent.',modelId:nextModel.id});
   return finishTurn(next, encounter, nextModel.displayName + ' switched in.');
 }
 
