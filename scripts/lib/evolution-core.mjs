@@ -119,7 +119,9 @@ export function compileEvolution(provider,record,known,existingIds,checkedAt){
       reviewStatus:'reviewed',providerModelId:record.id,verifiedCapabilities:[]},
     description:'A game-balanced new AI evolution. Its moves and stats are fictional; follow the official source for real capabilities.',
     moveIds:MOVES[kit],palette:'#'+(art.palette.M>>>0).toString(16).padStart(6,'0'),
-    balance,familyId:classification.familyId,branchKey:classification.branchKey,
+    balance,
+    passiveId:['analysis-boost','audit-ward','verification-link'][Number.parseInt(digest(record.id).slice(4,6),16)%3],
+    familyId:classification.familyId,branchKey:classification.branchKey,
     evolvesFrom:parent?.gameId??null,generation,firstSeenAt:checkedAt,
     sourceDigest:digest(record.sourceUrl+'|'+record.id),
   };
