@@ -60,7 +60,7 @@ export function applyMove(
     const gain = Math.min(remaining, move.power + comboBonus + passiveBonus);
     const appliedBonus = Math.max(0, gain - Math.min(remaining, move.power));
     if (appliedBonus > 0) addEvent(next.events, next.turn, 'COMBO_TRIGGERED',
-      'Evidence verified! Research + Verification combo +' + appliedBonus + ' (simulated).', appliedBonus);
+      'Evidence verified! Research + Verification combo +' + appliedBonus + '.', appliedBonus);
     if (move.tacticalEffect === 'guard' && next.turn <= 2) {
       next.guarded = true;
       addEvent(next.events, next.turn, 'STATUS_APPLIED', 'Code review raised a guard against the incoming counter.');
