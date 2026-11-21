@@ -241,9 +241,9 @@ export function BattlePanel({
         {showHero && model && <div className="hero-status status-frame">
           <div className="status-heading"><strong>{model.displayName}</strong><b>Lv.50</b></div>
           <div className="status-hp"><b>AP</b><div className="classic-hp" role="meter" aria-label="AI action points"
-            aria-valuemin={0} aria-valuemax={6} aria-valuenow={battle?.ap ?? 6}>
-            <span style={{ width: ((battle?.ap ?? 6) / 6 * 100) + '%' }} />
-          </div><small>{battle?.ap ?? 6}/6</small></div>
+            aria-valuemin={0} aria-valuemax={battle?.maxAp ?? 6} aria-valuenow={battle?.ap ?? 6}>
+            <span style={{ width: ((battle?.ap ?? 6) / (battle?.maxAp ?? 6) * 100) + '%' }} />
+          </div><small>{battle?.ap ?? 6}/{battle?.maxAp ?? 6}</small></div>
         </div>}
         {phase === 'encounter' && <div className="encounter-flash" aria-hidden="true" />}
       </div>
