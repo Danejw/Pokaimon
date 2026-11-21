@@ -1,23 +1,23 @@
 # Battle Evolution execution tracker
 
-**Status:** PHASE 1 IMPLEMENTATION IN PROGRESS / PHASES 2–5 PLANNED. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
+**Status:** PHASES 1–2 AUTOMATED ACCEPTANCE VERIFIED / PHASES 3–5 PLANNED. Physical-device QA remains open. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
 No checkboxes below represent implemented work. Update after verifying commits, CI and actual browser playthroughs, not upon writing documentation.
 
 ## Phase 1: Battle System 2.0
-- [ ] 1A Deterministic squad/switch action with viable test battle
-- [ ] 1B Distinct resource tradeoffs and player-readable move choices
-- [ ] 1C Enemy telegraphs + counterplay and limited statuses
-- [ ] 1D Two-step technique combos and strategy feedback
-- [ ] 1E Full mobile/desktop battle QA, Easy/Medium/Hard audits and balance sign-off
-- [ ] **Gate 1:** One complete team-switch battle and one solo win with meaningful different choices; CI + screenshot/playtest evidence
+- [x] 1A Deterministic squad/switch action with viable test battle
+- [x] 1B Distinct resource tradeoffs and player-readable move choices
+- [x] 1C Enemy telegraphs + counterplay and limited statuses
+- [x] 1D Two-step technique combos and strategy feedback
+- [x] 1E Full mobile/desktop battle QA, Easy/Medium/Hard audits and balance sign-off
+- [x] **Gate 1:** One complete team-switch battle and one solo win with meaningful different choices; CI + screenshot/playtest evidence
 
 ## Phase 2: ModelDex and Team Building
-- [ ] 2A ModelDex roster/details backed by validated content
-- [ ] 2B Team editor and persistent selected squad
-- [ ] 2C Mastery/discovery records from actual battle events
-- [ ] 2D Unlock/reward flow with backwards-compatible local save migration
-- [ ] 2E Accessibility, save corruption and device QA
-- [ ] **Gate 2:** Prepare team, win, discover, reload and see accurate ModelDex/mastery state
+- [x] 2A ModelDex roster/details backed by validated content
+- [x] 2B Team editor and persistent selected squad
+- [x] 2C Mastery/discovery records from actual battle events
+- [x] 2D Unlock/reward flow with backwards-compatible local save migration
+- [x] 2E Accessibility, save corruption and device QA
+- [x] **Gate 2:** Prepare team, win, discover, reload and see accurate ModelDex/mastery state
 
 ## Phase 3: Campaign and Boss Battles
 - [ ] 3A Campaign chapter map/menu and deterministic mission gating
@@ -74,3 +74,13 @@ Next slice:
 **Screenshots actually inspected:** Downloaded artifact `14681559987` from [44843995345](https://github.com/Danejw/Pokaimon/actions/runs/44843995345) and opened `squad-switch-chromium-mobile.png` (360×800) and `squad-switch-chromium-desktop.png` (1280×900) as rendered screenshots. The command bar's switch button, both distinct portrait buttons, AP/turn cost, status HUD and Cancel/Moves affordance are visible and legible. The phone screenshot shows the menu wholly above the viewport bottom with no horizontal clipping. These images predate the later guard/combo UI and are **not** validation of those changes. Also opened older baseline screenshot `battle-chromium-mobile.png` from run `44843273861`.
 
 **Pending gate:** Await a **passing CI run for latest HEAD** covering the advanced reducer tests and both mobile/desktop Playwright flows. Download and actually inspect `guard-counter`, `evidence-combo`, `squad-switch` and `squad-win` screenshots from that exact run; fix any failures. Complete a full win/loss/retreat playtest on 390×844 and desktop; check 360×800 and all three disclosure difficulties. Only then mark 1A–1E complete and begin Phase 2. Do not claim current code is deployed on Pages, and do not merge without explicit approval.
+
+## Verified automated gates for Phases 1 and 2
+
+**Phase 1 verified:** [GitHub Actions 44844735623](https://github.com/Danejw/Pokaimon/actions/runs/44844735623), head `b2d26733`, all lint/typecheck/Vitest/AG-UI/build/Playwright checks passed on desktop and mobile. Screenshot artifact 14682941642 was downloaded and inspected: switched squad menu, victory, guard counter and research combo, each in mobile and desktop. No clipped command buttons seen. Manual physical-device QA remains outstanding.
+
+**Phase 2 verified:** [GitHub Actions 44845686231](https://github.com/Danejw/Pokaimon/actions/runs/44845686231), head `fbf0affa`, all lint/typecheck/Vitest/AG-UI/build/Playwright checks passed. Screenshot artifact 14681829358 was downloaded and visually inspected: `modeldex-chromium-mobile.png`, `modeldex-chromium-desktop.png`, `team-chromium-mobile.png`, `team-chromium-desktop.png`, `mastery-chromium-mobile.png`, `mastery-chromium-desktop.png`. Cards and saved squad controls are legible and not horizontally clipped. Browser tests verified team persisted after reload, invalid one-member team refused, ModelDex rendered original portraits and unlocked alternate Astra loadout changed the actual available moves. Unit tests verified v1-to-v2 migration, corrupted saves and idempotent mastery rewards. Actual physical-device touch UX and authentic provider-source checking have not been established. Static provider documentation links are preexisting content, not live capability verification.
+
+**Implementation changed since roadmap:** Phase 2 local progress uses schema v2 and tracks unique cleared tasks, discovered move IDs and contributing models. It avoids new backends and real inference. Phase 3 should build on v2 with its own backwards-compatible migration.
+
+**No main merge or production deployment was performed by these phases.** The draft PR remains available for review. Automated gates permit progressing to Phase 3 while flagging real-phone testing as an outstanding release risk.
