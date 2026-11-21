@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { applyMove, createBattle, switchModel } from '../src/battle/engine';
+import { applyMove, createBattle } from '../src/battle/engine';
 import { INITIAL_MODEL, MODELS } from '../src/content/core';
 import { CAMPAIGN_CHAPTERS, CAMPAIGN_MISSIONS, getCampaignMission, isMissionUnlocked } from '../src/content/campaign';
 import { defaultProgress, loadProgress, recordMissionVictory, saveProgress } from '../src/storage/progress';
