@@ -14,7 +14,7 @@ export function ModelDex({progress,onHome,onTeam}:Navigation&{progress:Progress;
     <p className="intro">Meet your AI companions. Move powers and strengths are simulated game rules. Actual capabilities need independent evidence.</p>
     <div className="modeldex-actions"><button className="secondary" onClick={onTeam}>EDIT TEAM</button><span>{progress.discoveredMoves.length}/{Object.keys(MOVES).length} MOVES DISCOVERED</span></div>
     {roster.map(model=><article className="dex-entry guide-card" key={model.id}>
-      <div className="guide-portrait"><PixelPortrait model={model.id as 'astra'|'grok'|'fable'}/></div>
+      <div className="guide-portrait"><PixelPortrait model={model.id}/></div>
       <div className="guide-card-copy">
         <strong>{model.displayName}</strong>
         <small>{model.provider.toUpperCase()} · VER. {model.version}</small>
@@ -63,7 +63,7 @@ export function TeamEditor({progress,onHome,onSetTeam,onSetAlternate}:Navigation
     <p className="intro">Choose up to three companions. Swap between them during battle. All three starter models are always available.</p>
     {roster.map(model=><label className="team-pick" key={model.id}>
       <input type="checkbox" aria-label={'Team '+model.displayName} checked={chosen.includes(model.id)} onChange={()=>toggle(model.id)}/>
-      <span className="squad-icon" aria-hidden="true"><PixelPortrait model={model.id as 'astra'|'grok'|'fable'}/></span>
+      <span className="squad-icon" aria-hidden="true"><PixelPortrait model={model.id}/></span>
       <span className="team-pick-copy"><strong>{model.displayName}</strong><small>{model.moveIds.map(id=>MOVES[id].category).join(' · ').toUpperCase()}</small></span>
     </label>)}
     <div className="team-actions">
