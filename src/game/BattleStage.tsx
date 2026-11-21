@@ -9,6 +9,7 @@ export interface BattleStageProps {
   phase?: BattlePhase;
   attackSequence?: number;
   bossSequence?: number;
+  comboSequence?: number;
   attackType?: string;
   outcome?: 'active' | 'won' | 'lost';
   reducedMotion?: boolean;
@@ -18,6 +19,7 @@ interface Presentation {
   phase: BattlePhase;
   attackSequence: number;
   bossSequence: number;
+  comboSequence: number;
   attackType: string;
   outcome: 'active' | 'won' | 'lost';
   reducedMotion: boolean;
@@ -117,6 +119,7 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
     private lastPhase:BattlePhase|null=null;
     private lastAttackSequence=0;
     private lastBossSequence=0;
+    private lastComboSequence=0;
     private heroIdle=false;
 
     constructor(){super('retro-battle');}
@@ -367,6 +370,14 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
           this.tweens.add({targets:this.enemy.container,scaleX:1.16,scaleY:1.16,duration:190,yoyo:true,repeat:2,ease:'Stepped'});
         }
       }
+      if (p.comboSequence!==this.lastComboSequence) {
+        this.lastComboSequence=p.comboSequence;
+        if(p.comboSequence>0 && !p.reducedMotion){
+          this.sparks(257,146,0x82e7eb,15);
+          this.sparks(98,247,0xffef91,9);
+          this.flash(0x83dfd1,0.15);
+        }
+      }
       if(p.phase==='attack'&&p.attackSequence!==this.lastAttackSequence){
         this.lastAttackSequence=p.attackSequence;
         this.attack(p.attackType,p.model??'astra',p.reducedMotion);
@@ -377,11 +388,11 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
 
 export function BattleStage({
   enemy='TASK',model=null,phase='encounter',
-  attackSequence=0,bossSequence=0,attackType='',outcome='active',reducedMotion=false,
+  attackSequence=0,bossSequence=0,comboSequence=0,attackType='',outcome='active',reducedMotion=false,
 }:BattleStageProps){
   const node=useRef<HTMLDivElement|null>(null);
   const game=useRef<Phaser.Game|null>(null);
-  const presentation:Presentation={model,phase,attackSequence,bossSequence,attackType,outcome,reducedMotion};
+  const presentation:Presentation={model,phase,attackSequence,bossSequence,comboSequence,attackType,outcome,reducedMotion};
   const current=useRef(presentation);
   current.current=presentation;
 
@@ -398,9 +409,9 @@ export function BattleStage({
   },[enemy]);
 
   useEffect(()=>{game.current?.events.emit(PRESENTATION_EVENT,presentation);},[
-    phase,model,attackSequence,bossSequence,attackType,outcome,reducedMotion,
+    phase,model,attackSequence,bossSequence,comboSequence,attackType,outcome,reducedMotion,
   ]);
   return <div ref={node} className="battle-stage pixel-canvas" data-testid="phaser-stage"
-    data-phase={phase} data-model={model??'trainer'}
+    data-phase={phase} data-model={model??'trainer'} data-combo-sequence={comboSequence}
     role="img" aria-label={'Pixel-art battle arena: wild '+enemy+', trainer and AI companion'}/>;
 }
