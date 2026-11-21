@@ -40,3 +40,31 @@ jobs:
           name: playwright-failures
           path: test-results/
           retention-days: 7
+
+  generated-model-smoke:
+    name: Generated model smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: npm install -g npm@11
+      - run: npm install --no-audit --no-fund --legacy-peer-deps
+      - name: Seed a synthetic pre-observed model inventory
+        run: |
+          node -e 'const fs=require("node:fs");const path="data/model-observations.json";const state=JSON.parse(fs.readFileSync(path));state.initializedProviders=["openai"];state.knownIds.openai=["gpt-6.2-astra","gpt-88-1"];fs.writeFileSync(path,JSON.stringify(state))'
+      - name: Import synthetic official-source fixture, compile sprite and lineage
+        run: node scripts/evolve-models.mjs --fixture tests/fixtures/model-inventory-new.json --apply
+      - run: npm run models:validate
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npx playwright install chromium --with-deps
+      - run: npx playwright test tests/e2e/generated-model.spec.ts
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-evolution-ui-screenshots
+          path: test-results/visual/evolution-*.png
+          retention-days: 14
+          if-no-files-found: ignore
