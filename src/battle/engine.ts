@@ -232,7 +232,7 @@ export function switchModel(
   if (!nextModel) return state;
   const next: BattleState = { ...state, modelId: targetModelId,
     guarded:state.guarded || (nextModel.passiveId==='audit-ward' &&
-      !state.events.some(event=>event.kind==='MODEL_SWITCHED' && event.modelId===nextModel.id)),
+      !state.events.some(event=>(event.kind==='CHARACTER_SELECTED'||event.kind==='MODEL_SWITCHED') && event.modelId===nextModel.id)),
     lastMoveCategory: null, lastMoveTurn: -1, turn: state.turn + 1,
     progress: [...state.progress], goals: [...state.goals], events: [...state.events] };
   next.events.push({seq:next.events.length,turn:next.turn,kind:'MODEL_SWITCHED',
