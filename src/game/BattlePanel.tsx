@@ -14,6 +14,7 @@ import { battleMedal, forecastMove, getStageIntel } from '../battle/tactics';
 export interface BattlePanelProps {
   encounter: EncounterDefinition;
   roster?: readonly ModelDefinition[];
+  nextLabel?: string;
   reducedMotion: boolean;
   soundEnabled: boolean;
   textSpeed: 'normal' | 'fast';
@@ -29,7 +30,7 @@ interface AttackAction {
 }
 
 export function BattlePanel({
-  encounter, roster = MODELS, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onFinish,
+  encounter, roster = MODELS, nextLabel, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onFinish,
 }: BattlePanelProps) {
   const [phase, setPhase] = useState<BattlePhase>('encounter');
   const [model, setModel] = useState<ModelDefinition | null>(null);
@@ -99,6 +100,8 @@ export function BattlePanel({
 
   const currentStage = battle && battle.stageIndex < encounter.stages.length
     ? encounter.stages[battle.stageIndex] : null;
+  const bossPhaseEvent = battle?.events.find(event=>event.kind==='BOSS_PHASE_CHANGED');
+  const rivalEvent = battle?.events.find(event=>event.turn===battle.turn && event.kind==='RIVAL_ACTED');
   const comboEvent = battle?.events.find(event => event.turn === battle.turn && event.kind === 'COMBO_TRIGGERED');
   const counterEvent = battle?.events.find(event =>
     event.turn === battle.turn && event.kind === 'ENEMY_ACTED' &&
@@ -224,6 +227,7 @@ export function BattlePanel({
     <div className="game-frame">
       <div className="battle-screen">
         <BattleStage enemy={encounter.name} model={model?.id ?? null} phase={phase}
+          bossSequence={bossPhaseEvent?1:0}
           attackSequence={attack?.seq ?? 0} attackType={attack?.move.category ?? ''}
           outcome={battle?.outcome ?? 'active'} reducedMotion={reducedMotion} />
         <div className="enemy-status status-frame" aria-label={'Wild ' + encounter.name + ' status'}>
@@ -306,6 +310,11 @@ export function BattlePanel({
           </button>)}
         </div>
         </>}
+        {encounter.rival && <div className="rival-intent" role="status">RIVAL · {encounter.rival.name.toUpperCase()}: {difficulty === 'hard' ? 'Watch their tactics.' : 'Repeating the same approach makes the next step harder.'}</div>}
+        {encounter.boss && <div className="boss-intent" role="status">
+          {battle?.bossPhaseTriggered ? '★ BOSS PHASE: '+encounter.boss.label : 'BOSS BATTLE · '+(difficulty==='hard'?'A change is coming.':'Prepare for a '+encounter.boss.effect+' phase.')}
+        </div>}
+        {rivalEvent && <div className="wild-counter" role="status">{rivalEvent.message}</div>}
         {intel?.incomingSpecial && <div className="battle-intent" role="status">
           {difficulty === 'hard' ? encounter.name + ' is preparing an action.' : encounter.name + ' prepares ' + intel.incomingSpecial + '.'}
           {battle?.guarded && <b> · GUARD READY</b>}
@@ -335,9 +344,10 @@ export function BattlePanel({
           <span>{battle.turn} TURNS · {battle.maxAp - battle.ap} AP USED</span></div>}
         <p>{summarizeBattle(battle, encounter)}</p>
         {comboEvent && <span className="sr-only">{comboEvent.message}</span>}
+        {encounter.boss && <p className="boss-result">{bossPhaseEvent?'BOSS PHASE OVERCOME: '+encounter.boss.label:'BOSS CHALLENGE'}</p>}
         <div className="result-buttons">
           <button onClick={retry}>↻ RETRY BATTLE</button>
-          <button onClick={onNext}>▶ NEXT WILD ENCOUNTER</button>
+          <button onClick={onNext}>{nextLabel ?? '▶ NEXT WILD ENCOUNTER'}</button>
         </div>
         <details className="battle-log">
           <summary>BATTLE LOG ({battle.events.length})</summary>
