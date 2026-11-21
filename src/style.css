@@ -489,3 +489,22 @@ h1,h2,h3{margin:0}
     margin:0 auto;
   }
 }
+
+/* Phase 6: actionable evidence without displacing battle moves on phones. */
+.intelligence-trial{background:#e5f0de;border-color:#446c61}
+.intelligence-trial .challenge-heading small{background:#f8e49f;color:#604d30;border-color:#ae8c4a}
+.hydra-evidence{display:flex;align-items:center;gap:9px;margin:5px 0;padding:7px 8px;
+  border:3px solid #496c70;background:#e9f1dc;color:#2a4648}
+.hydra-evidence>div{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.hydra-evidence strong{font:800 12px 'Chakra Petch',system-ui,sans-serif;letter-spacing:.5px}
+.hydra-evidence span{font:600 12px/1.25 'Chakra Petch',system-ui,sans-serif}
+.hydra-evidence small{font:700 11px/1.2 'Chakra Petch',system-ui,sans-serif;color:#8c513a}
+.hydra-inspect{flex:none;border:3px solid #303545;background:#f6d56a;color:#303545;
+  padding:7px 9px;font:800 12px/1.2 'Chakra Petch',system-ui,sans-serif;max-width:140px}
+.hydra-inspect small{display:block;margin-top:4px;color:inherit;font-size:10px}
+.hydra-inspect:hover,.hydra-inspect:focus-visible{background:#ffe9a6}
+@media(max-width:375px){
+  .hydra-evidence{gap:5px;padding:5px}
+  .hydra-evidence span{font-size:11px}
+  .hydra-inspect{padding:5px 6px;font-size:11px;max-width:110px}
+}
