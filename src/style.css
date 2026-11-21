@@ -406,3 +406,31 @@ h1,h2,h3{margin:0}
 .team-reward p{font:15px/1.3 'Chakra Petch',system-ui,sans-serif}
 .team-reward-option{display:flex;align-items:center;gap:9px;font:700 15px 'Chakra Petch',system-ui,sans-serif;margin:12px 0}
 .team-reward small{font:700 13px 'Chakra Petch',system-ui,sans-serif;color:#65695f}
+
+
+/* Chapter select and authored boss encounters use the same retro design language. */
+.campaign-progress{font:800 14px 'Chakra Petch',system-ui,sans-serif;background:#e0ead5;border:3px solid #7eaa8f;padding:8px 10px;margin:8px 0 15px}
+.campaign-chapter{margin:14px 0;padding:9px;background:#f8f1d7;border:4px solid #344254;box-shadow:3px 3px 0 #9fa88e}
+.campaign-chapter-heading{display:flex;flex-direction:column;gap:4px;margin:0 0 9px}
+.campaign-chapter-heading h3{font:700 16px/1.3 'Chakra Petch',system-ui,sans-serif;margin:0!important}
+.campaign-chapter-heading span{font:700 13px 'Chakra Petch',system-ui,sans-serif;color:#67756a}
+.campaign-mission{display:flex;align-items:center;gap:7px;width:100%;min-height:67px;background:#fff9e9;border:3px solid #47556a;margin:5px 0;padding:6px;text-align:left;color:#334354}
+.campaign-mission:disabled{opacity:.6;background:#e5e1d2}
+.campaign-mission.available:focus-visible,.campaign-mission.available:hover{background:#e6f3d8;outline:3px solid #c58b52}
+.campaign-step-num{flex:none;min-width:27px;font:800 15px 'Chakra Petch',system-ui,sans-serif;color:#41715b}
+.campaign-copy{min-width:0;display:flex;flex:1;flex-direction:column;gap:4px}
+.campaign-copy strong{font:700 16px/1.1 'Chakra Petch',system-ui,sans-serif}
+.campaign-copy small{font:600 12px/1.15 'Chakra Petch',system-ui,sans-serif;overflow-wrap:anywhere}
+.campaign-mission>b{flex:none;font:700 12px 'Chakra Petch',system-ui,sans-serif;white-space:nowrap;color:#64736a}
+.chapter-award{font:800 12px 'Chakra Petch',system-ui,sans-serif;color:#8c6827;background:#ffecb7;padding:6px;margin:8px 0 0}
+.rival-intent,.boss-intent{margin:3px 2px;padding:4px 7px;font:700 12px/1.15 'Chakra Petch',system-ui,sans-serif}
+.rival-intent{background:#ebdfea;border-left:4px solid #9064a0;color:#624675}
+.boss-intent{background:#fff0c9;border-left:4px solid #cc9047;color:#7b552c}
+.boss-result{font:700 12px 'Chakra Petch',system-ui,sans-serif;color:#7f5d32}
+@media(max-width:375px){
+  .campaign-mission{gap:5px;padding:5px}
+  .campaign-copy strong{font-size:14px}
+  .campaign-copy small{font-size:11px}
+  .campaign-mission>b{font-size:11px}
+  .rival-intent,.boss-intent{font-size:11px;padding:3px 5px}
+}
