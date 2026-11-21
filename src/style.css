@@ -434,3 +434,42 @@ h1,h2,h3{margin:0}
   .campaign-mission>b{font-size:11px}
   .rival-intent,.boss-intent{font-size:11px;padding:3px 5px}
 }
+
+
+/* Phase 4: short strategic challenges and replay presentation. */
+.challenge-achievements{font:800 13px 'Chakra Petch',system-ui,sans-serif;background:#e2eddc;
+  border:3px solid #729783;margin:12px 0;padding:9px}
+.challenge-card{border:4px solid #344254;box-shadow:3px 3px 0 #87968b;padding:11px 10px;
+  background:#fff6db;margin:12px 0}
+.challenge-heading{display:flex;align-items:center;justify-content:space-between;gap:7px;
+  font:800 18px 'Chakra Petch',system-ui,sans-serif}
+.challenge-heading small{flex:none;background:#d8e9d6;border:2px solid #72957e;
+  color:#3f6255;padding:3px;font:800 11px 'Chakra Petch',system-ui,sans-serif}
+.challenge-card p{font:15px/1.3 'Chakra Petch',system-ui,sans-serif;margin:8px 0}
+.challenge-code-row{display:flex;gap:5px;align-items:stretch;min-width:0;margin:9px 0}
+.challenge-code-row input{min-width:0;flex:1;background:#fffdf5;color:#344254;border:3px solid #596778;
+  font:700 12px 'Chakra Petch',system-ui,sans-serif;padding:8px 5px}
+.challenge-code-row button{flex:none;background:#e1eacd;border:3px solid #344254;color:#344254;
+  font:800 13px 'Chakra Petch',system-ui,sans-serif;padding:6px}
+.challenge-code-row button:focus-visible,.challenge-code-row button:hover{background:#c1e9bd}
+.challenge-actions{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.challenge-actions span{font:700 12px 'Chakra Petch',system-ui,sans-serif;color:#6b704f}
+.challenge-actions button{min-height:42px;padding:6px 12px;font-size:14px}
+.challenge-import{margin-top:20px;border:3px solid #596778;padding:11px;background:#edeacc}
+.challenge-import h3{font:800 14px 'Chakra Petch',system-ui,sans-serif;margin:4px 0 9px}
+.challenge-import label{font:14px/1.3 'Chakra Petch',system-ui,sans-serif}
+.challenge-import p{font:700 13px 'Chakra Petch',system-ui,sans-serif;min-height:16px}
+.challenge-replay{background:#fffdf0;border:3px solid #526477;padding:10px;margin:15px 0;
+  font:14px/1.4 'Chakra Petch',system-ui,sans-serif}
+.challenge-replay summary{font-weight:800;cursor:pointer}
+.challenge-replay li{padding:3px 0}
+.challenge-emblems{margin:10px 0;display:flex;flex-wrap:wrap;gap:7px}
+.challenge-emblems h3{width:100%;font:700 14px 'Chakra Petch',system-ui,sans-serif}
+.challenge-emblems span{background:#ffedb8;padding:5px;font:700 12px 'Chakra Petch',system-ui,sans-serif;border:2px solid #b89655}
+.challenge-objective{border-bottom:2px solid #627e74;background:#f5e9c6;padding:4px 8px;
+  font:700 12px 'Chakra Petch',system-ui,sans-serif;text-align:center}
+.challenge-result{padding:8px;margin:0 0 9px;border:3px solid #ae9460;background:#fff2c3;
+  font:800 13px 'Chakra Petch',system-ui,sans-serif;color:#6b582e}
+.challenge-result.challenge-failed{border-color:#b78c81;background:#f8e4db;color:#834a3d}
+@media(max-width:375px){.challenge-heading{font-size:16px}.challenge-code-row input{font-size:11px}
+  .challenge-card{padding:9px 7px}.challenge-actions button{font-size:12px}}
