@@ -9,7 +9,8 @@ function addEvent(events: BattleEvent[], turn: number, kind: BattleEvent['kind']
 export function createBattle(encounter: EncounterDefinition = TASK, model: ModelDefinition = INITIAL_MODEL, seed = 1, squad: readonly ModelDefinition[] = MODELS): BattleState {
   return {
     encounterId: encounter.id, modelId: model.id, squadIds: [...new Set([model.id, ...squad.map(companion => companion.id)])], seed, turn: 0, ap: AP_LIMIT, maxAp: AP_LIMIT,
-    stageIndex: 0, goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
+    stageIndex: 0, guarded: false, lastMoveCategory: null, lastMoveTurn: -1,
+    goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
     outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
     events: [{ seq: 0, turn: 0, kind: 'ENCOUNTER_STARTED', message: encounter.name + ' appeared!' },
       { seq: 1, turn: 0, kind: 'CHARACTER_SELECTED', message: model.displayName + ' entered battle.' }],
@@ -29,14 +30,28 @@ export function applyMove(
   const stage = encounter.stages[next.stageIndex];
   addEvent(next.events, next.turn, 'MOVE_USED', model.displayName + ' used ' + move.name + '!');
   let feedback = '';
-  if (!stage.accepts.includes(move.category)) {
+  const matches = stage.accepts.includes(move.category);
+  const comboBonus = matches && move.category === 'verification' &&
+    state.lastMoveCategory === 'research' && state.lastMoveTurn === state.turn
+    ? 12 : 0;
+  next.lastMoveCategory = matches ? move.category : null;
+  next.lastMoveTurn = next.turn;
+  if (!matches) {
     feedback = move.name + ' cannot advance ' + stage.label + '. ' + stage.hint;
     addEvent(next.events, next.turn, 'STAGE_PROGRESS_CHANGED', 'No progress. ' + stage.hint, 0);
   } else {
     const remaining = next.goals[next.stageIndex] - next.progress[next.stageIndex];
-    const gain = Math.min(remaining, move.power);
+    const gain = Math.min(remaining, move.power + comboBonus);
+    const appliedBonus = Math.max(0, gain - Math.min(remaining, move.power));
+    if (appliedBonus > 0) addEvent(next.events, next.turn, 'COMBO_TRIGGERED',
+      'Evidence verified! Research + Verification combo +' + appliedBonus + ' (simulated).', appliedBonus);
+    if (move.tacticalEffect === 'guard' && next.turn <= 2) {
+      next.guarded = true;
+      addEvent(next.events, next.turn, 'STATUS_APPLIED', 'Code review raised a guard against the incoming counter.');
+    }
     next.progress[next.stageIndex] += gain;
-    feedback = move.name + ' advanced ' + stage.label + ' by ' + gain + '. ' + move.lesson;
+    feedback = move.name + ' advanced ' + stage.label + ' by ' + gain + '. ' + move.lesson +
+      (appliedBonus ? ' Research + Verification combo!' : '');
     addEvent(next.events, next.turn, 'STAGE_PROGRESS_CHANGED', stage.label + ' +' + gain, gain);
     if (next.progress[next.stageIndex] >= next.goals[next.stageIndex]) {
       addEvent(next.events, next.turn, 'STAGE_COMPLETED', stage.label + ' complete!');
@@ -56,7 +71,12 @@ export function applyMove(
 /** Resolve enemy effects after either a move or a switch. */
 function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFeedback: string): BattleState {
   let feedback = initialFeedback;
-  if (next.turn === 2) {
+  if (next.turn === 2 && next.guarded) {
+    next.guarded = false;
+    addEvent(next.events, next.turn, 'STATUS_CONSUMED', 'Guard absorbed the enemy special.');
+    addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' used ' + encounter.special + ', but your guard blocked it!');
+    feedback += ' Guard blocked ' + encounter.special + '!';
+  } else if (next.turn === 2) {
     const effect = encounter.specialEffect ?? 'scope-shift';
     if (effect === 'regression' && next.stageIndex > 0) {
       // A regression can reopen a recently completed stage.
@@ -72,6 +92,10 @@ function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFe
     }
   } else {
     addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' is watching your next move.');
+  }
+  if (next.guarded && next.turn > 2) {
+    next.guarded = false;
+    addEvent(next.events, next.turn, 'STATUS_CONSUMED', 'Guard expired.');
   }
   if (next.ap <= 0 || next.turn >= TURN_LIMIT) {
     next.outcome = 'lost';
@@ -91,7 +115,8 @@ export function switchModel(
       state.modelId === targetModelId || !state.squadIds.includes(targetModelId)) return state;
   const nextModel = roster.find(companion => companion.id === targetModelId);
   if (!nextModel) return state;
-  const next: BattleState = { ...state, modelId: targetModelId, turn: state.turn + 1,
+  const next: BattleState = { ...state, modelId: targetModelId,
+    lastMoveCategory: null, lastMoveTurn: -1, turn: state.turn + 1,
     progress: [...state.progress], goals: [...state.goals], events: [...state.events] };
   addEvent(next.events, next.turn, 'MODEL_SWITCHED', 'Go! ' + nextModel.displayName + '! One turn used, no AP spent.');
   return finishTurn(next, encounter, nextModel.displayName + ' switched in.');
