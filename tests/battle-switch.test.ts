@@ -38,8 +38,8 @@ describe('battle squad switching', () => {
     state = applyMove(state, 'code-review', MODELS[1], TASK);
     state = switchModel(state, 'astra', TASK, MODELS);
     state = applyMove(state, 'self-correction', INITIAL_MODEL, TASK);
-    state = applyMove(state, 'self-correction', INITIAL_MODEL, TASK);
     expect(state.outcome).toBe('won');
+    expect(state.turn).toBe(6);
     expect(state.turn).toBeLessThanOrEqual(8);
     const solo = ['deep-think','code-execution','self-correction','self-correction']
       .reduce((s,id) => applyMove(s,id,INITIAL_MODEL,TASK),createBattle(TASK,INITIAL_MODEL));
