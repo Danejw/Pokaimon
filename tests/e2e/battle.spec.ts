@@ -155,7 +155,7 @@ test('ModelDex and selected squad persist across reload and control battle selec
   await page.goto('./?encounter=task');
   await page.getByRole('button', { name: 'MODELDEX' }).click();
   await expect(page.getByRole('heading', { name: 'ModelDex' })).toBeVisible();
-  await expect(page.locator('.dex-entry')).toHaveCount(3);
+  await expect(page.locator('.dex-entry')).toHaveCount(4);
   await expect(page.getByText('MOVES DISCOVERED')).toBeVisible();
   await page.screenshot({ path:'test-results/visual/modeldex-'+testInfo.project.name+'.png', fullPage:true });
   await page.getByRole('button', { name: 'EDIT TEAM' }).click();
