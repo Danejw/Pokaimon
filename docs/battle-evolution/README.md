@@ -1,6 +1,6 @@
 # Pokaimon Battle Evolution: five-phase expansion
 
-**Status:** Approved five-phase direction; **planning only, 0/5 implementation phases complete**.
+**Status:** Phases 1–3 implemented and acceptance-tested on this branch; Phase 4 replay/challenges implemented with an additional combo effect awaiting final QA; Phase 5 registry, source review, candidate importer and fourth playable model implemented with final CI and screen review pending. See [TASKS.md](TASKS.md) for evidence and blockers.
 **Planning baseline:** `main` at `70be65c372b8e785abb3fa0d0fea5d993194d9da` (merged PR #3, November 20, 2026).
 **Working branch:** `feat/battle-evolution`; this branch begins from that baseline. [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4). No overworld in these five phases.
 **Scope:** Expand the existing browser battle into a fun, strategically deep, progressively unlockable, replayable AI-literacy game and make future model releases easy to incorporate.
@@ -84,4 +84,4 @@ flowchart TD
 
 ## Review sequence
 
-Read [Phase 1](PHASE_1_BATTLE_SYSTEM.md) first, agree on the switch economy and two playable strategies, then implement 1A. Advance only after completing the phase gate. The five phase files are forward-looking specifications and may be refined when playtests reveal better mechanics; document such decisions rather than silently shifting scope.
+Read [Phase 1](PHASE_1_BATTLE_SYSTEM.md) first, agree on the switch economy and two playable strategies, then implement 1A. Advance only after completing the phase gate. The five phase files are specifications and execution references and may be refined when playtests reveal better mechanics; document such decisions rather than silently shifting scope.
