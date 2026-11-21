@@ -9,6 +9,7 @@ export interface ModelDefinition {
   id: string; provider: string; displayName: string; version: string;
   description: string; source: string; verifiedAt: string; moveIds: readonly [string,string,string,string];
   palette: string; focus: number; tempo: number; precision: number;
+  passiveId?: 'analysis-boost'|'audit-ward'|'verification-link';
 }
 export interface StageDefinition {
   id: string; label: string; goal: number; accepts: readonly Capability[];

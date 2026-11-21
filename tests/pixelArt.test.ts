@@ -60,7 +60,7 @@ describe('clean, readable original pixel character art', () => {
   });
 
   it('renders identical character source art in battle and the party guide', () => {
-    expect(modelSprites).toBe(handDrawnModels);
+    for(const [id,art] of Object.entries(handDrawnModels))expect(modelSprites[id]).toBe(art);
     expect(enemySprites).toBe(handDrawnEnemies);
     expect(modelSprites.grok.pixels.join('')).not.toEqual(modelSprites.astra.pixels.join(''));
     expect(modelSprites.astra.pixels.join('')).not.toEqual(modelSprites.fable.pixels.join(''));

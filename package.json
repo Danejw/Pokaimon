@@ -12,7 +12,9 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "dev:agent": "tsx server/start.ts",
-    "test:agui": "vitest run tests/agui.test.ts"
+    "test:agui": "vitest run tests/agui.test.ts",
+    "models:scan": "node scripts/evolve-models.mjs --live",
+    "models:validate": "node scripts/evolve-models.mjs --validate-only"
   },
   "dependencies": {
     "phaser": "4.2.1",

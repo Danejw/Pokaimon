@@ -19,6 +19,10 @@ export function ModelDex({progress,onHome,onTeam}:Navigation&{progress:Progress;
       <div className="guide-card-copy">
         <strong>{model.displayName}</strong>
         <small>{model.provider.toUpperCase()} · VER. {model.version}</small>
+        {getCatalogEntry(model.id)?.firstSeenAt && <small className="evolution-new">✦ NEW EVOLUTION · {getCatalogEntry(model.id)?.firstSeenAt}</small>}
+        {getCatalogEntry(model.id)?.evolvesFrom && <small>EVOLVES FROM {roster.find(older=>older.id===getCatalogEntry(model.id)?.evolvesFrom)?.displayName??getCatalogEntry(model.id)?.evolvesFrom}</small>}
+        {getCatalogEntry(model.id)?.familyId && <small>EVOLUTION FAMILY · {getCatalogEntry(model.id)?.familyId?.toUpperCase()}</small>}
+        {model.passiveId && <small>GAME PASSIVE · {model.passiveId.toUpperCase().replaceAll('-',' ')}</small>}
         <small>{progress.teamIds.includes(model.id)?'IN YOUR TEAM':'AVAILABLE'} · {progress.winsByModel[model.id]??0} UNIQUE TASK CLEARS</small>
         <p>{model.description}</p>
         <p>GAME BALANCE · FOCUS {model.focus} · TEMPO {model.tempo} · PRECISION {model.precision}</p>

@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { handDrawnModels, handDrawnEnemies, handDrawnTrainer, type PixelDrawing } from './handDrawnSprites';
 import { spriteCanvas } from './spriteRaster';
+import generatedSprites from './generatedSprites.json';
 
 /**
  * The same original hand-authored sprites power Phaser battle and React's
@@ -11,7 +12,7 @@ export type ModelPose = 'idle' | 'charge' | 'attack' | 'victory' | 'hurt';
 export type PixelArt = PixelDrawing;
 
 export const enemySprites: Record<string, PixelArt> = handDrawnEnemies;
-export const modelSprites: Record<string, PixelArt> = handDrawnModels;
+export const modelSprites: Record<string, PixelArt> = {...handDrawnModels,...(generatedSprites as Record<string,PixelArt>)};
 /** Original generic sprite used when a new catalog model has no authored art yet. */
 export const fallbackModelSprite: PixelArt = {
   pixelSize: 3,

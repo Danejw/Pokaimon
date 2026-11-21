@@ -1,4 +1,5 @@
 import type { ModelDefinition, MoveDefinition } from '../battle/types';
+import generatedModels from './generatedModels.json';
 
 /** Game publication approval and real-world evidence review are separate decisions. */
 export type PublicationStatus = 'candidate' | 'approved' | 'retired';
@@ -16,6 +17,13 @@ export interface ModelCatalogEntry {
     verifiedCapabilities: readonly string[];
     providerModelId?: string;
   };
+  familyId?:string;
+  branchKey?:string;
+  evolvesFrom?:string|null;
+  generation?:number;
+  firstSeenAt?:string;
+  sourceDigest?:string;
+  passiveId?:'analysis-boost'|'audit-ward'|'verification-link';
   description: string;
   moveIds: readonly [string, string, string, string];
   palette: string;
@@ -25,7 +33,7 @@ export interface ModelCatalogEntry {
 
 /** Migrated from the existing playable roster. Its old documentation dates
  * were content-entry dates, not proof of current capability verification. */
-export const MODEL_CATALOG: readonly ModelCatalogEntry[] = [
+export const LEGACY_MODELS: readonly ModelCatalogEntry[] = [
   {
     id:'astra',publicationStatus:'approved',
     facts:{provider:'OpenAI',displayName:'GPT-6.2 Astra',version:'6.2',
@@ -72,6 +80,7 @@ export const MODEL_CATALOG: readonly ModelCatalogEntry[] = [
     palette:'#b6a0d8',balance:{focus:4,tempo:3,precision:4,patch:'1'},
   },
 ];
+export const MODEL_CATALOG: readonly ModelCatalogEntry[] = [...LEGACY_MODELS,...generatedModels as ModelCatalogEntry[]];
 
 export function validateCatalog(entries: readonly ModelCatalogEntry[], moves: Record<string,MoveDefinition>): string[] {
   const errors: string[]=[];
@@ -102,6 +111,9 @@ export function validateCatalog(entries: readonly ModelCatalogEntry[], moves: Re
       errors.push('Unreviewed capability claims in '+entry.id);
     if(entry.publicationStatus==='approved'&&entry.facts.reviewStatus!=='reviewed')
       errors.push('Unreviewed playable model '+entry.id);
+    if(entry.id.startsWith('ev-')&&(!entry.familyId||!entry.sourceDigest||!entry.firstSeenAt))
+      errors.push('Generated model missing provenance '+entry.id);
+    if(entry.evolvesFrom===entry.id)errors.push('Model cannot evolve from itself '+entry.id);
   }
   return errors;
 }
@@ -113,6 +125,7 @@ export function catalogToModels(entries: readonly ModelCatalogEntry[]): ModelDef
     verifiedAt:entry.facts.recordedAt,description:entry.description,
     moveIds:entry.moveIds,palette:entry.palette,
     focus:entry.balance.focus,tempo:entry.balance.tempo,precision:entry.balance.precision,
+    passiveId:entry.passiveId,
   }));
 }
 

@@ -97,7 +97,7 @@ for(const provider of SUPPORTED_PROVIDERS){
     if(!evidence.verified){
       holds.push({provider,id:model.id,reason:evidence.reason});continue;
     }
-    const compiled=compileEvolution(provider,{...model,...evidence},known,seenKeys,today);
+    const compiled=compileEvolution(provider,{...model,officialEvidence:evidence.verified,sourceUrl:evidence.sourceUrl},known,seenKeys,today);
     if(compiled.hold){holds.push({provider,id:model.id,reason:compiled.hold});continue;}
     if(sprites[compiled.entry.id]||generated.some(e=>e.id===compiled.entry.id)){
       holds.push({provider,id:model.id,reason:'duplicate-game-id'});continue;

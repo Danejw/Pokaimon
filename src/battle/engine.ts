@@ -12,7 +12,7 @@ export function createBattle(encounter: EncounterDefinition = TASK, model: Model
   const maxTurns=encounter.budget?.turns ?? TURN_LIMIT;
   return {
     encounterId: encounter.id, modelId: model.id, squadIds: [...new Set([model.id, ...squad.map(companion => companion.id)])], seed, turn: 0, ap: maxAp, maxAp, maxTurns,
-    stageIndex: 0, guarded: false, lastMoveCategory: null, lastMoveTurn: -1, bossPhaseTriggered: false,
+    stageIndex: 0, guarded: model.passiveId==='audit-ward', lastMoveCategory: null, lastMoveTurn: -1, bossPhaseTriggered: false,
     goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
     ...(encounter.mechanic === 'hydra' ? { hydra: { clueKnown:false, falseConfidence:0 } } : {}),
     ...(encounter.mechanic === 'golem' || encounter.mechanic === 'scope' ?
@@ -55,7 +55,9 @@ export function applyMove(
     addEvent(next.events, next.turn, 'STAGE_PROGRESS_CHANGED', 'No progress. ' + stage.hint, 0);
   } else {
     const remaining = next.goals[next.stageIndex] - next.progress[next.stageIndex];
-    const gain = Math.min(remaining, move.power + comboBonus);
+    const passiveBonus=model.passiveId==='analysis-boost' && next.turn===1 && move.category==='reasoning' ? 8 :
+      model.passiveId==='verification-link' && comboBonus>0 ? 8 : 0;
+    const gain = Math.min(remaining, move.power + comboBonus + passiveBonus);
     const appliedBonus = Math.max(0, gain - Math.min(remaining, move.power));
     if (appliedBonus > 0) addEvent(next.events, next.turn, 'COMBO_TRIGGERED',
       'Evidence verified! Research + Verification combo +' + appliedBonus + ' (simulated).', appliedBonus);
@@ -229,6 +231,8 @@ export function switchModel(
   const nextModel = roster.find(companion => companion.id === targetModelId);
   if (!nextModel) return state;
   const next: BattleState = { ...state, modelId: targetModelId,
+    guarded:state.guarded || (nextModel.passiveId==='audit-ward' &&
+      !state.events.some(event=>event.kind==='MODEL_SWITCHED' && event.modelId===nextModel.id)),
     lastMoveCategory: null, lastMoveTurn: -1, turn: state.turn + 1,
     progress: [...state.progress], goals: [...state.goals], events: [...state.events] };
   next.events.push({seq:next.events.length,turn:next.turn,kind:'MODEL_SWITCHED',
