@@ -208,3 +208,67 @@ test('team builder prevents a softlocked single-model squad', async ({ page }) =
   await page.getByRole('button', { name: 'TEAM' }).click();
   await expect(page.getByRole('checkbox', { name: 'Team GPT-6.2 Astra' })).toBeChecked();
 });
+
+test('campaign missions unlock serially after a real win and remain saved on reload', async ({ page }, testInfo) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: 'CAMPAIGN' }).click();
+  await expect(page.getByRole('heading', { name: 'Trainer campaign' })).toBeVisible();
+  await expect(page.locator('.campaign-chapter')).toHaveCount(3);
+  await expect(page.getByRole('button', { name: /Patch Sprinter/ })).toBeDisabled();
+  await page.screenshot({ path:'test-results/visual/campaign-locked-'+testInfo.project.name+'.png', fullPage:true });
+  await page.getByRole('button', { name: /First Assignment/ }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  for (const move of ['Deep Think','Code Execution','Self-Correction','Self-Correction']) {
+    await expect(page.getByRole('button', { name: move })).toBeVisible();
+    await page.getByRole('button', { name: move }).click();
+  }
+  await expect(page.getByRole('heading', { name: 'VICTORY!' })).toBeVisible();
+  await page.getByRole('button', { name: /CHAPTER SELECT/ }).click();
+  await expect(page.getByRole('button', { name: /Patch Sprinter/ })).toBeEnabled();
+  await expect(page.locator('.campaign-progress')).toContainText('1/9');
+  await page.screenshot({ path:'test-results/visual/campaign-unlocked-'+testInfo.project.name+'.png', fullPage:true });
+  await page.reload();
+  await page.getByRole('button', { name: 'CAMPAIGN' }).click();
+  await expect(page.getByRole('button', { name: /Patch Sprinter/ })).toBeEnabled();
+});
+
+test('workshop boss changes phase visibly with original creature art and can be defeated', async ({ page }, testInfo) => {
+  await page.addInitScript(() => localStorage.setItem('pokaimon:progress:v3', JSON.stringify({
+    schema:3,cleared:['task'],teamIds:['astra','grok','fable'],
+    discoveredMoves:[],winsByModel:{astra:1},useAlternateLoadout:false,
+    missionsCleared:['workshop-task','workshop-rival'],
+  })));
+  await page.goto('./');
+  await page.getByRole('button', { name: 'CAMPAIGN' }).click();
+  await page.getByRole('button', { name: /Scope Giant/ }).click();
+  await expect(page.locator('.enemy-status')).toContainText('SCOPE GIANT');
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await page.getByRole('button', { name: 'Deep Think' }).click();
+  await page.getByRole('button', { name: 'Code Execution' }).click();
+  await expect(page.locator('.boss-intent')).toContainText('FINAL AUDIT');
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase','command');
+  await page.screenshot({ path:'test-results/visual/boss-phase-'+testInfo.project.name+'.png', fullPage:true });
+  await page.getByRole('button', { name: 'Self-Correction' }).click();
+  await page.getByRole('button', { name: 'Self-Correction' }).click();
+  await expect(page.getByRole('heading', { name: 'VICTORY!' })).toBeVisible();
+  await expect(page.locator('.boss-result')).toContainText('FINAL AUDIT');
+  await page.getByRole('button', { name: /CHAPTER SELECT/ }).click();
+  await expect(page.getByText('THE WORKSHOP EMBLEM EARNED')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Source Hunt/ })).toBeEnabled();
+});
+
+test('rival punishes repeating a tactic without hiding the outcome', async ({ page }, testInfo) => {
+  await page.addInitScript(() => localStorage.setItem('pokaimon:progress:v3', JSON.stringify({
+    schema:3,cleared:['task'],teamIds:['astra','grok','fable'],
+    discoveredMoves:[],winsByModel:{astra:1},useAlternateLoadout:false,
+    missionsCleared:['workshop-task'],
+  })));
+  await page.goto('./');
+  await page.getByRole('button', { name: 'CAMPAIGN' }).click();
+  await page.getByRole('button', { name: /Patch Sprinter/ }).click();
+  await page.getByRole('button', { name: 'Select Grok 4.7' }).click();
+  await page.getByRole('button', { name: 'Max Reasoning' }).click();
+  await page.getByRole('button', { name: 'Max Reasoning' }).click();
+  await expect(page.locator('.wild-counter')).toContainText('anticipated that repeated reasoning move');
+  await page.screenshot({ path:'test-results/visual/rival-counter-'+testInfo.project.name+'.png', fullPage:true });
+});
