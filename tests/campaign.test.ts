@@ -58,7 +58,8 @@ describe('three-chapter campaign and rival bosses', () => {
     const originalGoal=state.goals[state.stageIndex];
     const repeat=applyMove(state,'max-reasoning',grok,rival.encounter);
     expect(repeat.events.some(e=>e.kind==='RIVAL_ACTED')).toBe(true);
-    expect(repeat.goals[1]).toBe(originalGoal+rival.encounter.rival!.repeatPenalty);
+    // Turn two also applies the regular encounter's Scope Shift (+14).
+    expect(repeat.goals[1]).toBe(originalGoal+rival.encounter.rival!.repeatPenalty+14);
     const alternate=applyMove(state,'context-recall',grok,rival.encounter);
     expect(alternate.events.some(e=>e.kind==='RIVAL_ACTED')).toBe(false);
   });
