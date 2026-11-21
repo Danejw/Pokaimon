@@ -1,4 +1,5 @@
 import type { EncounterDefinition, ModelDefinition, MoveDefinition } from '../battle/types';
+import { MODEL_CATALOG, catalogToModels } from './modelCatalog';
 
 export const MOVES: Record<string, MoveDefinition> = {
   'deep-think': { id: 'deep-think', name: 'Deep Think', category: 'reasoning', power: 42, cost: 1, animation: 'pulse', description: 'Break a difficult problem into smaller steps.', lesson: 'Reasoning helps define a plan. A plan alone cannot finish or verify a task.' },
@@ -11,30 +12,8 @@ export const MOVES: Record<string, MoveDefinition> = {
   'code-review': { id:'code-review', name:'Code Review', category:'coding', power:42, cost:1, tacticalEffect:'guard', animation:'shield', description:'Inspect code changes for bugs and useful fixes.', lesson:'Review helps identify defects and check a proposed fix. Executed tests are still necessary for real verification.' },
   'extended-thinking': { id:'extended-thinking', name:'Extended Thinking', category:'reasoning', power:43, cost:1, animation:'pulse', description:'Work through a complicated problem deliberately.', lesson:'Reasoning time is valuable for complex decisions, but reasoning is different from running a test.' },
 };
-export const INITIAL_MODEL: ModelDefinition = {
-  id: 'astra', provider: 'OpenAI', displayName: 'GPT-6.2 Astra', version: '6.2',
-  description: 'An AI model with a game-balanced reasoning-oriented loadout.', source: 'https://developers.openai.com/api/docs/models/gpt-6.2-astra',
-  verifiedAt: '2026-11-19', moveIds: ['deep-think', 'deep-research', 'code-execution', 'self-correction'],
-  palette: '#7ce7d1', focus: 4, tempo: 3, precision: 4,
-};
-
-export const MODELS: readonly ModelDefinition[] = [
-  INITIAL_MODEL,
-  {
-    id:'grok', provider:'xAI', displayName:'Grok 4.7', version:'4.7',
-    description:'A lively, search-oriented gameplay loadout. Stats reflect game balance.',
-    source:'https://x.ai/news/grok-4-7', verifiedAt:'2026-11-19',
-    moveIds:['max-reasoning','context-recall','parallel-search','code-review'],
-    palette:'#b9a7ff', focus:4, tempo:4, precision:3,
-  },
-  {
-    id:'fable', provider:'Anthropic', displayName:'Claude Fable 5.2', version:'5.2',
-    description:'A careful technical reviewer gameplay loadout. Stats reflect game balance.',
-    source:'https://platform.claude.com/docs/en/models/fable-5-2/overview', verifiedAt:'2026-11-19',
-    moveIds:['extended-thinking','context-recall','code-review','self-correction'],
-    palette:'#f5ae82', focus:4, tempo:3, precision:4,
-  },
-];
+export const MODELS: readonly ModelDefinition[] = catalogToModels(MODEL_CATALOG);
+export const INITIAL_MODEL: ModelDefinition = MODELS[0];
 export function getModel(id: string): ModelDefinition | undefined {
   return MODELS.find(model => model.id === id);
 }
