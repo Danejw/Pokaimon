@@ -109,6 +109,7 @@ export function BattlePanel({
       : phase === 'attack' ? (model?.displayName ?? 'AI') + ' used ' + attack?.move.name + '!'
       : phase === 'result' && battle?.outcome === 'won' ? encounter.name + ' completed!'
       : phase === 'result' ? 'Your team ran out of moves!'
+      : phase === 'command' && switching ? 'Choose a companion. Switching uses one turn and no AP.'
       : phase === 'command' && counterEvent ? encounter.name + ' used ' + encounter.special + '! Choose your response.'
       : phase === 'command' && currentStage ? (difficulty === 'hard' ? 'Choose your next move.' : 'Choose a move for ' + currentStage.label + '.')
       : narration || 'What should ' + (model?.displayName ?? 'your AI') + ' do?';
@@ -277,10 +278,9 @@ export function BattlePanel({
       </div>}
 
       {phase === 'command' && <div className="command-panel">
-        <div className="command-header"><span>WHAT WILL {model?.displayName.toUpperCase()} DO?</span>
+        <div className="command-header"><span>{switching ? 'CHOOSE COMPANION' : model?.displayName.toUpperCase()}</span>
+          <button className="squad-action" onClick={() => setSwitching(old => !old)} aria-expanded={switching}>{switching ? '◀ MOVES' : '↺ SWITCH (1 TURN)'}</button>
           <span>TURN {battle?.turn ?? 0}</span></div>
-        <div className="squad-action-row"><span>{switching ? 'CHOOSE A COMPANION' : 'SQUAD READY'}</span>
-          <button className="squad-action" onClick={() => setSwitching(old => !old)} aria-expanded={switching} aria-controls="switch-options">{switching ? '◀ MOVES' : '↺ SWITCH · 1 TURN'}</button></div>
         {switching ? <div id="switch-options" className="squad-options" role="group" aria-label="Switch companion">
           {companions.map((companion, index) => <button key={companion.id}
             ref={node => { switchButtons.current[index] = node; }}
