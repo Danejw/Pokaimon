@@ -1,0 +1,26 @@
+[
+  {
+    "provider": "openai",
+    "officialModelId": "gpt-6.2-astra",
+    "gameId": "astra",
+    "generation": 0
+  },
+  {
+    "provider": "anthropic",
+    "officialModelId": "claude-fable-5-2",
+    "gameId": "fable",
+    "generation": 0
+  },
+  {
+    "provider": "anthropic",
+    "officialModelId": "claude-opus-5-5",
+    "gameId": "opus55",
+    "generation": 0
+  },
+  {
+    "provider": "xai",
+    "officialModelId": "grok-4.7",
+    "gameId": "grok",
+    "generation": 0
+  }
+]
