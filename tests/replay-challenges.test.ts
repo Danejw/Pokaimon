@@ -78,14 +78,15 @@ describe('Phase 4: deterministic variations and challenge constraints',()=>{
 describe('Phase 4: reproducible battles and earned local achievements',()=>{
   it('replays a switched battle from a bounded action log, checking its digest',()=>{
     const encounter=makeEncounter('task',101,['extra-audit'])!;
-    let state=createBattle(encounter,INITIAL_MODEL,101,MODELS);
+    const squad=MODELS.slice(0,3);
+    let state=createBattle(encounter,INITIAL_MODEL,101,squad);
     state=applyMove(state,'deep-think',INITIAL_MODEL,encounter);
-    state=switchModel(state,'grok',encounter,MODELS);
+    state=switchModel(state,'grok',encounter,squad);
     state=applyMove(state,'code-review',MODELS[1],encounter);
-    state=switchModel(state,'astra',encounter,MODELS);
+    state=switchModel(state,'astra',encounter,squad);
     state=applyMove(state,'self-correction',INITIAL_MODEL,encounter);
     state=applyMove(state,'self-correction',INITIAL_MODEL,encounter);
-    const replay=buildBattleReplay(state,{encounterId:'task',modifierIds:['extra-audit'],roster:MODELS});
+    const replay=buildBattleReplay(state,{encounterId:'task',modifierIds:['extra-audit'],roster:squad});
     const reconstructed=restoreBattleReplay(replay);
     expect(reconstructed).toEqual(state);
     expect(restoreBattleReplay({...replay,checksum:'tampered'})).toBeNull();
