@@ -1,0 +1,15 @@
+{
+  "sources": [
+    {
+      "provider": "xai",
+      "models": [
+        {
+          "id": "grok-99.1",
+          "displayName": "Fictional Grok 99.1",
+          "officialEvidence": true,
+          "sourceUrl": "https://not-xai.example.com/grok-99.1"
+        }
+      ]
+    }
+  ]
+}

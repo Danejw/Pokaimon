@@ -5,7 +5,7 @@
 import { duckMusic, getAudioEngine, playNoise, playTone } from './audioEngine';
 
 export type Cue = 'select' | 'confirm' | 'encounter' | 'throw' | 'summon'
-  | 'attack' | 'hit' | 'win' | 'lose' | 'text';
+  | 'attack' | 'hit' | 'win' | 'lose' | 'text' | 'combo' | 'boss-phase';
 let lastTextAt = -Infinity;
 
 export function playCue(kind: Cue, enabled: boolean, category = ''): void {
@@ -71,6 +71,13 @@ export function playCue(kind: Cue, enabled: boolean, category = ''): void {
       }
       break;
     }
+    case 'combo':
+      [77,81,84,89].forEach((n,i)=>playTone(audio,'effects',n,t+i*0.055,0.13,0.065,'triangle'));
+      break;
+    case 'boss-phase':
+      playNoise(audio,'effects',t,0.20,0.10,720,'lowpass');
+      [49,52,56].forEach((n,i)=>playTone(audio,'effects',n,t+i*0.09,0.19,0.09,'sawtooth'));
+      break;
     case 'hit':
       playNoise(audio, 'effects', t, 0.095, 0.13, 870, 'lowpass');
       playTone(audio, 'effects', category === 'verification' ? 66 : 55,

@@ -8,7 +8,10 @@ This is the repository-wide entry point for AI coding agents. Keep it short and 
 
 Before making changes, read the relevant sections of:
 - [Game Design](docs/GAME_DESIGN.md) for what to build, rules, terminology, educational goals, scope and non-goals.
-- [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) for the current phase, vertical slices, acceptance criteria, and Go/No-go.
+- [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) for the completed historical MVP phases and baseline.
+- [Battle Evolution roadmap](docs/battle-evolution/README.md)
+- [Phase 6: Battle Intelligence plan](docs/battle-evolution/PHASE_6_BATTLE_INTELLIGENCE.md) and [Phase 8: autonomous model evolution plan](docs/battle-evolution/PHASE_8_AUTONOMOUS_MODEL_EVOLUTION.md); implement Phase 6 fully before Phase 8, using [the next expansion tracker](docs/battle-evolution/NEXT_EXPANSION_TASKS.md). Both are plans only, do not mark implemented.
+- [Battle Evolution roadmap](docs/battle-evolution/README.md) and [tracker](docs/battle-evolution/TASKS.md) for the **next** five post-MVP phases; read only the relevant detailed phase file, work serially, and do not mark planning as implementation.
 - [Retro Battle Direction](docs/RETRO_BATTLE_DIRECTION.md) for the **currently approved** player-driven random encounter, trainer/summon, pixel-art animation and battle presentation. This supersedes older screen-menu assumptions.
 - Existing source code and tests. **Actual repository behavior is the source of truth for what exists.** If documentation disagrees with code, report and resolve the discrepancy before changing behavior.
 

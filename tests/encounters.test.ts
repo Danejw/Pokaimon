@@ -3,7 +3,7 @@ import { ENCOUNTERS, canUseModel, isUnlocked, validateEncounters } from '../src/
 import { MODELS } from '../src/content/core';
 import { createBattle, applyMove } from '../src/battle/engine';
 import type { BattleState, ModelDefinition, EncounterDefinition } from '../src/battle/types';
-import { loadProgress, markCleared, saveProgress } from '../src/storage/progress';
+import { defaultProgress, loadProgress, markCleared, saveProgress } from '../src/storage/progress';
 
 function canWin(model:ModelDefinition,encounter:EncounterDefinition):boolean{
   let frontier:BattleState[]=[createBattle(encounter,model)];
@@ -43,9 +43,9 @@ describe('encounter campaign',()=>{
   it('persisted progress survives reload and corrupt storage',()=>{
     const map=new Map<string,string>();
     vi.stubGlobal('localStorage',{getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>map.set(k,v)});
-    const p=markCleared({schema:1,cleared:[]},'task');saveProgress(p);expect(loadProgress()).toEqual(p);
+    const p=markCleared({...defaultProgress,teamIds:[...defaultProgress.teamIds]},'task');saveProgress(p);expect(loadProgress()).toEqual(p);
     expect(markCleared(p,'task')).toBe(p);
-    map.set('pokaimon:progress:v1','broken');expect(loadProgress()).toEqual({schema:1,cleared:[]});
+    map.set('pokaimon:progress:v4','broken');expect(loadProgress()).toEqual(defaultProgress);
     vi.unstubAllGlobals();
   });
   it('regression reopens completed coding stage',()=>{

@@ -31,7 +31,7 @@ test('pixel handheld screens render with consistent model portrait sprites', asy
 
   await page.getByRole('button', { name: /HOME/i }).click();
   await page.getByRole('button', { name: /FIELD GUIDE/i }).click();
-  await expect(page.locator('.guide-portrait .pixel-portrait')).toHaveCount(3);
+  await expect(page.locator('.guide-portrait .pixel-portrait')).toHaveCount(4);
   await page.screenshot({ path: dir + '/guide-' + testInfo.project.name + '.png', fullPage: true });
 });
 
@@ -142,7 +142,7 @@ test('tactical preview matches real stage progress and earns the four-turn medal
   await expect(stage).toHaveAttribute('data-phase','command');
   await expect(page.locator('.stage-intel')).toContainText('STEP 2/3');
   await expect(page.getByRole('button', { name:'Code Execution' })).toHaveClass(/is-effective/);
-  await expect(page.locator('.tactical-help')).toContainText('SCOPE SHIFT');
+  await expect(page.locator('.battle-intent')).toContainText('Scope Shift');
   await page.getByRole('button', { name:'Code Execution' }).click();
   await expect(stage).toHaveAttribute('data-phase','command');
   await expect(page.locator('.stage-intel')).toContainText('STEP 3/3');
@@ -204,10 +204,10 @@ test('decision prompt is complete when controls become actionable', async ({ pag
   await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
   await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
   // Command phase must never expose clickable moves under half-typed narration.
-  await expect(page.locator('.retro-dialogue p')).toContainText('What should GPT-6.2 Astra do?');
+  await expect(page.locator('.retro-dialogue p')).toContainText('Choose a move for Understand & plan.');
   await page.getByRole('button', { name: 'Deep Think' }).click();
   await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'command');
-  await expect(page.locator('.retro-dialogue p')).toContainText('complete!');
+  await expect(page.locator('.retro-dialogue p')).toContainText('Choose a move for Apply a solution.');
 });
 
 test('enemy counter leaves every battle command visible in a 390x844 portrait viewport', async ({ page }, testInfo) => {
@@ -222,13 +222,14 @@ test('enemy counter leaves every battle command visible in a 390x844 portrait vi
   await page.getByRole('button', { name: 'Code Execution' }).click();
   await expect(stage).toHaveAttribute('data-phase', 'command');
   await expect(page.locator('.wild-counter')).toBeVisible();
-  await expect(page.locator('.retro-dialogue p')).toContainText('Scope Shift');
+  await expect(page.locator('.wild-counter')).toContainText('Scope Shift');
+  await expect(page.locator('.retro-dialogue p')).toContainText('The problem changed');
   const bounds = await page.evaluate(() => ({
     pageHeight: document.documentElement.scrollHeight,
     pageWidth: document.documentElement.scrollWidth,
     viewportHeight: innerHeight,
     viewportWidth: innerWidth,
-    menuBottom: document.querySelector('.tactical-help')!.getBoundingClientRect().bottom,
+    menuBottom: document.querySelector('.command-panel')!.getBoundingClientRect().bottom,
   }));
   expect(bounds.pageWidth).toBeLessThanOrEqual(bounds.viewportWidth + 1);
   expect(bounds.pageHeight).toBeLessThanOrEqual(bounds.viewportHeight + 8);
@@ -251,6 +252,7 @@ test('difficulty defaults to medium, persists, and controls battle spoilers', as
   await page.getByRole('button', { name: /SETTINGS/i }).click();
   await page.getByRole('combobox', { name: 'Difficulty' }).selectOption('hard');
   await page.reload();
+  await page.getByRole('button', { name: /SETTINGS/i }).click();
   await expect(page.getByRole('combobox', { name: 'Difficulty' })).toHaveValue('hard');
   await page.getByRole('button', { name: /HOME/i }).click();
   await page.getByRole('button', { name: /PLAY/i }).click();
@@ -268,4 +270,65 @@ test('difficulty defaults to medium, persists, and controls battle spoilers', as
   await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
   await expect(page.locator('.move-forecast')).toHaveCount(4);
   await expect(page.locator('.move-lesson')).toContainText('Fits this step');
+});
+
+test('desktop handheld frame has outer margins and follows page content height', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('./');
+  const measure = () => page.evaluate(() => {
+    const shell = document.querySelector('.retro-shell')!.getBoundingClientRect();
+    const root = document.querySelector('#root')!.getBoundingClientRect();
+    const home = document.querySelector('.home-page')?.getBoundingClientRect();
+    return {
+      shellTop: shell.top,
+      shellBottom: shell.bottom,
+      shellHeight: shell.height,
+      rootHeight: root.height,
+      homeBottom: home?.bottom ?? 0,
+      viewportHeight: innerHeight,
+      horizontalOverflow: document.documentElement.scrollWidth > innerWidth + 1,
+    };
+  });
+  const home = await measure();
+  expect(home.shellTop).toBeGreaterThanOrEqual(12);
+  expect(home.viewportHeight - home.shellBottom).toBeGreaterThanOrEqual(12);
+  expect(home.shellBottom - home.homeBottom).toBeLessThan(25);
+  expect(home.horizontalOverflow).toBe(false);
+  await page.screenshot({ path: dir + '/desktop-home-content-height.png', fullPage: true });
+
+  await page.getByRole('button', { name: 'CAMPAIGN' }).click();
+  const campaign = await measure();
+  expect(campaign.shellTop).toBeGreaterThanOrEqual(12);
+  expect(campaign.shellHeight).toBeGreaterThan(home.shellHeight);
+  expect(campaign.horizontalOverflow).toBe(false);
+  await page.screenshot({ path: dir + '/desktop-campaign-content-height.png', fullPage: true });
+});
+
+
+test('desktop wallpaper covers viewport below a short home page and home copy stays minimal', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('./');
+  const shell = page.locator('.retro-shell');
+  await expect(shell).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Master your models/i })).toBeVisible();
+  await expect(page.getByText('A NEW KIND OF WILD ENCOUNTER')).toHaveCount(0);
+  await expect(page.getByText('16-BIT AI LAB')).toHaveCount(0);
+  await expect(page.locator('.retro-header .brand')).toHaveText('POKAIMON');
+  const wallpaper = await page.evaluate(() => {
+    const html = getComputedStyle(document.documentElement);
+    const body = getComputedStyle(document.body);
+    const shellBottom = document.querySelector('.retro-shell')!.getBoundingClientRect().bottom;
+    return {
+      htmlBackground: html.backgroundImage,
+      bodyBackground: body.backgroundImage,
+      shellBottom,
+      viewportHeight: innerHeight,
+      scrollWidth: document.documentElement.scrollWidth,
+    };
+  });
+  expect(wallpaper.shellBottom).toBeLessThan(wallpaper.viewportHeight - 12);
+  expect(wallpaper.htmlBackground).toContain('repeating-linear-gradient');
+  expect(wallpaper.bodyBackground).toContain('repeating-linear-gradient');
+  expect(wallpaper.scrollWidth).toBeLessThanOrEqual(1441);
+  await page.screenshot({ path: dir + '/desktop-wallpaper-clean-menu.png', fullPage: true });
 });

@@ -5,18 +5,20 @@ import { handDrawnModels, handDrawnEnemies } from '../src/game/handDrawnSprites'
 describe('clean, readable original pixel character art', () => {
   const everyone = [trainerSprite, ...Object.values(modelSprites), ...Object.values(enemySprites)];
 
-  it('uses nine hand-designed pixel matrices without automatic noise or upscaling', () => {
-    expect(everyone).toHaveLength(9);
+  it('keeps all 18 original handheld sprites crisp without automatic noise or upscaling', () => {
+    expect(everyone).toHaveLength(18);
+    const bossArt = new Set(['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA','REGRESSION GOLEM','SCOPE SHIFTER'].map(name=>enemySprites[name]));
     for (const art of everyone) {
       expect(art.pixelSize).toBe(3);
+      const isBoss=bossArt.has(art);
       const width = art.pixels[0].length;
       expect(width).toBeGreaterThanOrEqual(30);
-      expect(width).toBeLessThanOrEqual(36);
+      expect(width).toBeLessThanOrEqual(isBoss?42:36);
       expect(art.pixels.length).toBeGreaterThanOrEqual(27);
-      expect(art.pixels.length).toBeLessThanOrEqual(art === trainerSprite ? 38 : 31);
+      expect(art.pixels.length).toBeLessThanOrEqual(art === trainerSprite ? 38 : isBoss?36:31);
       expect(art.pixels.every(row => row.length === width)).toBe(true);
-      expect(width * art.pixelSize).toBeLessThanOrEqual(108);
-      expect(art.pixels.length * art.pixelSize).toBeLessThanOrEqual(art === trainerSprite ? 114 : 93);
+      expect(width * art.pixelSize).toBeLessThanOrEqual(isBoss?126:108);
+      expect(art.pixels.length * art.pixelSize).toBeLessThanOrEqual(art === trainerSprite ? 114 : isBoss?108:93);
       const symbols = new Set(art.pixels.join(''));
       symbols.delete('.');
       expect(symbols.size).toBeGreaterThanOrEqual(5);
@@ -58,11 +60,14 @@ describe('clean, readable original pixel character art', () => {
   });
 
   it('renders identical character source art in battle and the party guide', () => {
-    expect(modelSprites).toBe(handDrawnModels);
+    for(const [id,art] of Object.entries(handDrawnModels))expect(modelSprites[id]).toBe(art);
     expect(enemySprites).toBe(handDrawnEnemies);
     expect(modelSprites.grok.pixels.join('')).not.toEqual(modelSprites.astra.pixels.join(''));
     expect(modelSprites.astra.pixels.join('')).not.toEqual(modelSprites.fable.pixels.join(''));
     expect(enemySprites.TASK.pixels.join('')).not.toEqual(enemySprites['MATH PROBLEM'].pixels.join(''));
+    for (const name of ['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA','REGRESSION GOLEM','SCOPE SHIFTER'])
+      expect(enemySprites[name].pixels.join('')).not.toEqual(enemySprites.TASK.pixels.join(''));
+    expect(new Set(['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA','REGRESSION GOLEM','SCOPE SHIFTER'].map(name=>enemySprites[name].pixels.join(''))).size).toBe(6);
   });
 
   it('keeps clean borders and transparent empty space', () => {

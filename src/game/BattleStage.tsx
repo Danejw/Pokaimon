@@ -1,13 +1,15 @@
 import { useEffect, useRef } from 'react';
 import * as Phaser from 'phaser';
 import type { BattlePhase } from './encounterFlow';
-import { createPixelCharacter, enemySprites, modelSprites, trainerSprite, type ModelId } from './pixelArt';
+import { createPixelCharacter, enemySprites, modelSprites, getModelSprite, trainerSprite } from './pixelArt';
 
 export interface BattleStageProps {
   enemy?: string;
   model?: string | null;
   phase?: BattlePhase;
   attackSequence?: number;
+  bossSequence?: number;
+  comboSequence?: number;
   attackType?: string;
   outcome?: 'active' | 'won' | 'lost';
   reducedMotion?: boolean;
@@ -16,6 +18,8 @@ interface Presentation {
   model: string | null;
   phase: BattlePhase;
   attackSequence: number;
+  bossSequence: number;
+  comboSequence: number;
   attackType: string;
   outcome: 'active' | 'won' | 'lost';
   reducedMotion: boolean;
@@ -114,6 +118,8 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
     private heroModel:string|null=null;
     private lastPhase:BattlePhase|null=null;
     private lastAttackSequence=0;
+    private lastBossSequence=0;
+    private lastComboSequence=0;
     private heroIdle=false;
 
     constructor(){super('retro-battle');}
@@ -222,10 +228,10 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
     private summon(model:string,reduced:boolean):void{
       this.trainer.container.setVisible(false);
       this.hero.container.setVisible(true);
-      const id=(model in modelSprites?model:'astra') as ModelId;
+      const id=model;
       if(this.heroModel!==id){
         this.hero.container.removeAll(true);
-        const newHero=createPixelCharacter(this,modelSprites[id],89,283);
+        const newHero=createPixelCharacter(this,getModelSprite(id),89,283);
         this.hero.container.destroy();
         this.hero=newHero;
         this.heroModel=id;
@@ -272,6 +278,24 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
         for(let i=0;i<6;i++){
           const ray=this.add.rectangle(260,160,6,38,0xfce176).setDepth(14).setRotation(i*Math.PI/3);
           this.tweens.add({targets:ray,alpha:0,scaleY:1.8,duration:340,onComplete:()=>ray.destroy()});
+        }
+      }else if(type==='coding'){
+        // Original code window: fragments assemble into a pixel grid before impact.
+        for(let i=0;i<10;i++){
+          const row=Math.floor(i/5),column=i%5;
+          const bit=this.add.rectangle(148,214,5+(i%2)*4,5, i%3===0?0xffcf69:0x6fd5b6).setDepth(14);
+          this.tweens.add({targets:bit,x:228+column*10,y:141+row*16,
+            alpha:0.15,duration:265+row*55+column*16,ease:'Linear',
+            onComplete:()=>bit.destroy()});
+        }
+      }else if(type==='context'){
+        // Original memory-link orbits: context fragments converge as a connected network.
+        for(let i=0;i<7;i++){
+          const phi=i*Math.PI*2/7;
+          const node=this.add.rectangle(259+Math.cos(phi)*61,164+Math.sin(phi)*50,10,10,
+            i%2?0x88d9ed:0xc7a5ff).setStrokeStyle(2,0xffffff).setDepth(14);
+          this.tweens.add({targets:node,x:259,y:164,angle:180,alpha:0,duration:280+i*19,
+            onComplete:()=>node.destroy()});
         }
       }else if(type==='research'){
         for(let i=0;i<5;i++){
@@ -338,6 +362,22 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
           default: break;
         }
       }
+      if (p.bossSequence!==this.lastBossSequence) {
+        this.lastBossSequence=p.bossSequence;
+        if (p.bossSequence>0 && !p.reducedMotion) {
+          this.flash(0xffc977,0.26);
+          this.sparks(255,158,0xe3aeea,15);
+          this.tweens.add({targets:this.enemy.container,scaleX:1.16,scaleY:1.16,duration:190,yoyo:true,repeat:2,ease:'Stepped'});
+        }
+      }
+      if (p.comboSequence!==this.lastComboSequence) {
+        this.lastComboSequence=p.comboSequence;
+        if(p.comboSequence>0 && !p.reducedMotion){
+          this.sparks(257,146,0x82e7eb,15);
+          this.sparks(98,247,0xffef91,9);
+          this.flash(0x83dfd1,0.15);
+        }
+      }
       if(p.phase==='attack'&&p.attackSequence!==this.lastAttackSequence){
         this.lastAttackSequence=p.attackSequence;
         this.attack(p.attackType,p.model??'astra',p.reducedMotion);
@@ -348,11 +388,11 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
 
 export function BattleStage({
   enemy='TASK',model=null,phase='encounter',
-  attackSequence=0,attackType='',outcome='active',reducedMotion=false,
+  attackSequence=0,bossSequence=0,comboSequence=0,attackType='',outcome='active',reducedMotion=false,
 }:BattleStageProps){
   const node=useRef<HTMLDivElement|null>(null);
   const game=useRef<Phaser.Game|null>(null);
-  const presentation:Presentation={model,phase,attackSequence,attackType,outcome,reducedMotion};
+  const presentation:Presentation={model,phase,attackSequence,bossSequence,comboSequence,attackType,outcome,reducedMotion};
   const current=useRef(presentation);
   current.current=presentation;
 
@@ -369,9 +409,9 @@ export function BattleStage({
   },[enemy]);
 
   useEffect(()=>{game.current?.events.emit(PRESENTATION_EVENT,presentation);},[
-    phase,model,attackSequence,attackType,outcome,reducedMotion,
+    phase,model,attackSequence,bossSequence,comboSequence,attackType,outcome,reducedMotion,
   ]);
   return <div ref={node} className="battle-stage pixel-canvas" data-testid="phaser-stage"
-    data-phase={phase} data-model={model??'trainer'}
+    data-phase={phase} data-model={model??'trainer'} data-combo-sequence={comboSequence}
     role="img" aria-label={'Pixel-art battle arena: wild '+enemy+', trainer and AI companion'}/>;
 }

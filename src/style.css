@@ -4,7 +4,8 @@
 :root {
   font-family:'Chakra Petch',system-ui,sans-serif;
   color:#303545;
-  background:#263443;
+  --wallpaper-stripes:repeating-linear-gradient(0deg,#273547 0px,#273547 7px,#304255 7px,#304255 10px);
+  background:var(--wallpaper-stripes);
   font-synthesis:none;
   --ink:#303545; --ink-deep:#171f32; --border-light:#fdf6de;
   --parchment:#fffbee; --cream:#f8edcb; --sand:#eecb8f;
@@ -19,7 +20,8 @@ button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visi
   outline:3px dashed #db833f;outline-offset:3px
 }
 body{
-  background:repeating-linear-gradient(0deg,#273547 0px,#273547 7px,#304255 7px,#304255 10px);
+  min-height:100dvh;
+  background:var(--wallpaper-stripes);
 }
 .retro-shell{
   width:100%;max-width:492px;min-height:100dvh;margin:0 auto;padding:0 9px 10px;
@@ -35,10 +37,8 @@ body{
 }
 .brandmark{color:#b6efc9;font-size:20px}
 .brand{font:12px 'Press Start 2P',monospace;letter-spacing:1px}
-.edition{margin-left:auto;font:600 13px 'Chakra Petch',system-ui,sans-serif;letter-spacing:1px}
 .retro-footer{margin-top:auto;text-align:center;padding:15px 0 4px;font:14px 'Chakra Petch',system-ui,sans-serif;color:#6a7680;letter-spacing:1px}
 h1,h2,h3{margin:0}
-.eyebrow{color:#96573f;font:700 17px 'Chakra Petch',system-ui,sans-serif;letter-spacing:1px;margin:17px 0 7px}
 .retro-home{flex:1}
 .retro-home h1{font:clamp(21px,6vw,29px)/1.7 'Press Start 2P',monospace;letter-spacing:-1px;margin:9px 0;color:#2f4050}
 .retro-home h1 em{font-style:normal;color:#47876f}
@@ -236,7 +236,6 @@ h1,h2,h3{margin:0}
   .retro-dialogue p{font-size:15px}
   .retro-move strong{font-size:13px}
   .status-heading strong{font-size:12px}
-  .retro-header .edition{display:none}
 }
 @media (max-height:710px){
   .retro-topbar{height:31px}
@@ -337,3 +336,183 @@ h1,h2,h3{margin:0}
 /* Make the enemy's deterministic counter readable at the next decision. */
 .wild-counter{margin:5px 2px 0;padding:5px 7px;border-left:4px solid #bd7651;background:#f7e3cb;color:#7a4535;font:700 12px/1.2 'Chakra Petch',system-ui,sans-serif}
 @media(max-height:780px){.wild-counter{font-size:11px;padding:3px 6px}}
+
+
+/* Phase 1: a tactical squad action inside the existing compact command bar. */
+.squad-action{
+  flex:none;border:2px solid #344254;background:#ffefbb;color:#304253;
+  padding:4px 5px;font:800 clamp(10px,2.6vw,13px)/1.1 'Chakra Petch',system-ui,sans-serif;
+  cursor:pointer;
+}
+.squad-action:hover,.squad-action:focus-visible{background:#c9edcf;outline:2px solid #ba8549;outline-offset:1px}
+.squad-options{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.squad-options button{
+  display:flex;align-items:center;gap:5px;min-width:0;min-height:65px;
+  padding:5px 6px;text-align:left;background:#fff9e8;color:#304253;
+  border:4px solid #344254;box-shadow:inset 0 0 0 2px #d5dbcc;
+}
+.squad-options button:hover,.squad-options button:focus-visible{background:#ffe6a2}
+.squad-options button>span:last-child{display:flex;flex-direction:column;gap:3px;min-width:0}
+.squad-options button b{font:700 clamp(12px,2.9vw,15px)/1.12 'Chakra Petch',system-ui,sans-serif;overflow-wrap:anywhere}
+.squad-options button small{font:700 11px 'Chakra Petch',system-ui,sans-serif;color:#566477}
+.squad-icon{width:42px;height:42px;flex:none;background:#dcecd8;border:2px solid #526477}
+@media(max-width:375px){
+  .squad-action{font-size:10px;padding:3px}
+  .squad-icon{width:35px;height:35px}
+  .squad-options button{padding:4px;gap:4px}
+  .squad-options button small{font-size:10px}
+}
+
+/* Telegraphs and rewards are driven only by deterministic battle events. */
+.battle-intent{
+  margin:3px 2px;padding:3px 6px;background:#e9deee;border-left:4px solid #83739e;
+  color:#514267;font:700 12px/1.2 'Chakra Petch',system-ui,sans-serif;
+}
+.battle-intent b{color:#366855}
+.battle-combo{
+  padding:6px 8px;margin:0 0 9px;background:#d6efdb;border:3px solid #648c6d;
+  color:#356246;font:800 12px 'Chakra Petch',system-ui,sans-serif;
+}
+@media(max-width:375px){.battle-intent{font-size:11px;padding:2px 5px}}
+
+
+/* ModelDex and squad editor: reuse existing handheld visual language. */
+.home-submenu{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin:8px 0}
+.home-submenu .text-button{font-size:clamp(14px,3.4vw,17px);padding:6px 7px;margin:4px 0}
+.modeldex-actions{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:14px}
+.modeldex-actions .secondary{min-height:44px;padding:7px;font-size:14px}
+.modeldex-actions span{font:700 13px/1.2 'Chakra Petch',system-ui,sans-serif;color:#50665e}
+.dex-entry{align-items:flex-start}
+.dex-entry .guide-portrait{margin-top:3px}
+.dex-entry .guide-card-copy p{font-size:15px;line-height:1.3}
+.dex-moves{margin:8px 0;border-top:2px dashed #a2aa9a;border-bottom:2px dashed #a2aa9a;padding:8px 0}
+.dex-moves summary{cursor:pointer;font:700 14px 'Chakra Petch',system-ui,sans-serif}
+.dex-moves p{padding:4px 0;margin:5px 0}
+.dex-moves b{font-size:13px}
+.dex-moves span{font-size:14px}
+.team-pick{display:flex;align-items:center;gap:9px;margin:6px 0;padding:9px;background:#fff9e8;border:4px solid #344254}
+.team-pick input,.team-reward-option input{accent-color:#4b986a;width:21px;height:21px;flex:none}
+.team-pick .squad-icon{width:52px;height:52px}
+.team-pick-copy{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+.team-pick-copy strong{font:700 17px 'Chakra Petch',system-ui,sans-serif}
+.team-pick-copy small{font:600 12px/1.2 'Chakra Petch',system-ui,sans-serif;color:#637078;overflow-wrap:anywhere}
+.team-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0 6px}
+.team-actions button{font-size:14px;padding:8px 5px}
+.team-message{min-height:28px;font:700 13px/1.35 'Chakra Petch',system-ui,sans-serif;color:#5b664d}
+.team-reward{background:#f7edce;border:4px solid #344254;padding:12px;margin:17px 0}
+.team-reward h3{margin:3px 0 11px!important}
+.team-reward strong{font:700 17px 'Chakra Petch',system-ui,sans-serif}
+.team-reward p{font:15px/1.3 'Chakra Petch',system-ui,sans-serif}
+.team-reward-option{display:flex;align-items:center;gap:9px;font:700 15px 'Chakra Petch',system-ui,sans-serif;margin:12px 0}
+.team-reward small{font:700 13px 'Chakra Petch',system-ui,sans-serif;color:#65695f}
+
+
+/* Chapter select and authored boss encounters use the same retro design language. */
+.campaign-progress{font:800 14px 'Chakra Petch',system-ui,sans-serif;background:#e0ead5;border:3px solid #7eaa8f;padding:8px 10px;margin:8px 0 15px}
+.campaign-chapter{margin:14px 0;padding:9px;background:#f8f1d7;border:4px solid #344254;box-shadow:3px 3px 0 #9fa88e}
+.campaign-chapter-heading{display:flex;flex-direction:column;gap:4px;margin:0 0 9px}
+.campaign-chapter-heading h3{font:700 16px/1.3 'Chakra Petch',system-ui,sans-serif;margin:0!important}
+.campaign-chapter-heading span{font:700 13px 'Chakra Petch',system-ui,sans-serif;color:#67756a}
+.campaign-mission{display:flex;align-items:center;gap:7px;width:100%;min-height:67px;background:#fff9e9;border:3px solid #47556a;margin:5px 0;padding:6px;text-align:left;color:#334354}
+.campaign-mission:disabled{opacity:.6;background:#e5e1d2}
+.campaign-mission.available:focus-visible,.campaign-mission.available:hover{background:#e6f3d8;outline:3px solid #c58b52}
+.campaign-step-num{flex:none;min-width:27px;font:800 15px 'Chakra Petch',system-ui,sans-serif;color:#41715b}
+.campaign-copy{min-width:0;display:flex;flex:1;flex-direction:column;gap:4px}
+.campaign-copy strong{font:700 16px/1.1 'Chakra Petch',system-ui,sans-serif}
+.campaign-copy small{font:600 12px/1.15 'Chakra Petch',system-ui,sans-serif;overflow-wrap:anywhere}
+.campaign-mission>b{flex:none;font:700 12px 'Chakra Petch',system-ui,sans-serif;white-space:nowrap;color:#64736a}
+.chapter-award{font:800 12px 'Chakra Petch',system-ui,sans-serif;color:#8c6827;background:#ffecb7;padding:6px;margin:8px 0 0}
+.rival-intent,.boss-intent{margin:3px 2px;padding:4px 7px;font:700 12px/1.15 'Chakra Petch',system-ui,sans-serif}
+.rival-intent{background:#ebdfea;border-left:4px solid #9064a0;color:#624675}
+.boss-intent{background:#fff0c9;border-left:4px solid #cc9047;color:#7b552c}
+.boss-result{font:700 12px 'Chakra Petch',system-ui,sans-serif;color:#7f5d32}
+@media(max-width:375px){
+  .campaign-mission{gap:5px;padding:5px}
+  .campaign-copy strong{font-size:14px}
+  .campaign-copy small{font-size:11px}
+  .campaign-mission>b{font-size:11px}
+  .rival-intent,.boss-intent{font-size:11px;padding:3px 5px}
+}
+
+
+/* Phase 4: short strategic challenges and replay presentation. */
+.challenge-achievements{font:800 13px 'Chakra Petch',system-ui,sans-serif;background:#e2eddc;
+  border:3px solid #729783;margin:12px 0;padding:9px}
+.challenge-card{border:4px solid #344254;box-shadow:3px 3px 0 #87968b;padding:11px 10px;
+  background:#fff6db;margin:12px 0}
+.challenge-heading{display:flex;align-items:center;justify-content:space-between;gap:7px;
+  font:800 18px 'Chakra Petch',system-ui,sans-serif}
+.challenge-heading small{flex:none;background:#d8e9d6;border:2px solid #72957e;
+  color:#3f6255;padding:3px;font:800 11px 'Chakra Petch',system-ui,sans-serif}
+.challenge-card p{font:15px/1.3 'Chakra Petch',system-ui,sans-serif;margin:8px 0}
+.challenge-code-row{display:flex;gap:5px;align-items:stretch;min-width:0;margin:9px 0}
+.challenge-code-row input{min-width:0;flex:1;background:#fffdf5;color:#344254;border:3px solid #596778;
+  font:700 12px 'Chakra Petch',system-ui,sans-serif;padding:8px 5px}
+.challenge-code-row button{flex:none;background:#e1eacd;border:3px solid #344254;color:#344254;
+  font:800 13px 'Chakra Petch',system-ui,sans-serif;padding:6px}
+.challenge-code-row button:focus-visible,.challenge-code-row button:hover{background:#c1e9bd}
+.challenge-actions{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.challenge-actions span{font:700 12px 'Chakra Petch',system-ui,sans-serif;color:#6b704f}
+.challenge-actions button{min-height:42px;padding:6px 12px;font-size:14px}
+.challenge-import{margin-top:20px;border:3px solid #596778;padding:11px;background:#edeacc}
+.challenge-import h3{font:800 14px 'Chakra Petch',system-ui,sans-serif;margin:4px 0 9px}
+.challenge-import label{font:14px/1.3 'Chakra Petch',system-ui,sans-serif}
+.challenge-import p{font:700 13px 'Chakra Petch',system-ui,sans-serif;min-height:16px}
+.challenge-replay{background:#fffdf0;border:3px solid #526477;padding:10px;margin:15px 0;
+  font:14px/1.4 'Chakra Petch',system-ui,sans-serif}
+.challenge-replay summary{font-weight:800;cursor:pointer}
+.challenge-replay li{padding:3px 0}
+.challenge-emblems{margin:10px 0;display:flex;flex-wrap:wrap;gap:7px}
+.challenge-emblems h3{width:100%;font:700 14px 'Chakra Petch',system-ui,sans-serif}
+.challenge-emblems span{background:#ffedb8;padding:5px;font:700 12px 'Chakra Petch',system-ui,sans-serif;border:2px solid #b89655}
+.challenge-objective{border-bottom:2px solid #627e74;background:#f5e9c6;padding:4px 8px;
+  font:700 12px 'Chakra Petch',system-ui,sans-serif;text-align:center}
+.challenge-result{padding:8px;margin:0 0 9px;border:3px solid #ae9460;background:#fff2c3;
+  font:800 13px 'Chakra Petch',system-ui,sans-serif;color:#6b582e}
+.challenge-result.challenge-failed{border-color:#b78c81;background:#f8e4db;color:#834a3d}
+@media(max-width:375px){.challenge-heading{font-size:16px}.challenge-code-row input{font-size:11px}
+  .challenge-card{padding:9px 7px}.challenge-actions button{font-size:12px}}
+
+
+/* Content-sized handheld shell: avoid viewport-height blank space on short pages. */
+.retro-shell{
+  min-height:0;
+}
+.retro-home,.home-page,.retro-page,.retro-battle{
+  flex:0 0 auto;
+}
+/* On larger displays, frame the game with a little breathing room on all sides.
+   The page can still scroll naturally when campaign or guide content is tall. */
+@media (min-width:600px){
+  #root{padding:20px 16px;}
+  .retro-shell{
+    margin:0 auto;
+  }
+}
+
+/* Phase 6: actionable evidence without displacing battle moves on phones. */
+.intelligence-trial{background:#e5f0de;border-color:#446c61}
+.intelligence-trial .challenge-heading small{background:#f8e49f;color:#604d30;border-color:#ae8c4a}
+.hydra-evidence{display:flex;align-items:center;gap:9px;margin:5px 0;padding:7px 8px;
+  border:3px solid #496c70;background:#e9f1dc;color:#2a4648}
+.hydra-evidence>div{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.hydra-evidence strong{font:800 12px 'Chakra Petch',system-ui,sans-serif;letter-spacing:.5px}
+.hydra-evidence span{font:600 12px/1.25 'Chakra Petch',system-ui,sans-serif}
+.hydra-evidence small{font:700 11px/1.2 'Chakra Petch',system-ui,sans-serif;color:#8c513a}
+.hydra-inspect{flex:none;border:3px solid #303545;background:#f6d56a;color:#303545;
+  padding:7px 9px;font:800 12px/1.2 'Chakra Petch',system-ui,sans-serif;max-width:140px}
+.hydra-inspect small{display:block;margin-top:4px;color:inherit;font-size:10px}
+.hydra-inspect:hover,.hydra-inspect:focus-visible{background:#ffe9a6}
+@media(max-width:375px){
+  .hydra-evidence{gap:5px;padding:5px}
+  .hydra-evidence span{font-size:11px}
+  .hydra-inspect{padding:5px 6px;font-size:11px;max-width:110px}
+}
+
+.intelligence-trial{border:4px solid #344254;box-shadow:3px 3px 0 #87968b;padding:11px 10px;margin:10px 0}
+.intelligence-trial p{font:15px/1.3 'Chakra Petch',system-ui,sans-serif;margin:8px 0}
+@media(max-width:375px){.intelligence-trial{padding:9px 7px}}
+
+.strategy-recap{margin:7px;padding:10px;border:3px solid #5e8071;background:#edf3d7;color:#304f48;font:600 12px/1.4 'Chakra Petch',system-ui,sans-serif}
+.strategy-recap b{display:block;color:#254b47;letter-spacing:.5px}
+.strategy-recap p{margin:4px 0}

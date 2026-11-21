@@ -2,17 +2,25 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { BattleStage } from './game/BattleStage';
 import { BattlePanel } from './game/BattlePanel';
 import { PixelPortrait } from './game/PixelPortrait';
+import { ModelDex, TeamEditor } from './game/TeamHub';
+import { CampaignPage } from './game/CampaignPage';
+import { ChallengePage } from './game/ChallengePage';
+import { getChallenge } from './content/challenges';
+import { makeEncounter, type ScenarioCode } from './content/variants';
+import { buildBattleReplay } from './battle/replay';
+import type { CampaignMission } from './content/campaign';
+import { rosterForProgress } from './content/team';
 import { pickWildEncounter } from './game/encounterFlow';
 import { playCue } from './game/sound';
 import { setBattleMusic } from './game/music';
 import { probeAgui, type AguiProbeResult } from './integrations/agui/client';
 import { MODELS, MOVES } from './content/core';
 import { ENCOUNTERS } from './content/encounters';
-import type { EncounterDefinition } from './battle/types';
+import type { EncounterDefinition, BattleState } from './battle/types';
 import { defaultPreferences, loadPreferences, savePreferences, type Preferences } from './storage/preferences';
-import { clearProgress, loadProgress, markCleared, saveProgress, type Progress } from './storage/progress';
+import { clearProgress, loadProgress, recordBattleProgress, recordMissionVictory, recordChallengeCompletion, recordBattleReplay, saveProgress, setTeam, setAlternateLoadout, type Progress } from './storage/progress';
 
-type Screen='home'|'battle'|'guide'|'settings';
+type Screen='home'|'battle'|'guide'|'settings'|'modeldex'|'team'|'campaign'|'challenges';
 
 export function App(){
   const [screen,setScreen]=useState<Screen>('home');
@@ -20,13 +28,36 @@ export function App(){
   const [progress,setProgress]=useState<Progress>(loadProgress);
   const [encounter,setEncounter]=useState<EncounterDefinition>(ENCOUNTERS[0]);
   const [sessionId,setSessionId]=useState(0);
+  const [activeMissionId,setActiveMissionId]=useState<string|null>(null);
+  const [activeChallengeId,setActiveChallengeId]=useState<string|null>(null);
+  const [activeScenario,setActiveScenario]=useState<ScenarioCode|null>(null);
   const [aguiStatus,setAguiStatus]=useState<AguiProbeResult|null>(null);
   const [testingAgui,setTestingAgui]=useState(false);
   const firstPlay=useRef(true);
   useEffect(()=>{savePreferences(prefs);},[prefs]);
   useEffect(()=>{saveProgress(progress);},[progress]);
   useEffect(()=>{if(screen!=='battle'||!prefs.sound)setBattleMusic(false,false);},[screen,prefs.sound]);
-  const recordWin=useCallback((id:string)=>setProgress(old=>markCleared(old,id)),[]);
+  const recordBattle=useCallback((id:string,battle:BattleState)=>setProgress(old=>{
+    let next=recordBattleProgress(old,id,battle);
+    if(activeMissionId && battle.outcome==='won')
+      next=recordMissionVictory(next,activeMissionId,battle);
+    if(!activeMissionId){
+      const available=rosterForProgress(old);
+      const roster=old.teamIds.map(teamId=>available.find(model=>model.id===teamId))
+        .filter((model):model is typeof available[number]=>!!model);
+      const replay=buildBattleReplay(battle,{
+        encounterId:id,modifierIds:activeScenario?.modifierIds??[],roster,
+      });
+      next=recordBattleReplay(next,replay);
+      if(activeChallengeId){
+        const challenge=getChallenge(activeChallengeId);
+        if(challenge)next=recordChallengeCompletion(next,challenge,battle,replay);
+      }
+    }
+    return next;
+  }),[activeMissionId,activeScenario,activeChallengeId]);
+  const roster = rosterForProgress(progress);
+  const activeTeam = progress.teamIds.map(id=>roster.find(model=>model.id===id)).filter((model):model is typeof roster[number]=>!!model);
   useEffect(()=>{
     function onKey(event:KeyboardEvent){
       if(event.key==='Escape'&&event.target instanceof HTMLElement &&
@@ -38,9 +69,34 @@ export function App(){
   },[]);
   const update=(part:Partial<Preferences>)=>setPrefs(old=>({...old,...part}));
   const launchEncounter=()=>{
+    setActiveMissionId(null);
+    setActiveChallengeId(null);
+    setActiveScenario(null);
     const override=firstPlay.current?new URLSearchParams(window.location.search).get('encounter'):null;
     firstPlay.current=false;
     setEncounter(pickWildEncounter(ENCOUNTERS,Math.random,override));
+    setSessionId(id=>id+1);
+    setScreen('battle');
+    setBattleMusic(true,prefs.sound);
+    playCue('encounter',prefs.sound);
+  };
+  const launchMission=(mission:CampaignMission)=>{
+    setActiveScenario(null);
+    setActiveChallengeId(null);
+    setActiveMissionId(mission.id);
+    setEncounter(mission.encounter);
+    setSessionId(id=>id+1);
+    setScreen('battle');
+    setBattleMusic(true,prefs.sound);
+    playCue('encounter',prefs.sound);
+  };
+  const launchChallenge=(scenario:ScenarioCode,challengeId:string|null)=>{
+    const encounter=makeEncounter(scenario.encounterId,scenario.seed,scenario.modifierIds);
+    if(!encounter)return;
+    setActiveMissionId(null);
+    setActiveChallengeId(challengeId);
+    setActiveScenario(scenario);
+    setEncounter(encounter);
     setSessionId(id=>id+1);
     setScreen('battle');
     setBattleMusic(true,prefs.sound);
@@ -50,11 +106,9 @@ export function App(){
     <header className="topline retro-header">
       <span className="brandmark">✦</span>
       <span className="brand">POKAIMON</span>
-      <span className="edition">16-BIT AI LAB</span>
     </header>
 
     {screen==='home'&&<section className="home-page retro-home">
-      <p className="eyebrow">A NEW KIND OF WILD ENCOUNTER</p>
       <h1>Master your<br/><em>models.</em></h1>
       <p className="intro">WILD TASKS ARE OUT THERE. CHOOSE YOUR AI. LEARN ITS MOVES. WIN THE BATTLE.</p>
       <div className="home-visual retro-preview">
@@ -63,26 +117,41 @@ export function App(){
       </div>
       <div className="home-actions">
         <button className="primary retro-primary" onClick={launchEncounter}>▶ PLAY</button>
-        <button className="secondary retro-secondary" onClick={()=>setScreen('guide')}>FIELD GUIDE</button>
+        <button className="secondary retro-secondary" onClick={()=>setScreen('campaign')}>CAMPAIGN</button>
       </div>
-      <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ SETTINGS</button>
+      <div className="home-submenu"><button className="text-button retro-text-button" onClick={()=>setScreen('challenges')}>CHALLENGES</button>
+        <button className="text-button retro-text-button" onClick={()=>setScreen('modeldex')}>MODELDEX</button>
+        <button className="text-button retro-text-button" onClick={()=>setScreen('team')}>TEAM</button>
+        <button className="text-button retro-text-button" onClick={()=>setScreen('guide')}>FIELD GUIDE</button>
+        <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ SETTINGS</button></div>
     </section>}
 
-    {screen==='battle'&&<BattlePanel key={sessionId} encounter={encounter}
+    {screen==='battle'&&<BattlePanel key={sessionId} encounter={encounter} roster={activeTeam}
+      seed={activeScenario?.seed??1} challenge={activeChallengeId?getChallenge(activeChallengeId):undefined}
       reducedMotion={prefs.reducedMotion} soundEnabled={prefs.sound} textSpeed={prefs.textSpeed} difficulty={prefs.difficulty}
-      onHome={()=>setScreen('home')} onNext={launchEncounter} onWin={recordWin}/>}
+      nextLabel={activeMissionId?'▶ CHAPTER SELECT':activeScenario?'▶ CHALLENGES':undefined}
+      onHome={()=>setScreen('home')} onNext={activeMissionId?()=>setScreen('campaign'):activeScenario?()=>setScreen('challenges'):launchEncounter} onFinish={recordBattle}/>}
+
+    {screen==='challenges'&&<ChallengePage progress={progress} onHome={()=>setScreen('home')} onLaunch={launchChallenge}/>}
+
+    {screen==='campaign'&&<CampaignPage progress={progress} onHome={()=>setScreen('home')} onLaunch={launchMission}/>}
+
+    {screen==='modeldex'&&<ModelDex progress={progress} onHome={()=>setScreen('home')} onTeam={()=>setScreen('team')}/>}
+    {screen==='team'&&<TeamEditor progress={progress} onHome={()=>setScreen('home')}
+      onSetTeam={ids=>setProgress(old=>setTeam(old,ids))}
+      onSetAlternate={enabled=>setProgress(old=>setAlternateLoadout(old,enabled))}/>}
 
     {screen==='guide'&&<section className="guide-page retro-page">
       <div className="section-top"><button className="back-button" onClick={()=>setScreen('home')}>◀ HOME</button><span>FIELD GUIDE</span></div>
       <h2>Know your moves</h2>
-      <p className="intro">Every move represents a real AI technique. Battle power and stats are simulated game rules.</p>
+      <p className="intro">Learn when to use each move. Battles run on game rules, with no live AI calls.</p>
       <h3>YOUR AI TEAM</h3>
       {MODELS.map(m=><article className="guide-card" key={m.id}>
-        <span className="guide-portrait" aria-hidden="true"><PixelPortrait model={m.id as 'astra' | 'grok' | 'fable'} /></span>
+        <span className="guide-portrait" aria-hidden="true"><PixelPortrait model={m.id} /></span>
         <div className="guide-card-copy">
           <strong>{m.displayName}</strong>
           <small>{m.provider.toUpperCase()} · VER. {m.version}</small>
-          <p>{m.description}</p>
+          
           <a href={m.source} target="_blank" rel="noreferrer">OFFICIAL MODEL DOCUMENTATION ↗</a>
         </div>
       </article>)}
@@ -103,11 +172,11 @@ export function App(){
 
     {screen==='settings'&&<section className="settings-page retro-page">
       <div className="section-top"><button className="back-button" onClick={()=>setScreen('home')}>◀ HOME</button><span>OPTIONS</span></div>
-      <h2>Settings</h2><p className="intro">SET UP YOUR HANDHELD EXPERIENCE.</p>
+      <h2>Settings</h2>
       <label className="setting"><span><strong>Difficulty</strong><small>Choose how much battle guidance you see</small></span>
         <select aria-label="Difficulty" value={prefs.difficulty} onChange={e=>update({difficulty:e.target.value as Preferences['difficulty']})}>
           <option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
-      <p className="difficulty-description">{prefs.difficulty==='easy'?'Move effectiveness, simulated damage, and step hints are shown.':prefs.difficulty==='medium'?'Learn move techniques through trial and error. Damage and recommended moves are hidden.':'No move forecasts, step hints, or tactical warnings. Read the battle and experiment.'}</p>
+      <p className="difficulty-description">{prefs.difficulty==='easy'?'Move effectiveness, damage, and step hints are shown.':prefs.difficulty==='medium'?'Learn move techniques through trial and error. Damage and recommended moves are hidden.':'No move forecasts, step hints, or tactical warnings. Read the battle and experiment.'}</p>
       <label className="setting"><span><strong>Sound</strong><small>Retro sound effects</small></span>
         <input aria-label="Sound" type="checkbox" checked={prefs.sound} onChange={e=>update({sound:e.target.checked})}/></label>
       <label className="setting"><span><strong>Reduced motion</strong><small>Skip elaborate attack effects</small></span>
@@ -118,12 +187,12 @@ export function App(){
       <button className="secondary full" onClick={()=>setPrefs({...defaultPreferences})}>RESTORE DEFAULTS</button>
       {(window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')&&
         <div className="agui-diagnostic">
-          <h3>AG-UI SIMULATION</h3><p>Check the local standards endpoint. No AI provider calls.</p>
+          <h3>AG-UI CONNECTION</h3><p>Check the local standards endpoint. No AI provider calls.</p>
           <button className="secondary full" disabled={testingAgui} onClick={()=>{
             setTestingAgui(true);setAguiStatus(null);
             void probeAgui().then(setAguiStatus).finally(()=>setTestingAgui(false));
           }}>{testingAgui?'CONNECTING...':'TEST AG-UI CONNECTION'}</button>
-          {aguiStatus&&<p role="status">{aguiStatus.error?'AG-UI error: '+aguiStatus.error:aguiStatus.finished?'AG-UI simulation connected: '+aguiStatus.message:'AG-UI run unfinished'}</p>}
+          {aguiStatus&&<p role="status">{aguiStatus.error?'AG-UI error: '+aguiStatus.error:aguiStatus.finished?'AG-UI connected: '+aguiStatus.message:'AG-UI run unfinished'}</p>}
         </div>}
       <button className="danger-button" onClick={()=>setProgress(clearProgress())}>RESET FIELD GUIDE PROGRESS</button>
     </section>}

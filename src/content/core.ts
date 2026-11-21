@@ -1,40 +1,19 @@
 import type { EncounterDefinition, ModelDefinition, MoveDefinition } from '../battle/types';
+import { MODEL_CATALOG, catalogToModels } from './modelCatalog';
 
 export const MOVES: Record<string, MoveDefinition> = {
   'deep-think': { id: 'deep-think', name: 'Deep Think', category: 'reasoning', power: 42, cost: 1, animation: 'pulse', description: 'Break a difficult problem into smaller steps.', lesson: 'Reasoning helps define a plan. A plan alone cannot finish or verify a task.' },
-  'deep-research': { id: 'deep-research', name: 'Deep Research', category: 'research', power: 40, cost: 1, animation: 'scan', toolRequired: 'search', description: 'Retrieve and compare evidence with sources.', lesson: 'Real research depends on actual retrieval tools and source checking. This battle is a simulation.' },
+  'deep-research': { id: 'deep-research', name: 'Deep Research', category: 'research', power: 40, cost: 1, animation: 'scan', toolRequired: 'search', description: 'Retrieve and compare evidence with sources.', lesson: 'Research depends on retrieval tools and careful source checking.' },
   'code-execution': { id: 'code-execution', name: 'Code Execution', category: 'coding', power: 42, cost: 1, animation: 'slash', toolRequired: 'sandbox', description: 'Put a software solution into action.', lesson: 'Executing an idea is distinct from reasoning about it. Live execution would need a permitted sandbox.' },
   'self-correction': { id: 'self-correction', name: 'Self-Correction', category: 'verification', power: 40, cost: 1, animation: 'shield', description: 'Check a result and repair mistakes.', lesson: 'Verifying and revising output improves reliability. Independent tests remain important.' },
   'max-reasoning': { id:'max-reasoning', name:'Max Reasoning', category:'reasoning', power:44, cost:1, animation:'pulse', description:'Spend extra effort analyzing a difficult decision.', lesson:'Increasing reasoning effort can help complex problems, though independent verification remains valuable.' },
   'context-recall': { id:'context-recall', name:'Context Recall', category:'context', power:42, cost:1, animation:'scan', description:'Use the relevant conversation and constraints.', lesson:'Supplying relevant context and instructions can improve task understanding.' },
-  'parallel-search': { id:'parallel-search', name:'Parallel Search', category:'research', power:43, cost:1, animation:'scan', toolRequired:'search', description:'Search multiple independent angles for evidence.', lesson:'Parallel retrieval broadens coverage. Source quality still needs checking.' },
-  'code-review': { id:'code-review', name:'Code Review', category:'coding', power:42, cost:1, animation:'shield', description:'Inspect code changes for bugs and useful fixes.', lesson:'Review helps identify defects and check a proposed fix. Executed tests are still necessary for real verification.' },
+  'parallel-search': { id:'parallel-search', name:'Parallel Search', category:'research', power:54, cost:2, animation:'scan', toolRequired:'search', description:'Search multiple independent angles for evidence.', lesson:'Parallel retrieval broadens coverage. Source quality still needs checking.' },
+  'code-review': { id:'code-review', name:'Code Review', category:'coding', power:42, cost:1, tacticalEffect:'guard', animation:'shield', description:'Inspect code changes for bugs and useful fixes.', lesson:'Review helps identify defects and check a proposed fix. Executed tests are still necessary for real verification.' },
   'extended-thinking': { id:'extended-thinking', name:'Extended Thinking', category:'reasoning', power:43, cost:1, animation:'pulse', description:'Work through a complicated problem deliberately.', lesson:'Reasoning time is valuable for complex decisions, but reasoning is different from running a test.' },
 };
-export const INITIAL_MODEL: ModelDefinition = {
-  id: 'astra', provider: 'OpenAI', displayName: 'GPT-6.2 Astra', version: '6.2',
-  description: 'An AI model with a game-balanced reasoning-oriented loadout.', source: 'https://developers.openai.com/api/docs/models/gpt-6.2-astra',
-  verifiedAt: '2026-11-19', moveIds: ['deep-think', 'deep-research', 'code-execution', 'self-correction'],
-  palette: '#7ce7d1', focus: 4, tempo: 3, precision: 4,
-};
-
-export const MODELS: readonly ModelDefinition[] = [
-  INITIAL_MODEL,
-  {
-    id:'grok', provider:'xAI', displayName:'Grok 4.7', version:'4.7',
-    description:'A lively, search-oriented gameplay loadout. Stats reflect game balance.',
-    source:'https://x.ai/news/grok-4-7', verifiedAt:'2026-11-19',
-    moveIds:['max-reasoning','context-recall','parallel-search','code-review'],
-    palette:'#b9a7ff', focus:4, tempo:4, precision:3,
-  },
-  {
-    id:'fable', provider:'Anthropic', displayName:'Claude Fable 5.2', version:'5.2',
-    description:'A careful technical reviewer gameplay loadout. Stats reflect game balance.',
-    source:'https://platform.claude.com/docs/en/models/fable-5-2/overview', verifiedAt:'2026-11-19',
-    moveIds:['extended-thinking','context-recall','code-review','self-correction'],
-    palette:'#f5ae82', focus:4, tempo:3, precision:4,
-  },
-];
+export const MODELS: readonly ModelDefinition[] = catalogToModels(MODEL_CATALOG);
+export const INITIAL_MODEL: ModelDefinition = MODELS[0];
 export function getModel(id: string): ModelDefinition | undefined {
   return MODELS.find(model => model.id === id);
 }

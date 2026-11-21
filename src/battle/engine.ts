@@ -1,18 +1,25 @@
 import type { BattleState, BattleEvent, EncounterDefinition, ModelDefinition, MoveDefinition } from './types';
-import { MOVES, INITIAL_MODEL, TASK } from '../content/core';
+import { MOVES, INITIAL_MODEL, MODELS, TASK } from '../content/core';
+import { HYDRA_CLUE, INTELLIGENCE_CLUES } from '../content/intelligentEncounters';
 
 const TURN_LIMIT = 8;
 const AP_LIMIT = 6;
 function addEvent(events: BattleEvent[], turn: number, kind: BattleEvent['kind'], message: string, amount?: number): void {
   events.push({ seq: events.length, turn, kind, message, ...(amount === undefined ? {} : { amount }) });
 }
-export function createBattle(encounter: EncounterDefinition = TASK, model: ModelDefinition = INITIAL_MODEL, seed = 1): BattleState {
+export function createBattle(encounter: EncounterDefinition = TASK, model: ModelDefinition = INITIAL_MODEL, seed = 1, squad: readonly ModelDefinition[] = MODELS): BattleState {
+  const maxAp=encounter.budget?.ap ?? AP_LIMIT;
+  const maxTurns=encounter.budget?.turns ?? TURN_LIMIT;
   return {
-    encounterId: encounter.id, modelId: model.id, seed, turn: 0, ap: AP_LIMIT, maxAp: AP_LIMIT,
-    stageIndex: 0, goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
+    encounterId: encounter.id, modelId: model.id, squadIds: [...new Set([model.id, ...squad.map(companion => companion.id)])], seed, turn: 0, ap: maxAp, maxAp, maxTurns,
+    stageIndex: 0, guarded: model.passiveId==='audit-ward', lastMoveCategory: null, lastMoveTurn: -1, bossPhaseTriggered: false,
+    goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
+    ...(encounter.mechanic === 'hydra' ? { hydra: { clueKnown:false, falseConfidence:0 } } : {}),
+    ...(encounter.mechanic === 'golem' || encounter.mechanic === 'scope' ?
+      { tactic: {inspected:false,consequence:false,recovered:false} } : {}),
     outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
     events: [{ seq: 0, turn: 0, kind: 'ENCOUNTER_STARTED', message: encounter.name + ' appeared!' },
-      { seq: 1, turn: 0, kind: 'CHARACTER_SELECTED', message: model.displayName + ' entered battle.' }],
+      { seq: 1, turn: 0, kind: 'CHARACTER_SELECTED', message: model.displayName + ' entered battle.', modelId:model.id }],
   };
 }
 export function applyMove(
@@ -27,21 +34,83 @@ export function applyMove(
     ...state, turn: state.turn + 1, ap: state.ap - move.cost, progress: [...state.progress], goals: [...state.goals], events: [...state.events],
   };
   const stage = encounter.stages[next.stageIndex];
-  addEvent(next.events, next.turn, 'MOVE_USED', model.displayName + ' used ' + move.name + '!');
+  next.events.push({seq: next.events.length,turn:next.turn,kind:'MOVE_USED',
+    message:model.displayName+' used '+move.name+'!',modelId:model.id,moveId});
   let feedback = '';
-  if (!stage.accepts.includes(move.category)) {
+  const matches = stage.accepts.includes(move.category);
+  const comboBonus = matches && move.category === 'verification' &&
+    state.lastMoveCategory === 'research' && state.lastMoveTurn === state.turn
+    ? 12 : 0;
+  if (encounter.rival && matches && state.lastMoveCategory === move.category &&
+      state.lastMoveTurn === state.turn) {
+    const penalty = Math.max(0, Math.min(20, encounter.rival.repeatPenalty));
+    next.goals[next.stageIndex] += penalty;
+    addEvent(next.events,next.turn,'RIVAL_ACTED',encounter.rival.name +
+      ' anticipated that repeated ' + move.category + ' move! +' + penalty + ' required progress.',penalty);
+  }
+  next.lastMoveCategory = matches ? move.category : null;
+  next.lastMoveTurn = next.turn;
+  if (!matches) {
     feedback = move.name + ' cannot advance ' + stage.label + '. ' + stage.hint;
     addEvent(next.events, next.turn, 'STAGE_PROGRESS_CHANGED', 'No progress. ' + stage.hint, 0);
   } else {
     const remaining = next.goals[next.stageIndex] - next.progress[next.stageIndex];
-    const gain = Math.min(remaining, move.power);
+    const passiveBonus=model.passiveId==='analysis-boost' && next.turn===1 && move.category==='reasoning' ? 8 :
+      model.passiveId==='verification-link' && comboBonus>0 ? 8 : 0;
+    const gain = Math.min(remaining, move.power + comboBonus + passiveBonus);
+    const appliedBonus = Math.max(0, gain - Math.min(remaining, move.power));
+    if (appliedBonus > 0) addEvent(next.events, next.turn, 'COMBO_TRIGGERED',
+      'Evidence verified! Research + Verification combo +' + appliedBonus + '.', appliedBonus);
+    if (move.tacticalEffect === 'guard' && next.turn <= 2) {
+      next.guarded = true;
+      addEvent(next.events, next.turn, 'STATUS_APPLIED', 'Code review raised a guard against the incoming counter.');
+    }
     next.progress[next.stageIndex] += gain;
-    feedback = move.name + ' advanced ' + stage.label + ' by ' + gain + '. ' + move.lesson;
+    feedback = move.name + ' advanced ' + stage.label + ' by ' + gain + '. ' + move.lesson +
+      (appliedBonus ? ' Research + Verification combo!' : '');
     addEvent(next.events, next.turn, 'STAGE_PROGRESS_CHANGED', stage.label + ' +' + gain, gain);
+    // Choice-based enemy responses: the specific decision, not a scripted turn number, triggers these.
+    if (encounter.mechanic === 'golem' && stage.id === 'patch' && !next.tactic?.consequence) {
+      const inspected = next.tactic?.inspected ?? false;
+      next.tactic={inspected,consequence:!inspected,recovered:false};
+      if (!inspected) {
+        next.goals[2]+=20;
+        addEvent(next.events,next.turn,'ENEMY_ACTED','Brittle Patch! Untested changes added a regression. +20 tests required.',20);
+      } else {
+        addEvent(next.events,next.turn,'ENEMY_ACTED','Regression Golem stopped: the failure trace guided a targeted patch.');
+      }
+    }
+    if (encounter.mechanic === 'scope' && stage.id === 'plan' && !next.tactic?.consequence) {
+      const inspected=next.tactic?.inspected ?? false;
+      next.tactic={inspected,consequence:!inspected,recovered:false};
+      if (!inspected) {
+        next.goals[2]+=20;
+        addEvent(next.events,next.turn,'ENEMY_ACTED','Scope Creep! Acceptance criteria changed. Replan or add extra verification.',20);
+      } else {
+        addEvent(next.events,next.turn,'ENEMY_ACTED','Scope Shifter anticipated: early clarification protected the acceptance test.');
+      }
+    }
     if (next.progress[next.stageIndex] >= next.goals[next.stageIndex]) {
       addEvent(next.events, next.turn, 'STAGE_COMPLETED', stage.label + ' complete!');
       next.stageIndex++;
       feedback = stage.label + ' complete! ' + move.lesson;
+      const boss = encounter.boss;
+      if (boss && !next.bossPhaseTriggered && next.stageIndex === boss.phaseAt &&
+          next.stageIndex < encounter.stages.length) {
+        next.bossPhaseTriggered = true;
+        const amount = Math.max(0,Math.min(20,boss.amount));
+        if (boss.effect === 'audit') next.goals[next.stageIndex] += amount;
+        if (boss.effect === 'reopen') {
+          next.stageIndex--;
+          next.progress[next.stageIndex]=Math.max(0,next.goals[next.stageIndex]-amount);
+        }
+        if (boss.effect === 'drain') next.ap=Math.max(0,next.ap-amount);
+        addEvent(next.events,next.turn,'BOSS_PHASE_CHANGED',
+          encounter.name+' entered '+boss.label+'! '+
+          (boss.effect==='audit'?'Final verification expanded.':
+           boss.effect==='reopen'?'Earlier evidence must be rechecked.':'Action budget tightened.'));
+        feedback += ' Boss phase: '+boss.label+'!';
+      }
     }
   }
   if (next.stageIndex >= encounter.stages.length) {
@@ -50,7 +119,37 @@ export function applyMove(
     next.feedback = feedback + ' ' + encounter.name + ' completed!';
     return next;
   }
-  if (next.turn === 2) {
+  return finishTurn(next, encounter, feedback);
+}
+
+/** Resolve enemy effects after either a move or a switch. */
+function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFeedback: string): BattleState {
+  let feedback = initialFeedback;
+  if (encounter.mechanic === 'hydra' && next.hydra) {
+    if (next.turn === 2) {
+      if (next.hydra.clueKnown) {
+        addEvent(next.events,next.turn,'ENEMY_ACTED',
+          'Echo Chamber blocked! You identified duplicate citations before trusting the evidence.');
+        feedback += ' Echo Chamber blocked by source inspection!';
+      } else {
+        next.hydra = { ...next.hydra, falseConfidence:1 };
+        next.goals[next.stageIndex] += 20;
+        addEvent(next.events,next.turn,'ENEMY_ACTED',
+          'Echo Chamber amplified an unchecked claim. +20 verification required.',20);
+        feedback += ' Echo Chamber! The unverified claim needs a stronger check.';
+      }
+    } else {
+      addEvent(next.events,next.turn,'ENEMY_ACTED',
+        'Hydra watches for a repeated or unsupported claim.');
+    }
+  } else if (encounter.mechanic === 'golem' || encounter.mechanic === 'scope') {
+    // Reactive mechanics fire on tactical decisions in applyMove, never on an arbitrary clock.
+  } else if (next.turn === 2 && next.guarded) {
+    next.guarded = false;
+    addEvent(next.events, next.turn, 'STATUS_CONSUMED', 'Guard absorbed the enemy special.');
+    addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' used ' + encounter.special + ', but your guard blocked it!');
+    feedback += ' Guard blocked ' + encounter.special + '!';
+  } else if (next.turn === 2) {
     const effect = encounter.specialEffect ?? 'scope-shift';
     if (effect === 'regression' && next.stageIndex > 0) {
       // A regression can reopen a recently completed stage.
@@ -67,7 +166,11 @@ export function applyMove(
   } else {
     addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' is watching your next move.');
   }
-  if (next.ap <= 0 || next.turn >= TURN_LIMIT) {
+  if (next.guarded && next.turn > 2) {
+    next.guarded = false;
+    addEvent(next.events, next.turn, 'STATUS_CONSUMED', 'Guard expired.');
+  }
+  if (next.ap <= 0 || next.turn >= next.maxTurns) {
     next.outcome = 'lost';
     addEvent(next.events, next.turn, 'BATTLE_LOST', 'Out of action points! Try a different approach.');
     feedback += ' Out of action points! Try again.';
@@ -75,6 +178,68 @@ export function applyMove(
   next.feedback = feedback;
   return next;
 }
+
+/** Investigate an authored claim before spending AP. One turn, no AP; a clue can only be found once. */
+export function inspectHydraEvidence(
+  state: BattleState, clueId: string, encounter: EncounterDefinition,
+): BattleState {
+  if (encounter.mechanic !== 'hydra' || state.encounterId !== encounter.id ||
+      state.outcome !== 'active' || state.turn >= state.maxTurns ||
+      !state.hydra || state.hydra.clueKnown || clueId !== HYDRA_CLUE.id) return state;
+  const next:BattleState = {
+    ...state, turn:state.turn+1, progress:[...state.progress], goals:[...state.goals],
+    hydra:{...state.hydra,clueKnown:true},events:[...state.events],
+  };
+  next.events.push({seq:next.events.length,turn:next.turn,kind:'CLUE_FOUND',
+    clueId:HYDRA_CLUE.id,message:HYDRA_CLUE.clue});
+  return finishTurn(next,encounter,'Evidence inspected: '+HYDRA_CLUE.clue);
+}
+
+/** One inspect action per authored intelligence trial, with no AP cost but one turn spent. */
+export function inspectScenarioClue(state:BattleState,clueId:string,encounter:EncounterDefinition):BattleState {
+  if(encounter.mechanic==='hydra')return inspectHydraEvidence(state,clueId,encounter);
+  if((encounter.mechanic!=='golem'&&encounter.mechanic!=='scope') ||
+     state.encounterId!==encounter.id || state.outcome!=='active' ||
+     !state.tactic || state.tactic.inspected || state.turn>=state.maxTurns)return state;
+  const clue=INTELLIGENCE_CLUES[encounter.mechanic];
+  if(clue.id!==clueId)return state;
+  const next:BattleState={...state,turn:state.turn+1,tactic:{...state.tactic,inspected:true},
+    goals:[...state.goals],progress:[...state.progress],events:[...state.events]};
+  next.events.push({seq:next.events.length,turn:next.turn,kind:'CLUE_FOUND',clueId,message:clue.clue});
+  return finishTurn(next,encounter,clue.clue);
+}
+
+/** After a scope change, explicitly trade one turn and one AP to revise acceptance criteria. */
+export function reviseScopePlan(state:BattleState,encounter:EncounterDefinition):BattleState {
+  if(encounter.mechanic!=='scope'||state.encounterId!==encounter.id||
+     !state.tactic?.consequence||state.tactic.recovered||state.outcome!=='active'||
+     state.turn>=state.maxTurns||state.ap<1)return state;
+  const next:BattleState={...state,turn:state.turn+1,ap:state.ap-1,
+    tactic:{...state.tactic,recovered:true},goals:[...state.goals],progress:[...state.progress],events:[...state.events]};
+  next.goals[2]=Math.max(encounter.stages[2].goal,next.goals[2]-20);
+  addEvent(next.events,next.turn,'APPROACH_CHANGED','Acceptance plan revised to address the new requirement. One AP used.');
+  return finishTurn(next,encounter,'Replanned against the changed acceptance criteria.');
+}
+
+/** Switching is a tactical action: one turn, zero AP, and the usual enemy response. */
+export function switchModel(
+  state: BattleState, targetModelId: string,
+  encounter: EncounterDefinition = TASK, roster: readonly ModelDefinition[] = MODELS,
+): BattleState {
+  if (state.outcome !== 'active' || state.encounterId !== encounter.id ||
+      state.modelId === targetModelId || !state.squadIds.includes(targetModelId)) return state;
+  const nextModel = roster.find(companion => companion.id === targetModelId);
+  if (!nextModel) return state;
+  const next: BattleState = { ...state, modelId: targetModelId,
+    guarded:state.guarded || (nextModel.passiveId==='audit-ward' &&
+      !state.events.some(event=>(event.kind==='CHARACTER_SELECTED'||event.kind==='MODEL_SWITCHED') && event.modelId===nextModel.id)),
+    lastMoveCategory: null, lastMoveTurn: -1, turn: state.turn + 1,
+    progress: [...state.progress], goals: [...state.goals], events: [...state.events] };
+  next.events.push({seq:next.events.length,turn:next.turn,kind:'MODEL_SWITCHED',
+    message:'Go! '+nextModel.displayName+'! One turn used, no AP spent.',modelId:nextModel.id});
+  return finishTurn(next, encounter, nextModel.displayName + ' switched in.');
+}
+
 export function totalProgress(state: BattleState): number {
   const done = state.progress.reduce((n, value) => n + value, 0);
   const goal = state.goals.reduce((n, value) => n + value, 0);
