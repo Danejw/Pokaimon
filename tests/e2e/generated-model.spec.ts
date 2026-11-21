@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import generatedJson from '../../src/content/generatedModels.json';
 import type {ModelCatalogEntry} from '../../src/content/modelCatalog';
-const generated=generatedJson as ModelCatalogEntry[];
+const generated=generatedJson as unknown as ModelCatalogEntry[];
 import {MOVES} from '../../src/content/core';
 const entry=generated[0];
 test.skip(!entry,'No generated official evolution in the checked-in catalog. The fixture smoke job injects one in CI.');
