@@ -35,7 +35,7 @@ describe('Phase 6A: Hallucination Hydra decision',()=>{
     let state=attack(begin(),'deep-think');
     state=attack(state,'deep-research');
     expect(state.hydra?.falseConfidence).toBe(1);
-    expect(state.goals[2]).toBe(HYDRA.stages[2].goal+16);
+    expect(state.goals[2]).toBe(HYDRA.stages[2].goal+20);
     state=attack(state,'self-correction');
     expect(state.outcome).toBe('active');
     state=attack(state,'self-correction');
