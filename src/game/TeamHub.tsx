@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MODELS, MOVES } from '../content/core';
+import { getCatalogEntry } from '../content/modelCatalog';
 import { rosterForProgress, teamCanHandleEncounters } from '../content/team';
 import { PixelPortrait } from './PixelPortrait';
 import type { Progress } from '../storage/progress';
@@ -27,7 +28,7 @@ export function ModelDex({progress,onHome,onTeam}:Navigation&{progress:Progress;
             <span> {move.category.toUpperCase()} · {move.cost} AP. {move.description}</span>
           </p>;})}
         </details>
-        <small>DOCUMENTATION CHECKED {model.verifiedAt}</small>
+        <small>{getCatalogEntry(model.id)?.facts.reviewStatus === 'reviewed' ? 'EVIDENCE REVIEWED ' : 'REFERENCE RECORDED '} {model.verifiedAt}{getCatalogEntry(model.id)?.facts.reviewStatus === 'pending' ? ' · VERIFICATION PENDING' : ''}</small>
         <a href={model.source} target="_blank" rel="noreferrer">OFFICIAL MODEL DOCUMENTATION ↗</a>
       </div>
     </article>)}
@@ -68,7 +69,7 @@ export function TeamEditor({progress,onHome,onSetTeam,onSetAlternate}:Navigation
     </label>)}
     <div className="team-actions">
       <button className="primary" onClick={commit}>SAVE TEAM</button>
-      <button className="secondary" onClick={()=>{setChosen(MODELS.map(m=>m.id));setNotice('All starters selected. Save to apply.');}}>RESTORE STARTERS</button>
+      <button className="secondary" onClick={()=>{setChosen(MODELS.slice(0,3).map(m=>m.id));setNotice('All starters selected. Save to apply.');}}>RESTORE STARTERS</button>
     </div>
     <p className="team-message" role="status">{notice||'Each selected team must be capable of completing all current wild encounters.'}</p>
     <div className="team-reward">
