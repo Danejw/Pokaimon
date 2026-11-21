@@ -1,14 +1,14 @@
 import type { BattleState, BattleEvent, EncounterDefinition, ModelDefinition, MoveDefinition } from './types';
-import { MOVES, INITIAL_MODEL, TASK } from '../content/core';
+import { MOVES, INITIAL_MODEL, MODELS, TASK } from '../content/core';
 
 const TURN_LIMIT = 8;
 const AP_LIMIT = 6;
 function addEvent(events: BattleEvent[], turn: number, kind: BattleEvent['kind'], message: string, amount?: number): void {
   events.push({ seq: events.length, turn, kind, message, ...(amount === undefined ? {} : { amount }) });
 }
-export function createBattle(encounter: EncounterDefinition = TASK, model: ModelDefinition = INITIAL_MODEL, seed = 1): BattleState {
+export function createBattle(encounter: EncounterDefinition = TASK, model: ModelDefinition = INITIAL_MODEL, seed = 1, squad: readonly ModelDefinition[] = MODELS): BattleState {
   return {
-    encounterId: encounter.id, modelId: model.id, seed, turn: 0, ap: AP_LIMIT, maxAp: AP_LIMIT,
+    encounterId: encounter.id, modelId: model.id, squadIds: [...new Set([model.id, ...squad.map(companion => companion.id)])], seed, turn: 0, ap: AP_LIMIT, maxAp: AP_LIMIT,
     stageIndex: 0, goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
     outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
     events: [{ seq: 0, turn: 0, kind: 'ENCOUNTER_STARTED', message: encounter.name + ' appeared!' },
@@ -50,6 +50,12 @@ export function applyMove(
     next.feedback = feedback + ' ' + encounter.name + ' completed!';
     return next;
   }
+  return finishTurn(next, encounter, feedback);
+}
+
+/** Resolve enemy effects after either a move or a switch. */
+function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFeedback: string): BattleState {
+  let feedback = initialFeedback;
   if (next.turn === 2) {
     const effect = encounter.specialEffect ?? 'scope-shift';
     if (effect === 'regression' && next.stageIndex > 0) {
@@ -75,6 +81,22 @@ export function applyMove(
   next.feedback = feedback;
   return next;
 }
+
+/** Switching is a tactical action: one turn, zero AP, and the usual enemy response. */
+export function switchModel(
+  state: BattleState, targetModelId: string,
+  encounter: EncounterDefinition = TASK, roster: readonly ModelDefinition[] = MODELS,
+): BattleState {
+  if (state.outcome !== 'active' || state.encounterId !== encounter.id ||
+      state.modelId === targetModelId || !state.squadIds.includes(targetModelId)) return state;
+  const nextModel = roster.find(companion => companion.id === targetModelId);
+  if (!nextModel) return state;
+  const next: BattleState = { ...state, modelId: targetModelId, turn: state.turn + 1,
+    progress: [...state.progress], goals: [...state.goals], events: [...state.events] };
+  addEvent(next.events, next.turn, 'MODEL_SWITCHED', 'Go! ' + nextModel.displayName + '! One turn used, no AP spent.');
+  return finishTurn(next, encounter, nextModel.displayName + ' switched in.');
+}
+
 export function totalProgress(state: BattleState): number {
   const done = state.progress.reduce((n, value) => n + value, 0);
   const goal = state.goals.reduce((n, value) => n + value, 0);
