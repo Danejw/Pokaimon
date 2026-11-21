@@ -53,11 +53,20 @@ export async function listOfficialModels(provider,env=process.env,fetcher=fetch)
     headers['anthropic-version']='2026-10-21';
   }else headers.authorization='Bearer '+key;
   try{
-    const body=await boundedJson(config.url,headers,fetcher);
+    let body=await boundedJson(config.url,headers,fetcher);
     const models=normalizeListing(provider,body);
-    // Pagination must not silently claim full inventory coverage.
+    let pages=1;
+    while(provider==='anthropic' && body.has_more && pages<4){
+      const lastId=typeof body.last_id==='string'?body.last_id:body.data?.at(-1)?.id;
+      if(typeof lastId!=='string'||lastId.length>90)return {provider,status:'partial-pagination',models};
+      body=await boundedJson(config.url+'&after_id='+encodeURIComponent(lastId),headers,fetcher);
+      models.push(...normalizeListing(provider,body));
+      pages++;
+      if(models.length>400)return {provider,status:'partial-pagination',models:models.slice(0,400)};
+    }
+    // If a provider's listing exceeds the bounded scan, publish nothing from it.
     if(provider==='anthropic' && body.has_more)return {provider,status:'partial-pagination',models};
-    return {provider,status:'ok',models};
+    return {provider,status:'ok',models:[...new Map(models.map(m=>[m.id,m])).values()]};
   }catch(error){
     const message=error instanceof Error?error.message:'Source failed';
     return {provider,status:'error',models:[],reason:message.replaceAll(key,'[REDACTED]').slice(0,200)};
