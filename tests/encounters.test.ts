@@ -45,7 +45,7 @@ describe('encounter campaign',()=>{
     vi.stubGlobal('localStorage',{getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>map.set(k,v)});
     const p=markCleared({...defaultProgress,teamIds:[...defaultProgress.teamIds]},'task');saveProgress(p);expect(loadProgress()).toEqual(p);
     expect(markCleared(p,'task')).toBe(p);
-    map.set('pokaimon:progress:v2','broken');expect(loadProgress()).toEqual(defaultProgress);
+    map.set('pokaimon:progress:v3','broken');expect(loadProgress()).toEqual(defaultProgress);
     vi.unstubAllGlobals();
   });
   it('regression reopens completed coding stage',()=>{
