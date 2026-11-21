@@ -3,6 +3,7 @@ import { MODEL_CATALOG, catalogToModels, validateCatalog } from '../src/content/
 import { MODELS, MOVES } from '../src/content/core';
 import { getModelSprite, fallbackModelSprite } from '../src/game/pixelArt';
 import { applyMove, createBattle } from '../src/battle/engine';
+import { buildBattleReplay, restoreBattleReplay } from '../src/battle/replay';
 import { TASK } from '../src/content/core';
 
 describe('Phase 5: model registry', () => {
@@ -40,5 +41,13 @@ describe('Phase 5: model registry', () => {
       .toContain('Unknown move missing in astra');
     expect(validateCatalog([{...entry,facts:{...entry.facts,sourceUrl:'javascript:evil()'}}],MOVES))
       .toContain('Invalid source URL in astra');
+  });
+  it('reconstructs a saved battle containing a newly registered official model',()=>{
+    const opus=MODELS.find(model=>model.id==='opus55')!;
+    const squad=[MODELS[0],opus];
+    const initial=createBattle(TASK,opus,1,squad);
+    const battle=applyMove(initial,'extended-thinking',opus,TASK);
+    const replay=buildBattleReplay(battle,{encounterId:'task',modifierIds:[],roster:squad});
+    expect(restoreBattleReplay(replay)).toEqual(battle);
   });
 });
