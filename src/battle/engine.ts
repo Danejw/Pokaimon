@@ -1,5 +1,6 @@
 import type { BattleState, BattleEvent, EncounterDefinition, ModelDefinition, MoveDefinition } from './types';
 import { MOVES, INITIAL_MODEL, MODELS, TASK } from '../content/core';
+import { HYDRA_CLUE } from '../content/intelligentEncounters';
 
 const TURN_LIMIT = 8;
 const AP_LIMIT = 6;
@@ -13,6 +14,7 @@ export function createBattle(encounter: EncounterDefinition = TASK, model: Model
     encounterId: encounter.id, modelId: model.id, squadIds: [...new Set([model.id, ...squad.map(companion => companion.id)])], seed, turn: 0, ap: maxAp, maxAp, maxTurns,
     stageIndex: 0, guarded: false, lastMoveCategory: null, lastMoveTurn: -1, bossPhaseTriggered: false,
     goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
+    ...(encounter.mechanic === 'hydra' ? { hydra: { clueKnown:false, falseConfidence:0 } } : {}),
     outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
     events: [{ seq: 0, turn: 0, kind: 'ENCOUNTER_STARTED', message: encounter.name + ' appeared!' },
       { seq: 1, turn: 0, kind: 'CHARACTER_SELECTED', message: model.displayName + ' entered battle.', modelId:model.id }],
@@ -98,7 +100,24 @@ export function applyMove(
 /** Resolve enemy effects after either a move or a switch. */
 function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFeedback: string): BattleState {
   let feedback = initialFeedback;
-  if (next.turn === 2 && next.guarded) {
+  if (encounter.mechanic === 'hydra' && next.hydra) {
+    if (next.turn === 2) {
+      if (next.hydra.clueKnown) {
+        addEvent(next.events,next.turn,'ENEMY_ACTED',
+          'Echo Chamber blocked! You identified duplicate citations before trusting the evidence.');
+        feedback += ' Echo Chamber blocked by source inspection!';
+      } else {
+        next.hydra = { ...next.hydra, falseConfidence:1 };
+        next.goals[next.stageIndex] += 16;
+        addEvent(next.events,next.turn,'ENEMY_ACTED',
+          'Echo Chamber amplified an unchecked claim. +16 verification required.',16);
+        feedback += ' Echo Chamber! The unverified claim needs a stronger check.';
+      }
+    } else {
+      addEvent(next.events,next.turn,'ENEMY_ACTED',
+        'Hydra watches for a repeated or unsupported claim.');
+    }
+  } else if (next.turn === 2 && next.guarded) {
     next.guarded = false;
     addEvent(next.events, next.turn, 'STATUS_CONSUMED', 'Guard absorbed the enemy special.');
     addEvent(next.events, next.turn, 'ENEMY_ACTED', encounter.name + ' used ' + encounter.special + ', but your guard blocked it!');
@@ -131,6 +150,22 @@ function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFe
   }
   next.feedback = feedback;
   return next;
+}
+
+/** Investigate an authored claim before spending AP. One turn, no AP; a clue can only be found once. */
+export function inspectHydraEvidence(
+  state: BattleState, clueId: string, encounter: EncounterDefinition,
+): BattleState {
+  if (encounter.mechanic !== 'hydra' || state.encounterId !== encounter.id ||
+      state.outcome !== 'active' || state.turn >= state.maxTurns ||
+      !state.hydra || state.hydra.clueKnown || clueId !== HYDRA_CLUE.id) return state;
+  const next:BattleState = {
+    ...state, turn:state.turn+1, progress:[...state.progress], goals:[...state.goals],
+    hydra:{...state.hydra,clueKnown:true},events:[...state.events],
+  };
+  next.events.push({seq:next.events.length,turn:next.turn,kind:'CLUE_FOUND',
+    clueId:HYDRA_CLUE.id,message:HYDRA_CLUE.clue});
+  return finishTurn(next,encounter,'Evidence inspected: '+HYDRA_CLUE.clue);
 }
 
 /** Switching is a tactical action: one turn, zero AP, and the usual enemy response. */
