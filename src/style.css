@@ -363,3 +363,15 @@ h1,h2,h3{margin:0}
   .squad-options button{padding:4px;gap:4px}
   .squad-options button small{font-size:10px}
 }
+
+/* Telegraphs and rewards are driven only by deterministic battle events. */
+.battle-intent{
+  margin:3px 2px;padding:3px 6px;background:#e9deee;border-left:4px solid #83739e;
+  color:#514267;font:700 12px/1.2 'Chakra Petch',system-ui,sans-serif;
+}
+.battle-intent b{color:#366855}
+.battle-combo{
+  padding:6px 8px;margin:0 0 9px;background:#d6efdb;border:3px solid #648c6d;
+  color:#356246;font:800 12px 'Chakra Petch',system-ui,sans-serif;
+}
+@media(max-width:375px){.battle-intent{font-size:11px;padding:2px 5px}}
