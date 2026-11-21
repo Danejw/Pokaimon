@@ -1,8 +1,18 @@
 import {test,expect} from '@playwright/test';
-import generatedJson from '../../src/content/generatedModels.json';
+import {readFileSync} from 'node:fs';
 import type {ModelCatalogEntry} from '../../src/content/modelCatalog';
-const generated=generatedJson as unknown as ModelCatalogEntry[];
-import {MOVES} from '../../src/content/core';
+const generated=JSON.parse(readFileSync(new URL('../../src/content/generatedModels.json',import.meta.url),'utf8')) as ModelCatalogEntry[];
+const moveInfo:Record<string,{name:string;category:string}>={
+ 'deep-think':{name:'Deep Think',category:'reasoning'},
+ 'extended-thinking':{name:'Extended Thinking',category:'reasoning'},
+ 'max-reasoning':{name:'Max Reasoning',category:'reasoning'},
+ 'context-recall':{name:'Context Recall',category:'context'},
+ 'code-execution':{name:'Code Execution',category:'coding'},
+ 'code-review':{name:'Code Review',category:'coding'},
+ 'deep-research':{name:'Deep Research',category:'research'},
+ 'parallel-search':{name:'Parallel Search',category:'research'},
+ 'self-correction':{name:'Self-Correction',category:'verification'},
+};
 const entry=generated[0];
 test.skip(!entry,'No generated official evolution in the checked-in catalog. The fixture smoke job injects one in CI.');
 test('generated original evolution appears in ModelDex and wins a battle',async({page},testInfo)=>{
@@ -25,7 +35,7 @@ test('generated original evolution appears in ModelDex and wins a battle',async(
   await page.getByRole('button',{name:'Select '+entry.facts.displayName}).click();
   await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-model',entry.id);
   await page.screenshot({path:'test-results/visual/evolution-battle-'+testInfo.project.name+'.png',fullPage:true});
-  const moves=entry.moveIds.map(id=>MOVES[id]);
+  const moves=entry.moveIds.map(id=>moveInfo[id]);
   const plan=moves.find(m=>m.category==='reasoning'||m.category==='context')!;
   const code=moves.find(m=>m.category==='coding')!;
   const verify=moves.find(m=>m.category==='verification')!;
