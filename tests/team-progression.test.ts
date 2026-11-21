@@ -15,15 +15,15 @@ describe('model collection, team and versioned progress', () => {
     stubStorage();
     const p=loadProgress();
     expect(p.schema).toBe(4);
-    expect(p.teamIds).toEqual(MODELS.map(model=>model.id));
-    expect(rosterForProgress(p).length).toBe(3);
+    expect(p.teamIds).toEqual(MODELS.slice(0,3).map(model=>model.id));
+    expect(rosterForProgress(p).length).toBe(4);
     vi.unstubAllGlobals();
   });
   it('migrates older cleared tasks once without erasing them',()=>{
     const data=stubStorage({'pokaimon:progress:v1':JSON.stringify({schema:1,cleared:['task','bug','task']})});
     const p=loadProgress();
     expect(p.cleared).toEqual(['task','bug']);
-    expect(p.teamIds).toEqual(MODELS.map(m=>m.id));
+    expect(p.teamIds).toEqual(MODELS.slice(0,3).map(m=>m.id));
     saveProgress(p);
     expect(JSON.parse(data.get('pokaimon:progress:v4')??'{}').schema).toBe(4);
     expect(loadProgress()).toEqual(p);
@@ -33,7 +33,7 @@ describe('model collection, team and versioned progress', () => {
     stubStorage({'pokaimon:progress:v2':JSON.stringify({schema:2,cleared:['task'],teamIds:['unknown','grok'],discoveredMoves:['bad'],winsByModel:{},useAlternateLoadout:true})});
     const p=loadProgress();
     expect(teamCanHandleEncounters(rosterForProgress(p))).toBe(true);
-    expect(p.teamIds).toEqual(MODELS.map(m=>m.id));
+    expect(p.teamIds).toEqual(MODELS.slice(0,3).map(m=>m.id));
     expect(p.useAlternateLoadout).toBe(false);
     vi.unstubAllGlobals();
   });
