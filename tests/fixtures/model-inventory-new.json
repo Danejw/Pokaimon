@@ -14,10 +14,10 @@
           "sourceUrl": "https://developers.openai.com/api/docs/models/gpt-88-1"
         },
         {
-          "id": "gpt-88-2",
-          "displayName": "Fictional GPT-88.2",
+          "id": "gpt-6-3-astra",
+          "displayName": "Fictional GPT-6.3 Astra (fictional fixture)",
           "officialEvidence": true,
-          "sourceUrl": "https://developers.openai.com/api/docs/models/gpt-88-2"
+          "sourceUrl": "https://developers.openai.com/api/docs/models/gpt-6-3-astra"
         }
       ]
     }
