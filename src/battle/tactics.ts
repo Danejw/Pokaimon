@@ -25,7 +25,9 @@ export function forecastMove(
     return { status:'mismatch', gain:0, finishesStage:false };
   }
   const remaining = Math.max(0, state.goals[state.stageIndex] - state.progress[state.stageIndex]);
-  const gain = Math.min(remaining, move.power);
+  const comboBonus = move.category === 'verification' && state.lastMoveCategory === 'research' &&
+    state.lastMoveTurn === state.turn ? 12 : 0;
+  const gain = Math.min(remaining, move.power + comboBonus);
   return { status:'effective', gain, finishesStage:gain >= remaining };
 }
 
