@@ -4,7 +4,8 @@
 :root {
   font-family:'Chakra Petch',system-ui,sans-serif;
   color:#303545;
-  background:#263443;
+  --wallpaper-stripes:repeating-linear-gradient(0deg,#273547 0px,#273547 7px,#304255 7px,#304255 10px);
+  background:var(--wallpaper-stripes);
   font-synthesis:none;
   --ink:#303545; --ink-deep:#171f32; --border-light:#fdf6de;
   --parchment:#fffbee; --cream:#f8edcb; --sand:#eecb8f;
@@ -19,7 +20,8 @@ button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visi
   outline:3px dashed #db833f;outline-offset:3px
 }
 body{
-  background:repeating-linear-gradient(0deg,#273547 0px,#273547 7px,#304255 7px,#304255 10px);
+  min-height:100dvh;
+  background:var(--wallpaper-stripes);
 }
 .retro-shell{
   width:100%;max-width:492px;min-height:100dvh;margin:0 auto;padding:0 9px 10px;
@@ -35,10 +37,8 @@ body{
 }
 .brandmark{color:#b6efc9;font-size:20px}
 .brand{font:12px 'Press Start 2P',monospace;letter-spacing:1px}
-.edition{margin-left:auto;font:600 13px 'Chakra Petch',system-ui,sans-serif;letter-spacing:1px}
 .retro-footer{margin-top:auto;text-align:center;padding:15px 0 4px;font:14px 'Chakra Petch',system-ui,sans-serif;color:#6a7680;letter-spacing:1px}
 h1,h2,h3{margin:0}
-.eyebrow{color:#96573f;font:700 17px 'Chakra Petch',system-ui,sans-serif;letter-spacing:1px;margin:17px 0 7px}
 .retro-home{flex:1}
 .retro-home h1{font:clamp(21px,6vw,29px)/1.7 'Press Start 2P',monospace;letter-spacing:-1px;margin:9px 0;color:#2f4050}
 .retro-home h1 em{font-style:normal;color:#47876f}
@@ -236,7 +236,6 @@ h1,h2,h3{margin:0}
   .retro-dialogue p{font-size:15px}
   .retro-move strong{font-size:13px}
   .status-heading strong{font-size:12px}
-  .retro-header .edition{display:none}
 }
 @media (max-height:710px){
   .retro-topbar{height:31px}
