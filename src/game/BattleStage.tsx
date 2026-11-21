@@ -276,6 +276,24 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
           const ray=this.add.rectangle(260,160,6,38,0xfce176).setDepth(14).setRotation(i*Math.PI/3);
           this.tweens.add({targets:ray,alpha:0,scaleY:1.8,duration:340,onComplete:()=>ray.destroy()});
         }
+      }else if(type==='coding'){
+        // Original code window: fragments assemble into a pixel grid before impact.
+        for(let i=0;i<10;i++){
+          const row=Math.floor(i/5),column=i%5;
+          const bit=this.add.rectangle(148,214,5+(i%2)*4,5, i%3===0?0xffcf69:0x6fd5b6).setDepth(14);
+          this.tweens.add({targets:bit,x:228+column*10,y:141+row*16,
+            alpha:0.15,duration:265+row*55+column*16,ease:'Linear',
+            onComplete:()=>bit.destroy()});
+        }
+      }else if(type==='context'){
+        // Original memory-link orbits: context fragments converge as a connected network.
+        for(let i=0;i<7;i++){
+          const phi=i*Math.PI*2/7;
+          const node=this.add.rectangle(259+Math.cos(phi)*61,164+Math.sin(phi)*50,10,10,
+            i%2?0x88d9ed:0xc7a5ff).setStrokeStyle(2,0xffffff).setDepth(14);
+          this.tweens.add({targets:node,x:259,y:164,angle:180,alpha:0,duration:280+i*19,
+            onComplete:()=>node.destroy()});
+        }
       }else if(type==='research'){
         for(let i=0;i<5;i++){
           const card=this.add.rectangle(145+i*5,220-i*9,17,23,0x94dff7).setStrokeStyle(2,0xffffff).setDepth(14);
