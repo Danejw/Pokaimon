@@ -9,8 +9,9 @@ describe('Phase 5: model registry', () => {
   it('keeps real-world evidence separate from simulated balance data', () => {
     expect(validateCatalog(MODEL_CATALOG, MOVES)).toEqual([]);
     expect(catalogToModels(MODEL_CATALOG)).toEqual(MODELS);
-    expect(MODEL_CATALOG).toHaveLength(3);
-    expect(MODEL_CATALOG.every(entry => entry.facts.reviewStatus === 'pending')).toBe(true);
+    expect(MODEL_CATALOG).toHaveLength(4);
+    expect(MODEL_CATALOG.filter(entry => entry.facts.reviewStatus === 'pending')).toHaveLength(3);
+    expect(MODEL_CATALOG.find(entry => entry.id === 'opus55')?.facts.reviewStatus).toBe('reviewed');
     expect(MODEL_CATALOG.every(entry => entry.balance.focus >= 1)).toBe(true);
   });
   it('a candidate is never playable until explicitly approved', () => {
@@ -18,11 +19,11 @@ describe('Phase 5: model registry', () => {
       ...MODEL_CATALOG[0], id:'trial', publicationStatus:'candidate' as const,
       facts:{...MODEL_CATALOG[0].facts, displayName:'Test Creature', sourceUrl:'https://example.org/fictional', reviewStatus:'pending' as const},
     };
-    expect(catalogToModels([...MODEL_CATALOG,candidate])).toHaveLength(3);
+    expect(catalogToModels([...MODEL_CATALOG,candidate])).toHaveLength(4);
     const approved={...candidate,publicationStatus:'approved' as const};
     const newRoster=catalogToModels([...MODEL_CATALOG,approved]);
-    expect(newRoster).toHaveLength(4);
-    const newModel=newRoster[3];
+    expect(newRoster).toHaveLength(5);
+    const newModel=newRoster[4];
     expect(newModel.id).toBe('trial');
     expect(getModelSprite(newModel.id)).toBe(fallbackModelSprite);
     let battle=createBattle(TASK,newModel,1,[newModel]);
