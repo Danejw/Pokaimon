@@ -484,6 +484,31 @@ function adaptiveTrial(): PixelDrawing {
   return p.finish();
 }
 
+/** Original three-screen evidence hydra: each head echoes one source signal. */
+function hallucinationHydra(): PixelDrawing {
+  const p=new Painter(42,36,{
+    K:0x303a51,D:0x526e88,M:0x7397a3,L:0xb1d5c4,
+    W:0xfff7dc,T:0x64e1c1,Y:0xf8d37c,R:0xde7d9b,
+  });
+  // Three independent-looking screens share the same original signal trunk.
+  p.rect('K',4,10,12,12).rect('D',6,12,8,8).rect('M',7,13,6,6);
+  p.rect('K',15,2,12,15).rect('D',17,4,8,11).rect('M',18,5,6,8);
+  p.rect('K',26,10,12,12).rect('D',28,12,8,8).rect('M',29,13,6,6);
+  p.rect('W',8,15,3,2).rect('W',19,8,4,2).rect('W',30,15,3,2);
+  p.rect('K',9,15,1,2).rect('K',20,8,2,2).rect('K',31,15,1,2);
+  p.rect('R',8,19,4,1).rect('R',19,13,4,1).rect('R',30,19,4,1);
+  // Duplicated evidence links are visibly wired into one shared body.
+  p.rect('K',8,22,5,3).rect('K',19,16,4,9).rect('K',30,22,5,3);
+  p.rect('T',10,22,2,3).rect('T',20,17,2,8).rect('T',32,22,2,3);
+  p.rect('K',10,25,24,9).rect('D',12,26,20,6).rect('M',14,27,16,4);
+  p.rect('W',16,27,12,3).rect('K',17,28,10,1);
+  p.rect('Y',19,29,6,1).rect('T',17,30,2,1).rect('T',25,30,2,1);
+  p.rect('K',6,28,5,6).rect('K',33,28,5,6);
+  p.rect('R',7,31,3,2).rect('R',34,31,3,2);
+  p.rect('Y',2,19,3,3).rect('Y',37,19,3,3);
+  return p.finish();
+}
+
 export const handDrawnModels = { astra:astra(), grok:grok(), fable:fable() };
 export const handDrawnEnemies: Record<string, PixelDrawing> = {
   'TASK':task(),
@@ -491,6 +516,7 @@ export const handDrawnEnemies: Record<string, PixelDrawing> = {
   'RESEARCH REQUEST':research(),
   'MATH PROBLEM':math(),
   'HALLUCINATION':hallucination(),
+  'HALLUCINATION HYDRA':hallucinationHydra(),
   'RUSH RIVAL':bug(),
   'CITATION SPECTER':hallucination(),
   'CLOCKWORK RIVAL':math(),
