@@ -13,13 +13,14 @@ import { battleMedal, forecastMove, getStageIntel } from '../battle/tactics';
 
 export interface BattlePanelProps {
   encounter: EncounterDefinition;
+  roster?: readonly ModelDefinition[];
   reducedMotion: boolean;
   soundEnabled: boolean;
   textSpeed: 'normal' | 'fast';
   difficulty: Difficulty;
   onHome: () => void;
   onNext: () => void;
-  onWin: (id: string) => void;
+  onWin: (id: string, battle: BattleState) => void;
 }
 
 interface AttackAction {
@@ -28,7 +29,7 @@ interface AttackAction {
 }
 
 export function BattlePanel({
-  encounter, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onWin,
+  encounter, roster = MODELS, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onWin,
 }: BattlePanelProps) {
   const [phase, setPhase] = useState<BattlePhase>('encounter');
   const [model, setModel] = useState<ModelDefinition | null>(null);
@@ -93,7 +94,7 @@ export function BattlePanel({
   }, [phase, switching]);
 
   useEffect(() => {
-    if (battle?.outcome === 'won') onWin(encounter.id);
+    if (battle?.outcome === 'won') onWin(encounter.id, battle);
   }, [battle?.outcome, encounter.id, onWin]);
 
   const currentStage = battle && battle.stageIndex < encounter.stages.length
@@ -135,7 +136,7 @@ export function BattlePanel({
     if (phase !== 'selection') return;
     playCue('throw', soundEnabled);
     setModel(next);
-    setBattle(createBattle(encounter, next));
+    setBattle(createBattle(encounter, next, 1, roster));
     setSelectedMove(0);
     setSwitching(false);
     setAttack(null);
@@ -152,7 +153,7 @@ export function BattlePanel({
 
   function changeCompanion(nextModel: ModelDefinition): void {
     if (phase !== 'command' || !switching || !battle || !model) return;
-    const next = switchModel(battle, nextModel.id, encounter, MODELS);
+    const next = switchModel(battle, nextModel.id, encounter, roster);
     if (next === battle) return;
     playCue('summon', soundEnabled);
     setBattle(next);
@@ -184,7 +185,7 @@ export function BattlePanel({
     if (['arrowup', 'arrowdown', 'w', 's'].includes(key)) {
       event.preventDefault();
       const shift = key === 'arrowup' || key === 'w' ? -1 : 1;
-      const index = (selectedIndex + shift + MODELS.length) % MODELS.length;
+      const index = (selectedIndex + shift + roster.length) % roster.length;
       setSelectedIndex(index);
       selectionButtons.current[index]?.focus();
       playCue('select', soundEnabled);
@@ -211,7 +212,7 @@ export function BattlePanel({
   const moves = model ? movesFor(model) : [];
   const intel = battle ? getStageIntel(battle, encounter) : null;
   const forecasts = battle ? moves.map(move => forecastMove(battle, move, encounter)) : [];
-  const companions = battle ? MODELS.filter(companion => battle.squadIds.includes(companion.id) && companion.id !== model?.id) : [];
+  const companions = battle ? roster.filter(companion => battle.squadIds.includes(companion.id) && companion.id !== model?.id) : [];
 
   return <section className="retro-battle" aria-label={'Wild ' + encounter.name + ' encounter'}>
     <div className="retro-topbar">
@@ -256,7 +257,7 @@ export function BattlePanel({
 
       {phase === 'selection' && <div className="retro-menu party-panel" onKeyDown={onSelectionKey}
         aria-label="AI model selection">
-        {MODELS.map((m, index) => {
+        {roster.map((m, index) => {
           const viable = canUseModel(encounter, m);
           return <button key={m.id} ref={node => { selectionButtons.current[index] = node; }}
             className={'party-slot ' + (selectedIndex === index ? 'is-selected' : '')}
