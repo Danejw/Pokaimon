@@ -2,7 +2,7 @@
 
 **Status:** Approved five-phase direction; **planning only, 0/5 implementation phases complete**.
 **Planning baseline:** `main` at `70be65c372b8e785abb3fa0d0fea5d993194d9da` (merged PR #3, November 20, 2026).
-**Working branch:** `feat/battle-evolution`; this branch begins from that baseline. No overworld in these five phases.
+**Working branch:** `feat/battle-evolution`; this branch begins from that baseline. [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4). No overworld in these five phases.
 **Scope:** Expand the existing browser battle into a fun, strategically deep, progressively unlockable, replayable AI-literacy game and make future model releases easy to incorporate.
 
 > This is a **post-MVP plan**. Its Phase 1–5 numbers are separate from the completed historical MVP Phase 0–4 in [../IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md). The currently deployed game and source code are the implementation baseline, not these proposals. Mark completion only after tests, screenshots, and playtesting.
