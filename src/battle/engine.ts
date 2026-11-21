@@ -9,7 +9,7 @@ function addEvent(events: BattleEvent[], turn: number, kind: BattleEvent['kind']
 export function createBattle(encounter: EncounterDefinition = TASK, model: ModelDefinition = INITIAL_MODEL, seed = 1, squad: readonly ModelDefinition[] = MODELS): BattleState {
   return {
     encounterId: encounter.id, modelId: model.id, squadIds: [...new Set([model.id, ...squad.map(companion => companion.id)])], seed, turn: 0, ap: AP_LIMIT, maxAp: AP_LIMIT,
-    stageIndex: 0, guarded: false, lastMoveCategory: null, lastMoveTurn: -1,
+    stageIndex: 0, guarded: false, lastMoveCategory: null, lastMoveTurn: -1, bossPhaseTriggered: false,
     goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
     outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
     events: [{ seq: 0, turn: 0, kind: 'ENCOUNTER_STARTED', message: encounter.name + ' appeared!' },
@@ -35,6 +35,13 @@ export function applyMove(
   const comboBonus = matches && move.category === 'verification' &&
     state.lastMoveCategory === 'research' && state.lastMoveTurn === state.turn
     ? 12 : 0;
+  if (encounter.rival && matches && state.lastMoveCategory === move.category &&
+      state.lastMoveTurn === state.turn) {
+    const penalty = Math.max(0, Math.min(20, encounter.rival.repeatPenalty));
+    next.goals[next.stageIndex] += penalty;
+    addEvent(next.events,next.turn,'RIVAL_ACTED',encounter.rival.name +
+      ' anticipated that repeated ' + move.category + ' move! +' + penalty + ' required progress.',penalty);
+  }
   next.lastMoveCategory = matches ? move.category : null;
   next.lastMoveTurn = next.turn;
   if (!matches) {
@@ -58,6 +65,23 @@ export function applyMove(
       addEvent(next.events, next.turn, 'STAGE_COMPLETED', stage.label + ' complete!');
       next.stageIndex++;
       feedback = stage.label + ' complete! ' + move.lesson;
+      const boss = encounter.boss;
+      if (boss && !next.bossPhaseTriggered && next.stageIndex === boss.phaseAt &&
+          next.stageIndex < encounter.stages.length) {
+        next.bossPhaseTriggered = true;
+        const amount = Math.max(0,Math.min(20,boss.amount));
+        if (boss.effect === 'audit') next.goals[next.stageIndex] += amount;
+        if (boss.effect === 'reopen') {
+          next.stageIndex--;
+          next.progress[next.stageIndex]=Math.max(0,next.goals[next.stageIndex]-amount);
+        }
+        if (boss.effect === 'drain') next.ap=Math.max(0,next.ap-amount);
+        addEvent(next.events,next.turn,'BOSS_PHASE_CHANGED',
+          encounter.name+' entered '+boss.label+'! '+
+          (boss.effect==='audit'?'Final verification expanded.':
+           boss.effect==='reopen'?'Earlier evidence must be rechecked.':'Action budget tightened.'));
+        feedback += ' Boss phase: '+boss.label+'!';
+      }
     }
   }
   if (next.stageIndex >= encounter.stages.length) {
