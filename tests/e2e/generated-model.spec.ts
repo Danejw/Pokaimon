@@ -32,6 +32,8 @@ test('generated original evolution appears in ModelDex and wins a battle',async(
   await page.getByRole('button',{name:plan.name}).click();
   await page.getByRole('button',{name:code.name}).click();
   await page.getByRole('button',{name:verify.name}).click();
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', 'attack');
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-phase', /command|result/);
   if(await page.getByRole('heading',{name:'VICTORY!'}).count()===0)
     await page.getByRole('button',{name:verify.name}).click();
   await expect(page.getByRole('heading',{name:'VICTORY!'})).toBeVisible();
