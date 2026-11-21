@@ -235,7 +235,7 @@ export function BattlePanel({
     <div className="game-frame">
       <div className="battle-screen">
         <BattleStage enemy={encounter.name} model={model?.id ?? null} phase={phase}
-          bossSequence={bossPhaseEvent?1:0}
+          bossSequence={bossPhaseEvent?1:0} comboSequence={comboEvent?.seq ?? 0}
           attackSequence={attack?.seq ?? 0} attackType={attack?.move.category ?? ''}
           outcome={battle?.outcome ?? 'active'} reducedMotion={reducedMotion} />
         <div className="enemy-status status-frame" aria-label={'Wild ' + encounter.name + ' status'}>
