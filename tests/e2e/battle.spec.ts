@@ -79,3 +79,46 @@ test('reduced motion and fast text do not block the encounter sequence', async (
   await page.getByRole('button', { name: 'Deep Think' }).click();
   await expect(page.getByTestId('phaser-stage')).not.toHaveClass(/stage-hit/);
 });
+
+test('switching companions uses a turn without spending AP and keeps the battle playable', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await startTask(page);
+  await summon(page, 'GPT-6.2 Astra');
+  await page.getByRole('button', { name: 'Deep Think' }).click();
+  await expect(page.getByRole('button', { name: 'Code Execution' })).toBeVisible();
+  await page.getByRole('button', { name: /SWITCH \(1 TURN\)/ }).click();
+  await expect(page.getByRole('group', { name: 'Switch companion' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Switch to Grok 4.7' })).toBeVisible();
+  await page.getByRole('button', { name: 'Switch to Grok 4.7' }).click();
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-model','grok');
+  await expect(page.getByRole('button', { name: 'Code Review' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Deep Think' })).toHaveCount(0);
+  await expect(page.locator('.hero-status')).toContainText('5/6');
+  await expect(page.locator('.command-header')).toContainText('TURN 2');
+  await page.getByRole('button', { name: 'Code Review' }).click();
+  await expect(page.getByRole('button', { name: 'Code Review' })).toBeVisible();
+  await page.getByRole('button', { name: 'Code Review' }).click();
+  await expect(page.getByRole('button', { name: /SWITCH \(1 TURN\)/ })).toBeVisible();
+  await page.getByRole('button', { name: /SWITCH \(1 TURN\)/ }).click();
+  await page.getByRole('button', { name: 'Switch to GPT-6.2 Astra' }).click();
+  await expect(page.getByRole('button', { name: 'Self-Correction' })).toBeVisible();
+  await page.getByRole('button', { name: 'Self-Correction' }).click();
+  await expect(page.getByRole('button', { name: 'Self-Correction' })).toBeVisible();
+  await page.getByRole('button', { name: 'Self-Correction' }).click();
+  await expect(page.getByRole('heading', { name: 'VICTORY!' })).toBeVisible();
+  await page.screenshot({ path: 'test-results/visual/squad-win-' + testInfo.project.name + '.png', fullPage:true });
+});
+
+test('switch menu stays legible and selectable on compact phones and desktop', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: testInfo.project.name.includes('mobile') ? 360 : 1280, height: testInfo.project.name.includes('mobile') ? 800 : 900 });
+  await startTask(page);
+  await summon(page, 'GPT-6.2 Astra');
+  await page.getByRole('button', { name: /SWITCH \(1 TURN\)/ }).click();
+  await expect(page.getByRole('button', { name: 'Switch to Grok 4.7' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Switch to Claude Fable 5.2' })).toBeVisible();
+  const horizontal = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+  expect(horizontal).toBeLessThanOrEqual(1);
+  await page.screenshot({ path:'test-results/visual/squad-switch-' + testInfo.project.name + '.png', fullPage:true });
+  await page.getByRole('button', { name: /MOVES/i }).click();
+  await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
+});
