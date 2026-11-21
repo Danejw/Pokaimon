@@ -33,7 +33,10 @@ export const fallbackModelSprite: PixelArt = {
     '......K..K......',
     '......K..K......',
     '................',
-  ],
+  ].flatMap(row => {
+    const doubled = [...row].map(pixel => pixel + pixel).join('');
+    return [doubled, doubled];
+  }),
 };
 export function getModelSprite(modelId:string): PixelArt {
   return modelSprites[modelId] ?? fallbackModelSprite;
