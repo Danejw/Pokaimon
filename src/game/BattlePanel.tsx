@@ -98,6 +98,7 @@ export function BattlePanel({
 
   const currentStage = battle && battle.stageIndex < encounter.stages.length
     ? encounter.stages[battle.stageIndex] : null;
+  const comboEvent = battle?.events.find(event => event.turn === battle.turn && event.kind === 'COMBO_TRIGGERED');
   const counterEvent = battle?.events.find(event =>
     event.turn === battle.turn && event.kind === 'ENEMY_ACTED' &&
     event.message.includes(' used '));
@@ -110,7 +111,7 @@ export function BattlePanel({
       : phase === 'result' && battle?.outcome === 'won' ? encounter.name + ' completed!'
       : phase === 'result' ? 'Your team ran out of moves!'
       : phase === 'command' && switching ? 'Choose a companion. Switching uses one turn and no AP.'
-      : phase === 'command' && counterEvent ? encounter.name + ' used ' + encounter.special + '! Choose your response.'
+      : phase === 'command' && counterEvent ? (counterEvent.message.includes('blocked') ? 'Guard blocked ' + encounter.special + '!' : encounter.name + ' used ' + encounter.special + '! Choose your response.')
       : phase === 'command' && currentStage ? (difficulty === 'hard' ? 'Choose your next move.' : 'Choose a move for ' + currentStage.label + '.')
       : narration || 'What should ' + (model?.displayName ?? 'your AI') + ' do?';
 
@@ -304,6 +305,10 @@ export function BattlePanel({
           </button>)}
         </div>
         </>}
+        {intel?.incomingSpecial && <div className="battle-intent" role="status">
+          {difficulty === 'hard' ? encounter.name + ' is preparing an action.' : encounter.name + ' prepares ' + intel.incomingSpecial + '.'}
+          {battle?.guarded && <b> · GUARD READY</b>}
+        </div>}
         {counterEvent && <div className="wild-counter" role="status" aria-live="polite">
           <b>{counterEvent.message}</b>
         </div>}
@@ -313,7 +318,7 @@ export function BattlePanel({
             ? 'Fits this step (simulated +' + forecasts[selectedMove].gain + ').'
             : 'No progress on this step.'}</span>}
         </div>}
-        {!switching && difficulty === 'easy' && <div className="retro-help tactical-help">{intel?.incomingSpecial
+        {!switching && difficulty === 'easy' && !intel?.incomingSpecial && <div className="retro-help tactical-help">{intel?.incomingSpecial
           ? 'WILD COUNTER NEXT: ' + intel.incomingSpecial.toUpperCase()
           : 'MATCH MOVE TYPE TO THE CURRENT STEP'}</div>}
       </div>}
@@ -324,9 +329,11 @@ export function BattlePanel({
 
       {phase === 'result' && battle && <div className="retro-result">
         <h2>{battle.outcome === 'won' ? 'VICTORY!' : 'TRY AGAIN'}</h2>
+        {battle.events.some(event => event.kind === 'COMBO_TRIGGERED') && <div className="battle-combo" role="status">EVIDENCE COMBO · RESEARCH + VERIFY</div>}
         {battleMedal(battle) && <div className="battle-medal" role="status"><b>{battleMedal(battle)}</b>
           <span>{battle.turn} TURNS · {battle.maxAp - battle.ap} AP USED</span></div>}
         <p>{summarizeBattle(battle, encounter)}</p>
+        {comboEvent && <span className="sr-only">{comboEvent.message}</span>}
         <div className="result-buttons">
           <button onClick={retry}>↻ RETRY BATTLE</button>
           <button onClick={onNext}>▶ NEXT WILD ENCOUNTER</button>
