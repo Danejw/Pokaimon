@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { applyMove, createBattle, summarizeBattle, switchModel, totalProgress } from '../battle/engine';
+import { applyMove, createBattle, inspectHydraEvidence, summarizeBattle, switchModel, totalProgress } from '../battle/engine';
+import { HYDRA_CLUE } from '../content/intelligentEncounters';
 import type { BattleState, EncounterDefinition, ModelDefinition, MoveDefinition } from '../battle/types';
 import { MODELS, movesFor } from '../content/core';
 import { canUseModel, missingForModel } from '../content/encounters';
@@ -175,6 +176,17 @@ export function BattlePanel({
     setPhase(next.outcome === 'active' ? 'summon' : 'result');
   }
 
+  function inspectEvidence(): void {
+    if (phase !== 'command' || switching || !battle || encounter.mechanic !== 'hydra') return;
+    const next = inspectHydraEvidence(battle, HYDRA_CLUE.id, encounter);
+    if (next === battle) return;
+    setBattle(next);
+    setNarration(next.feedback);
+    playCue(next.outcome === 'lost' ? 'lose' : 'select', soundEnabled);
+    if (next.outcome !== 'active') setPhase('result');
+    else window.requestAnimationFrame(() => moveButtons.current[0]?.focus());
+  }
+
   function retry(): void {
     setPhase('encounter');
     setModel(null);
@@ -227,7 +239,7 @@ export function BattlePanel({
   return <section className="retro-battle" aria-label={'Wild ' + encounter.name + ' encounter'}>
     <div className="retro-topbar">
       <button className="retro-back" onClick={onHome}>◀ HOME</button>
-      <span className="battle-chapter">{challenge ? 'CHALLENGE BATTLE' : 'WILD ENCOUNTER'} <span aria-hidden="true">✦</span></span>
+      <span className="battle-chapter">{encounter.mechanic === 'hydra' ? 'INTELLIGENCE TRIAL' : challenge ? 'CHALLENGE BATTLE' : 'WILD ENCOUNTER'} <span aria-hidden="true">✦</span></span>
       <small>SIMULATION</small>
     </div>
 
@@ -295,6 +307,13 @@ export function BattlePanel({
         <div className="command-header"><span>{switching ? 'CHOOSE COMPANION' : model?.displayName.toUpperCase()}</span>
           <button className="squad-action" onClick={() => setSwitching(old => !old)} aria-expanded={switching}>{switching ? '◀ MOVES' : '↺ SWITCH (1 TURN)'}</button>
           <span>TURN {battle?.turn ?? 0}</span></div>
+        {encounter.mechanic === 'hydra' && battle?.hydra && !switching && <div className="hydra-evidence" role="group" aria-label="Hydra evidence notebook">
+          <div><strong>EVIDENCE NOTEBOOK</strong>
+            <span role="status" aria-live="polite">{battle.hydra.clueKnown ? HYDRA_CLUE.clue : 'Two citations support the claim. Are they independent?'}</span>
+            {battle.hydra.falseConfidence > 0 && <small>⚠ ECHO CHAMBER · EXTRA VERIFICATION REQUIRED</small>}
+          </div>
+          {!battle.hydra.clueKnown && <button className="hydra-inspect" onClick={inspectEvidence} aria-label="Inspect source provenance">INSPECT SOURCE <small>1 TURN · 0 AP</small></button>}
+        </div>}
         {switching ? <div id="switch-options" className="squad-options" role="group" aria-label="Switch companion">
           {companions.map((companion, index) => <button key={companion.id}
             ref={node => { switchButtons.current[index] = node; }}
