@@ -1,0 +1,25 @@
+{
+  "sources": [
+    {
+      "provider": "openai",
+      "models": [
+        {
+          "id": "gpt-6.2-astra",
+          "displayName": "GPT-6.2 Astra"
+        },
+        {
+          "id": "gpt-88-1",
+          "displayName": "Fictional GPT-88.1",
+          "officialEvidence": true,
+          "sourceUrl": "https://developers.openai.com/api/docs/models/gpt-88-1"
+        },
+        {
+          "id": "gpt-88-2",
+          "displayName": "Fictional GPT-88.2",
+          "officialEvidence": true,
+          "sourceUrl": "https://developers.openai.com/api/docs/models/gpt-88-2"
+        }
+      ]
+    }
+  ]
+}
