@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, resolve, dirname } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const repoRoot=process.cwd();
@@ -10,7 +10,8 @@ function sandbox(){
   const root=mkdtempSync(join(tmpdir(),'pokaimon-evolution-'));
   for(const path of ['src/content/generatedModels.json','src/game/generatedSprites.json',
     'data/model-observations.json','data/model-seeds.json']){
-    cpSync(resolve(repoRoot,path),resolve(root,path),{recursive:true});
+    mkdirSync(dirname(resolve(root,path)),{recursive:true});
+    cpSync(resolve(repoRoot,path),resolve(root,path));
   }
   return root;
 }
