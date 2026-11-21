@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as Phaser from 'phaser';
 import type { BattlePhase } from './encounterFlow';
-import { createPixelCharacter, enemySprites, modelSprites, trainerSprite, type ModelId } from './pixelArt';
+import { createPixelCharacter, enemySprites, modelSprites, getModelSprite, trainerSprite } from './pixelArt';
 
 export interface BattleStageProps {
   enemy?: string;
@@ -225,10 +225,10 @@ function createScene(enemyName:string,initial:Presentation):typeof Phaser.Scene 
     private summon(model:string,reduced:boolean):void{
       this.trainer.container.setVisible(false);
       this.hero.container.setVisible(true);
-      const id=(model in modelSprites?model:'astra') as ModelId;
+      const id=model;
       if(this.heroModel!==id){
         this.hero.container.removeAll(true);
-        const newHero=createPixelCharacter(this,modelSprites[id],89,283);
+        const newHero=createPixelCharacter(this,getModelSprite(id),89,283);
         this.hero.container.destroy();
         this.hero=newHero;
         this.heroModel=id;
