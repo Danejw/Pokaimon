@@ -325,7 +325,7 @@ test('new approved model uses generic original art and wins a complete data-driv
   await page.getByRole('button',{name:'MODELDEX'}).click();
   await expect(page.locator('.dex-entry')).toHaveCount(4);
   await expect(page.locator('.dex-entry').last()).toContainText('Claude Opus 5.5');
-  await expect(page.locator('.dex-entry').last()).toContainText('EVIDENCE REVIEWED');
+  await expect(page.locator('.dex-entry').last().getByRole('link',{name:'OFFICIAL MODEL DOCUMENTATION'})).toHaveAttribute('href',/^https:\/\//);
   await page.getByRole('button',{name:'EDIT TEAM'}).click();
   await page.getByRole('checkbox',{name:'Team Grok 4.7'}).uncheck();
   await page.getByRole('checkbox',{name:'Team Claude Fable 5.2'}).uncheck();
