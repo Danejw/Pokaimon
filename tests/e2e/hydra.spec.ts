@@ -26,7 +26,7 @@ test('Hydra unchecked evidence raises verification burden but allows recovery',a
   await page.getByRole('button',{name:'Select GPT-6.2 Astra'}).click();
   await page.getByRole('button',{name:'Deep Think'}).click();
   await page.getByRole('button',{name:'Deep Research'}).click();
-  await expect(page.getByRole('group',{name:'Tactical evidence notebook'})).toContainText('EXTRA VERIFICATION REQUIRED');
+  await expect(page.getByRole('group',{name:'Tactical evidence notebook'})).toContainText('ADDITIONAL VERIFICATION');
   await page.getByRole('button',{name:'Self-Correction'}).click();
   await expect(page.getByRole('button',{name:'Self-Correction'})).toBeVisible();
   await page.getByRole('button',{name:'Self-Correction'}).click();
