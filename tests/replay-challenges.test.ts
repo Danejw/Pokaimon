@@ -35,6 +35,30 @@ describe('Phase 4: deterministic variations and challenge constraints',()=>{
       expect(decodeChallengeCode(value)).toBeNull();
     }
   });
+  it('each authored challenge has at least one complete deterministic winning strategy',()=>{
+    const audit=getChallenge('audit-task')!;
+    const auditScene=makeEncounter(audit.encounterId,audit.seed,audit.modifierIds)!;
+    let a=createBattle(auditScene,INITIAL_MODEL,audit.seed);
+    for(const move of ['deep-think','code-execution','self-correction','self-correction'])
+      a=applyMove(a,move,INITIAL_MODEL,auditScene);
+    expect(evaluateChallenge(audit,a)).toBe(true);
+
+    const relay=getChallenge('relay-bug')!;
+    const relayScene=makeEncounter(relay.encounterId,relay.seed,relay.modifierIds)!;
+    let b=createBattle(relayScene,MODELS[1],relay.seed);
+    b=applyMove(b,'max-reasoning',MODELS[1],relayScene);
+    b=switchModel(b,'astra',relayScene,MODELS);
+    for(const move of ['deep-think','code-execution','self-correction'])
+      b=applyMove(b,move,INITIAL_MODEL,relayScene);
+    expect(evaluateChallenge(relay,b)).toBe(true);
+
+    const research=getChallenge('source-check')!;
+    const researchScene=makeEncounter(research.encounterId,research.seed,research.modifierIds)!;
+    let c=createBattle(researchScene,INITIAL_MODEL,research.seed);
+    for(const move of ['deep-think','deep-research','self-correction'])
+      c=applyMove(c,move,INITIAL_MODEL,researchScene);
+    expect(evaluateChallenge(research,c)).toBe(true);
+  });
   it('tracks win conditions from real events rather than claimed wins',()=>{
     expect(CHALLENGES).toHaveLength(3);
     const task=getChallenge('audit-task')!;
