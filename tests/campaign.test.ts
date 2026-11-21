@@ -88,19 +88,19 @@ describe('three-chapter campaign and rival bosses', () => {
     expect(logicAfter.ap).toBe(3);
     expect(logicAfter.events.filter(e=>e.kind==='BOSS_PHASE_CHANGED')).toHaveLength(1);
   });
-  it('migrates v2 saves to v3 without losing team or mastery',()=>{
+  it('migrates v2 saves to v4 without losing team or mastery',()=>{
     const data=new Map([['pokaimon:progress:v2',JSON.stringify({
       schema:2,cleared:['task','bug','research'],teamIds:['astra'],
       discoveredMoves:['deep-think'],winsByModel:{astra:3},useAlternateLoadout:true,
     })]]);
     vi.stubGlobal('localStorage',{getItem:(k:string)=>data.get(k)??null,setItem:(k:string,v:string)=>data.set(k,v)});
     const p=loadProgress();
-    expect(p.schema).toBe(3);
+    expect(p.schema).toBe(4);
     expect(p.missionsCleared).toEqual([]);
     expect(p.teamIds).toEqual(['astra']);
     expect(p.discoveredMoves).toContain('deep-think');
     saveProgress(p);
-    expect(JSON.parse(data.get('pokaimon:progress:v3')??'{}').schema).toBe(3);
+    expect(JSON.parse(data.get('pokaimon:progress:v4')??'{}').schema).toBe(4);
     vi.unstubAllGlobals();
   });
   it('rejects wrong encounter IDs or fabricated outcomes for campaign credit',()=>{
