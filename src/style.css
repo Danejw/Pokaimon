@@ -473,3 +473,20 @@ h1,h2,h3{margin:0}
 .challenge-result.challenge-failed{border-color:#b78c81;background:#f8e4db;color:#834a3d}
 @media(max-width:375px){.challenge-heading{font-size:16px}.challenge-code-row input{font-size:11px}
   .challenge-card{padding:9px 7px}.challenge-actions button{font-size:12px}}
+
+
+/* Content-sized handheld shell: avoid viewport-height blank space on short pages. */
+.retro-shell{
+  min-height:0;
+}
+.retro-home,.home-page,.retro-page,.retro-battle{
+  flex:0 0 auto;
+}
+/* On larger displays, frame the game with a little breathing room on all sides.
+   The page can still scroll naturally when campaign or guide content is tall. */
+@media (min-width:600px){
+  #root{padding:20px 16px;}
+  .retro-shell{
+    margin:0 auto;
+  }
+}
