@@ -1,19 +1,22 @@
 import type { BattleState } from '../battle/types';
 import { MODELS, MOVES } from '../content/core';
 import { rosterForProgress, teamCanHandleEncounters } from '../content/team';
+import { CAMPAIGN_MISSIONS, getCampaignMission, isMissionUnlocked } from '../content/campaign';
 
 export interface Progress {
-  schema: 2;
+  schema: 3;
   cleared: string[];
+  missionsCleared: string[];
   teamIds: string[];
   discoveredMoves: string[];
   winsByModel: Record<string,number>;
   useAlternateLoadout: boolean;
 }
 const OLD_KEY='pokaimon:progress:v1';
-const KEY='pokaimon:progress:v2';
+const PREVIOUS_KEY='pokaimon:progress:v2';
+const KEY='pokaimon:progress:v3';
 export const defaultProgress: Progress = {
-  schema:2, cleared:[], teamIds:MODELS.map(model=>model.id),
+  schema:3, cleared:[], missionsCleared:[], teamIds:MODELS.map(model=>model.id),
   discoveredMoves:[], winsByModel:{}, useAlternateLoadout:false,
 };
 
@@ -25,14 +28,16 @@ function cleanIds(value:unknown, validIds:readonly string[]):string[] {
 function migrate(value:unknown):Progress | null {
   if(!value||typeof value!=='object') return null;
   const object=value as Record<string,unknown>;
-  const cleared=cleanIds(object.cleared,['task','bug','research','math','hallucination']);
+  const cleared=cleanIds(object.cleared,[...new Set(['task','bug','research','math','hallucination',
+    ...CAMPAIGN_MISSIONS.map(mission=>mission.encounter.id)])]);
   if(object.schema===1) return {...defaultProgress,cleared};
-  if(object.schema!==2) return null;
+  if(object.schema!==2&&object.schema!==3) return null;
   const discoveredMoves=cleanIds(object.discoveredMoves,Object.keys(MOVES));
   const roster=MODELS.map(m=>m.id);
   const rawTeam=cleanIds(object.teamIds,roster);
   const useAlternateLoadout=object.useAlternateLoadout===true && cleared.length>=3;
-  const provisional:Progress={schema:2,cleared,
+  const missionsCleared=cleanIds(object.missionsCleared,CAMPAIGN_MISSIONS.map(mission=>mission.id));
+  const provisional:Progress={schema:3,cleared,missionsCleared,
     teamIds:rawTeam.length>0&&rawTeam.length<=3?rawTeam:[...roster],
     discoveredMoves, winsByModel:{},useAlternateLoadout};
   if(!teamCanHandleEncounters(rosterForProgress(provisional).filter(m=>provisional.teamIds.includes(m.id))))
@@ -50,7 +55,7 @@ function parse(key:string):unknown {
 }
 export function loadProgress():Progress {
   try {
-    return migrate(parse(KEY)) ?? migrate(parse(OLD_KEY)) ?? {...defaultProgress,teamIds:[...defaultProgress.teamIds]};
+    return migrate(parse(KEY)) ?? migrate(parse(PREVIOUS_KEY)) ?? migrate(parse(OLD_KEY)) ?? {...defaultProgress,teamIds:[...defaultProgress.teamIds]};
   }catch{return {...defaultProgress,teamIds:[...defaultProgress.teamIds]};}
 }
 export function saveProgress(progress:Progress):void{
@@ -91,6 +96,13 @@ export function recordBattleProgress(progress:Progress,encounterId:string,battle
   const cleared=isNew?[...progress.cleared,encounterId]:progress.cleared;
   if(!isNew && discoveredMoves.length===progress.discoveredMoves.length)return progress;
   return {...progress,cleared,discoveredMoves,winsByModel};
+}
+export function recordMissionVictory(progress:Progress,missionId:string,battle:BattleState):Progress {
+  const mission=getCampaignMission(missionId);
+  if(!mission || battle.outcome!=='won' || battle.encounterId!==mission.encounter.id ||
+     progress.missionsCleared.includes(missionId) ||
+     !isMissionUnlocked(missionId,progress.missionsCleared))return progress;
+  return {...progress,missionsCleared:[...progress.missionsCleared,missionId]};
 }
 export const recordVictory=recordBattleProgress;
 
