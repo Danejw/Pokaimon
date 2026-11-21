@@ -222,7 +222,8 @@ test('enemy counter leaves every battle command visible in a 390x844 portrait vi
   await page.getByRole('button', { name: 'Code Execution' }).click();
   await expect(stage).toHaveAttribute('data-phase', 'command');
   await expect(page.locator('.wild-counter')).toBeVisible();
-  await expect(page.locator('.retro-dialogue p')).toContainText('Scope Shift');
+  await expect(page.locator('.wild-counter')).toContainText('Scope Shift');
+  await expect(page.locator('.retro-dialogue p')).toContainText('The problem changed');
   const bounds = await page.evaluate(() => ({
     pageHeight: document.documentElement.scrollHeight,
     pageWidth: document.documentElement.scrollWidth,
