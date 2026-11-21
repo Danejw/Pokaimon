@@ -75,6 +75,10 @@ export function BattlePanel({
       );
       const timer = window.setTimeout(() => {
         const next = applyMove(battle, attack.move.id, model, encounter);
+        if(next.events.some(event=>event.turn===next.turn && event.kind==='COMBO_TRIGGERED'))
+          playCue('combo',soundEnabled);
+        if(next.events.some(event=>event.turn===next.turn && event.kind==='BOSS_PHASE_CHANGED'))
+          playCue('boss-phase',soundEnabled);
         setBattle(next);
         setNarration(next.feedback);
         if (next.outcome === 'won' || next.outcome === 'lost') {
@@ -118,7 +122,7 @@ export function BattlePanel({
       : phase === 'result' && battle?.outcome === 'won' ? encounter.name + ' completed!'
       : phase === 'result' ? 'Your team ran out of moves!'
       : phase === 'command' && switching ? 'Choose a companion. Switching uses one turn and no AP.'
-      : phase === 'command' && counterEvent ? (counterEvent.message.includes('blocked') ? 'Guard blocked ' + encounter.special + '!' : encounter.name + ' used ' + encounter.special + '! Choose your response.')
+      : phase === 'command' && counterEvent ? (counterEvent.message.includes('blocked') ? 'Guard blocked ' + encounter.special + '!' : 'The problem changed. Choose your response.')
       : phase === 'command' && currentStage ? (difficulty === 'hard' ? 'Choose your next move.' : 'Choose a move for ' + currentStage.label + '.')
       : narration || 'What should ' + (model?.displayName ?? 'your AI') + ' do?';
 
@@ -314,7 +318,7 @@ export function BattlePanel({
           </button>)}
         </div>
         </>}
-        {encounter.rival && <div className="rival-intent" role="status">RIVAL · {encounter.rival.name.toUpperCase()}: {difficulty === 'hard' ? 'Watch their tactics.' : 'Repeating the same approach makes the next step harder.'}</div>}
+        {encounter.rival && !rivalEvent && <div className="rival-intent" role="status">RIVAL · {encounter.rival.name.toUpperCase()}: {difficulty === 'hard' ? 'Watch their tactics.' : 'Repeating the same approach makes the next step harder.'}</div>}
         {encounter.boss && <div className="boss-intent" role="status">
           {battle?.bossPhaseTriggered ? '★ BOSS PHASE: '+encounter.boss.label : 'BOSS BATTLE · '+(difficulty==='hard'?'A change is coming.':'Prepare for a '+encounter.boss.effect+' phase.')}
         </div>}
