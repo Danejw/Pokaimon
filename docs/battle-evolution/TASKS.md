@@ -1,6 +1,6 @@
 # Battle Evolution execution tracker
 
-**Status:** PLAN COMPLETE / IMPLEMENTATION NOT STARTED. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026).
+**Status:** PLAN COMPLETE / IMPLEMENTATION NOT STARTED. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
 No checkboxes below represent implemented work. Update after verifying commits, CI and actual browser playthroughs, not upon writing documentation.
 
 ## Phase 1: Battle System 2.0
