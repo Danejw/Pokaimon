@@ -1,10 +1,12 @@
 import {test,expect} from '@playwright/test';
-import generated from '../../src/content/generatedModels.json';
+import generatedJson from '../../src/content/generatedModels.json';
+import type {ModelCatalogEntry} from '../../src/content/modelCatalog';
+const generated=generatedJson as ModelCatalogEntry[];
 import {MOVES} from '../../src/content/core';
 const entry=generated[0];
 test.skip(!entry,'No generated official evolution in the checked-in catalog. The fixture smoke job injects one in CI.');
 test('generated original evolution appears in ModelDex and wins a battle',async({page},testInfo)=>{
-  await page.goto('./');
+  await page.goto('./?encounter=task');
   await page.getByRole('button',{name:'MODELDEX'}).click();
   const target=page.locator('.dex-entry').filter({hasText:entry.facts.displayName});
   await expect(target).toBeVisible();
