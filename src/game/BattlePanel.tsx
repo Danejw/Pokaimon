@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { applyMove, createBattle, summarizeBattle, totalProgress } from '../battle/engine';
+import { applyMove, createBattle, summarizeBattle, switchModel, totalProgress } from '../battle/engine';
 import type { BattleState, EncounterDefinition, ModelDefinition, MoveDefinition } from '../battle/types';
 import { MODELS, movesFor } from '../content/core';
 import { canUseModel, missingForModel } from '../content/encounters';
@@ -36,10 +36,12 @@ export function BattlePanel({
   const [attack, setAttack] = useState<AttackAction | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedMove, setSelectedMove] = useState(0);
+  const [switching, setSwitching] = useState(false);
   const [typedFeedback, setTypedFeedback] = useState('');
   const [narration, setNarration] = useState('');
   const selectionButtons = useRef<Array<HTMLButtonElement | null>>([]);
   const moveButtons = useRef<Array<HTMLButtonElement | null>>([]);
+  const switchButtons = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => { if (phase === 'result') setBattleMusic(false, false); }, [phase]);
 
@@ -84,8 +86,11 @@ export function BattlePanel({
 
   useEffect(() => {
     if (phase === 'selection') selectionButtons.current[selectedIndex]?.focus();
-    if (phase === 'command') moveButtons.current[selectedMove]?.focus();
-  }, [phase]);
+    if (phase === 'command') {
+      if (switching) switchButtons.current[0]?.focus();
+      else moveButtons.current[selectedMove]?.focus();
+    }
+  }, [phase, switching]);
 
   useEffect(() => {
     if (battle?.outcome === 'won') onWin(encounter.id);
@@ -130,16 +135,31 @@ export function BattlePanel({
     setModel(next);
     setBattle(createBattle(encounter, next));
     setSelectedMove(0);
+    setSwitching(false);
     setAttack(null);
     setNarration('');
     setPhase('throw');
   }
 
   function useMove(move: MoveDefinition): void {
-    if (phase !== 'command' || !model || !battle || battle.outcome !== 'active' || battle.ap < move.cost) return;
+    if (phase !== 'command' || switching || !model || !battle || battle.outcome !== 'active' || battle.ap < move.cost) return;
     playCue('attack', soundEnabled, move.category);
     setAttack(old => ({ seq: (old?.seq ?? 0) + 1, move }));
     setPhase('attack');
+  }
+
+  function changeCompanion(nextModel: ModelDefinition): void {
+    if (phase !== 'command' || !switching || !battle || !model) return;
+    const next = switchModel(battle, nextModel.id, encounter, MODELS);
+    if (next === battle) return;
+    playCue('summon', soundEnabled);
+    setBattle(next);
+    setModel(nextModel);
+    setSelectedMove(0);
+    setSwitching(false);
+    setNarration(next.feedback);
+    if (next.outcome !== 'active') playCue('lose', soundEnabled);
+    setPhase(next.outcome === 'active' ? 'summon' : 'result');
   }
 
   function retry(): void {
@@ -149,6 +169,7 @@ export function BattlePanel({
     setAttack(null);
     setSelectedIndex(0);
     setSelectedMove(0);
+    setSwitching(false);
     setTypedFeedback('');
     setNarration('');
     playCue('encounter', soundEnabled);
@@ -169,6 +190,7 @@ export function BattlePanel({
   }
 
   function onMovesKey(event: KeyboardEvent<HTMLDivElement>): void {
+    if (switching) return;
     const key = event.key.toLowerCase();
     const vertical = ['arrowup', 'arrowdown', 'w', 's'].includes(key);
     const horizontal = ['arrowleft', 'arrowright', 'a', 'd'].includes(key);
@@ -187,6 +209,7 @@ export function BattlePanel({
   const moves = model ? movesFor(model) : [];
   const intel = battle ? getStageIntel(battle, encounter) : null;
   const forecasts = battle ? moves.map(move => forecastMove(battle, move, encounter)) : [];
+  const companions = battle ? MODELS.filter(companion => battle.squadIds.includes(companion.id) && companion.id !== model?.id) : [];
 
   return <section className="retro-battle" aria-label={'Wild ' + encounter.name + ' encounter'}>
     <div className="retro-topbar">
@@ -256,7 +279,16 @@ export function BattlePanel({
       {phase === 'command' && <div className="command-panel">
         <div className="command-header"><span>WHAT WILL {model?.displayName.toUpperCase()} DO?</span>
           <span>TURN {battle?.turn ?? 0}</span></div>
-        <div className="command-grid" onKeyDown={onMovesKey} aria-label="Move selection">
+        <div className="squad-action-row"><span>{switching ? 'CHOOSE A COMPANION' : 'SQUAD READY'}</span>
+          <button className="squad-action" onClick={() => setSwitching(old => !old)} aria-expanded={switching} aria-controls="switch-options">{switching ? '◀ MOVES' : '↺ SWITCH · 1 TURN'}</button></div>
+        {switching ? <div id="switch-options" className="squad-options" role="group" aria-label="Switch companion">
+          {companions.map((companion, index) => <button key={companion.id}
+            ref={node => { switchButtons.current[index] = node; }}
+            onClick={() => changeCompanion(companion)} aria-label={'Switch to ' + companion.displayName}>
+            <span className="squad-icon" aria-hidden="true"><PixelPortrait model={companion.id as 'astra' | 'grok' | 'fable'} /></span>
+            <span><b>{companion.displayName}</b><small>0 AP · 1 TURN</small></span>
+          </button>)}
+        </div> : <><div className="command-grid" onKeyDown={onMovesKey} aria-label="Move selection">
           {moves.map((move, i) => <button key={move.id}
             ref={node => { moveButtons.current[i] = node; }}
             className={'retro-move ' + (selectedMove === i ? 'is-selected' : '') +
@@ -271,16 +303,17 @@ export function BattlePanel({
             </small></span>
           </button>)}
         </div>
+        </>}
         {counterEvent && <div className="wild-counter" role="status" aria-live="polite">
           <b>{counterEvent.message}</b>
         </div>}
-        {difficulty !== 'hard' && <div className="move-lesson" role="status" aria-live="polite">
+        {!switching && difficulty !== 'hard' && <div className="move-lesson" role="status" aria-live="polite">
           <b>{moves[selectedMove]?.name}:</b>{' '}{moves[selectedMove]?.description}{' '}
           {difficulty === 'easy' && <span>{forecasts[selectedMove]?.status === 'effective'
             ? 'Fits this step (simulated +' + forecasts[selectedMove].gain + ').'
             : 'No progress on this step.'}</span>}
         </div>}
-        {difficulty === 'easy' && <div className="retro-help tactical-help">{intel?.incomingSpecial
+        {!switching && difficulty === 'easy' && <div className="retro-help tactical-help">{intel?.incomingSpecial
           ? 'WILD COUNTER NEXT: ' + intel.incomingSpecial.toUpperCase()
           : 'MATCH MOVE TYPE TO THE CURRENT STEP'}</div>}
       </div>}
