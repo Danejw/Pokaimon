@@ -29,12 +29,26 @@ export function ChallengePage({progress,onHome,onLaunch}:{
     <h2>Battle Challenges</h2>
     <p className="intro">A new challenge for your models. Match techniques, build combos, and discover strategic ways to win.</p>
     <p className="challenge-achievements" role="status">{progress.challengesCleared.length}/{CHALLENGES.length} CHALLENGES CLEARED · {progress.achievements.length} BADGES EARNED</p>
-    <article className="challenge-card intelligence-trial">
+    <article className="intelligence-trial">
       <div className="challenge-heading"><span>★ Hallucination Hydra</span><small>NEW TRIAL</small></div>
       <p>A confident claim hides duplicate sources. Inspect the evidence or try to push through its Echo Chamber.</p>
       <div className="challenge-actions">
         <span>DECISION-DRIVEN BOSS</span>
         <button className="primary" onClick={()=>onLaunch({encounterId:'hydra',seed:601,modifierIds:[]},null)}>▶ HYDRA TRIAL</button>
+      </div>
+    </article>
+    <article className="intelligence-trial">
+      <div className="challenge-heading"><span>★ Regression Golem</span><small>NEW TRIAL</small></div>
+      <p>Debug an unstable app. Diagnose the root cause first, or repair and test the unexpected regression.</p>
+      <div className="challenge-actions"><span>DEBUGGING BOSS</span>
+        <button className="primary" onClick={()=>onLaunch({encounterId:'golem',seed:602,modifierIds:[]},null)}>▶ GOLEM TRIAL</button>
+      </div>
+    </article>
+    <article className="intelligence-trial">
+      <div className="challenge-heading"><span>★ Scope Shifter</span><small>NEW TRIAL</small></div>
+      <p>Clarify the requirements before committing, or pay to revise the plan after the brief changes.</p>
+      <div className="challenge-actions"><span>PLANNING BOSS</span>
+        <button className="primary" onClick={()=>onLaunch({encounterId:'scope-shifter',seed:603,modifierIds:[]},null)}>▶ SCOPE TRIAL</button>
       </div>
     </article>
     {CHALLENGES.map((challenge,index)=>{

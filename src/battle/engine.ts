@@ -1,6 +1,6 @@
 import type { BattleState, BattleEvent, EncounterDefinition, ModelDefinition, MoveDefinition } from './types';
 import { MOVES, INITIAL_MODEL, MODELS, TASK } from '../content/core';
-import { HYDRA_CLUE } from '../content/intelligentEncounters';
+import { HYDRA_CLUE, INTELLIGENCE_CLUES } from '../content/intelligentEncounters';
 
 const TURN_LIMIT = 8;
 const AP_LIMIT = 6;
@@ -15,6 +15,8 @@ export function createBattle(encounter: EncounterDefinition = TASK, model: Model
     stageIndex: 0, guarded: false, lastMoveCategory: null, lastMoveTurn: -1, bossPhaseTriggered: false,
     goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
     ...(encounter.mechanic === 'hydra' ? { hydra: { clueKnown:false, falseConfidence:0 } } : {}),
+    ...(encounter.mechanic === 'golem' || encounter.mechanic === 'scope' ?
+      { tactic: {inspected:false,consequence:false,recovered:false} } : {}),
     outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
     events: [{ seq: 0, turn: 0, kind: 'ENCOUNTER_STARTED', message: encounter.name + ' appeared!' },
       { seq: 1, turn: 0, kind: 'CHARACTER_SELECTED', message: model.displayName + ' entered battle.', modelId:model.id }],
@@ -65,6 +67,27 @@ export function applyMove(
     feedback = move.name + ' advanced ' + stage.label + ' by ' + gain + '. ' + move.lesson +
       (appliedBonus ? ' Research + Verification combo!' : '');
     addEvent(next.events, next.turn, 'STAGE_PROGRESS_CHANGED', stage.label + ' +' + gain, gain);
+    // Choice-based enemy responses: the specific decision, not a scripted turn number, triggers these.
+    if (encounter.mechanic === 'golem' && stage.id === 'patch' && !next.tactic?.consequence) {
+      const inspected = next.tactic?.inspected ?? false;
+      next.tactic={inspected,consequence:!inspected,recovered:false};
+      if (!inspected) {
+        next.goals[2]+=20;
+        addEvent(next.events,next.turn,'ENEMY_ACTED','Brittle Patch! Untested changes added a regression. +20 tests required.',20);
+      } else {
+        addEvent(next.events,next.turn,'ENEMY_ACTED','Regression Golem stopped: the failure trace guided a targeted patch.');
+      }
+    }
+    if (encounter.mechanic === 'scope' && stage.id === 'plan' && !next.tactic?.consequence) {
+      const inspected=next.tactic?.inspected ?? false;
+      next.tactic={inspected,consequence:!inspected,recovered:false};
+      if (!inspected) {
+        next.goals[2]+=20;
+        addEvent(next.events,next.turn,'ENEMY_ACTED','Scope Creep! Acceptance criteria changed. Replan or add extra verification.',20);
+      } else {
+        addEvent(next.events,next.turn,'ENEMY_ACTED','Scope Shifter anticipated: early clarification protected the acceptance test.');
+      }
+    }
     if (next.progress[next.stageIndex] >= next.goals[next.stageIndex]) {
       addEvent(next.events, next.turn, 'STAGE_COMPLETED', stage.label + ' complete!');
       next.stageIndex++;
@@ -117,6 +140,8 @@ function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFe
       addEvent(next.events,next.turn,'ENEMY_ACTED',
         'Hydra watches for a repeated or unsupported claim.');
     }
+  } else if (encounter.mechanic === 'golem' || encounter.mechanic === 'scope') {
+    // Reactive mechanics fire on tactical decisions in applyMove, never on an arbitrary clock.
   } else if (next.turn === 2 && next.guarded) {
     next.guarded = false;
     addEvent(next.events, next.turn, 'STATUS_CONSUMED', 'Guard absorbed the enemy special.');
@@ -166,6 +191,32 @@ export function inspectHydraEvidence(
   next.events.push({seq:next.events.length,turn:next.turn,kind:'CLUE_FOUND',
     clueId:HYDRA_CLUE.id,message:HYDRA_CLUE.clue});
   return finishTurn(next,encounter,'Evidence inspected: '+HYDRA_CLUE.clue);
+}
+
+/** One inspect action per authored intelligence trial, with no AP cost but one turn spent. */
+export function inspectScenarioClue(state:BattleState,clueId:string,encounter:EncounterDefinition):BattleState {
+  if(encounter.mechanic==='hydra')return inspectHydraEvidence(state,clueId,encounter);
+  if((encounter.mechanic!=='golem'&&encounter.mechanic!=='scope') ||
+     state.encounterId!==encounter.id || state.outcome!=='active' ||
+     !state.tactic || state.tactic.inspected || state.turn>=state.maxTurns)return state;
+  const clue=INTELLIGENCE_CLUES[encounter.mechanic];
+  if(clue.id!==clueId)return state;
+  const next:BattleState={...state,turn:state.turn+1,tactic:{...state.tactic,inspected:true},
+    goals:[...state.goals],progress:[...state.progress],events:[...state.events]};
+  next.events.push({seq:next.events.length,turn:next.turn,kind:'CLUE_FOUND',clueId,message:clue.clue});
+  return finishTurn(next,encounter,clue.clue);
+}
+
+/** After a scope change, explicitly trade one turn and one AP to revise acceptance criteria. */
+export function reviseScopePlan(state:BattleState,encounter:EncounterDefinition):BattleState {
+  if(encounter.mechanic!=='scope'||state.encounterId!==encounter.id||
+     !state.tactic?.consequence||state.tactic.recovered||state.outcome!=='active'||
+     state.turn>=state.maxTurns||state.ap<1)return state;
+  const next:BattleState={...state,turn:state.turn+1,ap:state.ap-1,
+    tactic:{...state.tactic,recovered:true},goals:[...state.goals],progress:[...state.progress],events:[...state.events]};
+  next.goals[2]=Math.max(encounter.stages[2].goal,next.goals[2]-20);
+  addEvent(next.events,next.turn,'APPROACH_CHANGED','Acceptance plan revised to address the new requirement. One AP used.');
+  return finishTurn(next,encounter,'Replanned against the changed acceptance criteria.');
 }
 
 /** Switching is a tactical action: one turn, zero AP, and the usual enemy response. */

@@ -509,6 +509,35 @@ function hallucinationHydra(): PixelDrawing {
   return p.finish();
 }
 
+/** Clanky two-eyed stone debugging golem with a visible test-grid chest. */
+function regressionGolem():PixelDrawing{
+  const p=new Painter(42,36,{K:0x283748,D:0x53677a,M:0x8298a1,L:0xc5d3c5,W:0xfff6dc,R:0xed8b72,T:0x73d3af,Y:0xf3d06a});
+  p.rect('K',7,5,28,25).rect('D',9,7,24,21).rect('M',11,9,20,17);
+  p.rect('K',13,8,16,10).rect('W',14,9,14,7);
+  p.rect('K',16,11,4,3).rect('K',23,11,4,3).rect('T',17,12,2,1).rect('T',24,12,2,1);
+  p.rect('K',19,15,6,2).rect('R',20,16,4,1);
+  p.rect('K',13,20,16,6).rect('W',14,21,14,4);
+  for(let i=0;i<3;i++)for(let j=0;j<4;j++)p.rect((i+j)%3===0?'R':'T',15+j*3,22+i,2,1);
+  p.rect('K',1,15,6,14).rect('D',2,16,5,11).rect('K',35,15,6,14).rect('D',35,16,5,11);
+  p.rect('Y',2,22,4,3).rect('Y',36,22,4,3);
+  p.rect('K',9,30,10,5).rect('K',23,30,10,5).rect('M',11,31,7,2).rect('M',25,31,7,2);
+  return p.finish();
+}
+/** Four-direction changing requirement masks on one original clockwork chassis. */
+function scopeShifter():PixelDrawing{
+  const p=new Painter(42,36,{K:0x302e4b,D:0x64597e,M:0xa092b2,L:0xdad0e7,W:0xfff3da,R:0xea8b88,T:0x79ddc7,Y:0xffd36f});
+  p.rect('K',12,3,18,26).rect('D',14,5,14,22).rect('M',16,7,10,18);
+  p.rect('K',9,10,24,15).rect('W',11,12,20,11);
+  p.rect('K',13,14,5,5).rect('K',24,14,5,5).rect('T',14,15,3,2).rect('Y',25,15,3,2);
+  p.rect('K',18,20,6,2).rect('R',19,21,4,1);
+  p.rect('K',2,5,10,7).rect('D',4,7,6,3).rect('Y',6,7,2,3);
+  p.rect('K',30,5,10,7).rect('D',32,7,6,3).rect('T',34,7,2,3);
+  p.rect('K',3,25,10,7).rect('D',5,27,6,3).rect('R',7,27,2,3);
+  p.rect('K',29,25,10,7).rect('D',31,27,6,3).rect('Y',33,27,2,3);
+  p.rect('K',15,29,12,6).rect('M',17,30,8,4).rect('T',19,31,4,2);
+  return p.finish();
+}
+
 export const handDrawnModels = { astra:astra(), grok:grok(), fable:fable() };
 export const handDrawnEnemies: Record<string, PixelDrawing> = {
   'TASK':task(),
@@ -517,6 +546,8 @@ export const handDrawnEnemies: Record<string, PixelDrawing> = {
   'MATH PROBLEM':math(),
   'HALLUCINATION':hallucination(),
   'HALLUCINATION HYDRA':hallucinationHydra(),
+  'REGRESSION GOLEM':regressionGolem(),
+  'SCOPE SHIFTER':scopeShifter(),
   'RUSH RIVAL':bug(),
   'CITATION SPECTER':hallucination(),
   'CLOCKWORK RIVAL':math(),

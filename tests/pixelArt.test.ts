@@ -5,9 +5,9 @@ import { handDrawnModels, handDrawnEnemies } from '../src/game/handDrawnSprites'
 describe('clean, readable original pixel character art', () => {
   const everyone = [trainerSprite, ...Object.values(modelSprites), ...Object.values(enemySprites)];
 
-  it('keeps all 16 original handheld sprites crisp without automatic noise or upscaling', () => {
-    expect(everyone).toHaveLength(16);
-    const bossArt = new Set(['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA'].map(name=>enemySprites[name]));
+  it('keeps all 18 original handheld sprites crisp without automatic noise or upscaling', () => {
+    expect(everyone).toHaveLength(18);
+    const bossArt = new Set(['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA','REGRESSION GOLEM','SCOPE SHIFTER'].map(name=>enemySprites[name]));
     for (const art of everyone) {
       expect(art.pixelSize).toBe(3);
       const isBoss=bossArt.has(art);
@@ -65,9 +65,9 @@ describe('clean, readable original pixel character art', () => {
     expect(modelSprites.grok.pixels.join('')).not.toEqual(modelSprites.astra.pixels.join(''));
     expect(modelSprites.astra.pixels.join('')).not.toEqual(modelSprites.fable.pixels.join(''));
     expect(enemySprites.TASK.pixels.join('')).not.toEqual(enemySprites['MATH PROBLEM'].pixels.join(''));
-    for (const name of ['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA'])
+    for (const name of ['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA','REGRESSION GOLEM','SCOPE SHIFTER'])
       expect(enemySprites[name].pixels.join('')).not.toEqual(enemySprites.TASK.pixels.join(''));
-    expect(new Set(['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA'].map(name=>enemySprites[name].pixels.join(''))).size).toBe(4);
+    expect(new Set(['SCOPE GIANT','FALSE SIGNAL','ADAPTIVE TRIAL','HALLUCINATION HYDRA','REGRESSION GOLEM','SCOPE SHIFTER'].map(name=>enemySprites[name].pixels.join(''))).size).toBe(6);
   });
 
   it('keeps clean borders and transparent empty space', () => {

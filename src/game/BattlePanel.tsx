@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { applyMove, createBattle, inspectHydraEvidence, summarizeBattle, switchModel, totalProgress } from '../battle/engine';
-import { HYDRA_CLUE } from '../content/intelligentEncounters';
+import { applyMove, createBattle, inspectScenarioClue, reviseScopePlan, summarizeBattle, switchModel, totalProgress } from '../battle/engine';
+import { INTELLIGENCE_CLUES } from '../content/intelligentEncounters';
 import type { BattleState, EncounterDefinition, ModelDefinition, MoveDefinition } from '../battle/types';
 import { MODELS, movesFor } from '../content/core';
 import { canUseModel, missingForModel } from '../content/encounters';
@@ -114,8 +114,8 @@ export function BattlePanel({
   const counterEvent = battle?.events.find(event =>
     event.turn === battle.turn && event.kind === 'ENEMY_ACTED' &&
     event.message.includes(' used '));
-  const hydraResponse = encounter.mechanic === 'hydra' ? battle?.events.find(event =>
-    event.turn === battle.turn && event.kind === 'ENEMY_ACTED' && event.message.includes('Echo Chamber')) : undefined;
+  const intelligenceReaction = encounter.mechanic ? battle?.events.find(event =>
+    event.turn === battle.turn && event.kind === 'ENEMY_ACTED') : undefined;
 
   const message = (phase === 'encounter' || phase === 'selection')
     ? 'A wild ' + encounter.name + ' appeared!'
@@ -179,14 +179,21 @@ export function BattlePanel({
   }
 
   function inspectEvidence(): void {
-    if (phase !== 'command' || switching || !battle || encounter.mechanic !== 'hydra') return;
-    const next = inspectHydraEvidence(battle, HYDRA_CLUE.id, encounter);
-    if (next === battle) return;
-    setBattle(next);
-    setNarration(next.feedback);
-    playCue(next.outcome === 'lost' ? 'lose' : 'select', soundEnabled);
-    if (next.outcome !== 'active') setPhase('result');
-    else window.requestAnimationFrame(() => moveButtons.current[0]?.focus());
+    if(phase!=='command'||switching||!battle||!encounter.mechanic)return;
+    const clue=INTELLIGENCE_CLUES[encounter.mechanic];
+    const next=inspectScenarioClue(battle,clue.id,encounter);
+    if(next===battle)return;
+    setBattle(next);setNarration(next.feedback);
+    playCue(next.outcome==='lost'?'lose':'select',soundEnabled);
+    if(next.outcome!=='active')setPhase('result');
+  }
+  function replan(): void {
+    if(phase!=='command'||switching||!battle)return;
+    const next=reviseScopePlan(battle,encounter);
+    if(next===battle)return;
+    setBattle(next);setNarration(next.feedback);
+    playCue(next.outcome==='lost'?'lose':'select',soundEnabled);
+    if(next.outcome!=='active')setPhase('result');
   }
 
   function retry(): void {
@@ -309,13 +316,24 @@ export function BattlePanel({
         <div className="command-header"><span>{switching ? 'CHOOSE COMPANION' : model?.displayName.toUpperCase()}</span>
           <button className="squad-action" onClick={() => setSwitching(old => !old)} aria-expanded={switching}>{switching ? '◀ MOVES' : '↺ SWITCH (1 TURN)'}</button>
           <span>TURN {battle?.turn ?? 0}</span></div>
-        {encounter.mechanic === 'hydra' && battle?.hydra && !switching && <div className="hydra-evidence" role="group" aria-label="Hydra evidence notebook">
-          <div><strong>EVIDENCE NOTEBOOK</strong>
-            <span role="status" aria-live="polite">{battle.hydra.clueKnown ? HYDRA_CLUE.clue : 'Two citations support the claim. Are they independent?'}</span>
-            {battle.hydra.falseConfidence > 0 && <small>⚠ ECHO CHAMBER · EXTRA VERIFICATION REQUIRED</small>}
-            {hydraResponse && <small className="hydra-response" role="status">{hydraResponse.message}</small>}
+        {encounter.mechanic && !switching && <div className="hydra-evidence" role="group" aria-label="Tactical evidence notebook">
+          <div><strong>{encounter.mechanic==='hydra'?'EVIDENCE NOTEBOOK':encounter.mechanic==='golem'?'DEBUGGING NOTES':'REQUIREMENT NOTES'}</strong>
+            <span role="status" aria-live="polite">
+              {(encounter.mechanic==='hydra'?battle?.hydra?.clueKnown:battle?.tactic?.inspected)
+                ? INTELLIGENCE_CLUES[encounter.mechanic].clue
+                : encounter.description}
+            </span>
+            {(battle?.hydra?.falseConfidence || battle?.tactic?.consequence) && <small>⚠ {encounter.special.toUpperCase()} · ADDITIONAL VERIFICATION</small>}
+            {intelligenceReaction && <small className="hydra-response" role="status">{intelligenceReaction.message}</small>}
           </div>
-          {!battle.hydra.clueKnown && <button className="hydra-inspect" onClick={inspectEvidence} aria-label="Inspect source provenance">INSPECT SOURCE <small>1 TURN · 0 AP</small></button>}
+          {!(encounter.mechanic==='hydra'?battle?.hydra?.clueKnown:battle?.tactic?.inspected)&&
+            <button className="hydra-inspect" onClick={inspectEvidence} aria-label="Inspect tactical evidence">
+              {INTELLIGENCE_CLUES[encounter.mechanic].title.toUpperCase()}<small>1 TURN · 0 AP</small>
+            </button>}
+          {encounter.mechanic==='scope' && battle?.tactic?.consequence && !battle.tactic.recovered &&
+            <button className="hydra-inspect" onClick={replan} aria-label="Replan after scope change">
+              REPLAN<small>1 TURN · 1 AP</small>
+            </button>}
         </div>}
         {switching ? <div id="switch-options" className="squad-options" role="group" aria-label="Switch companion">
           {companions.map((companion, index) => <button key={companion.id}

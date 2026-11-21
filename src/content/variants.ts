@@ -1,6 +1,6 @@
 import type { EncounterDefinition } from '../battle/types';
 import { ENCOUNTERS } from './encounters';
-import { HYDRA } from './intelligentEncounters';
+import { INTELLIGENCE_TRIALS } from './intelligentEncounters';
 
 export type ModifierId = 'extra-audit' | 'tight-budget' | 'counter-rotation';
 export interface ScenarioCode {
@@ -15,7 +15,7 @@ const validSeed = (seed:number):boolean => Number.isSafeInteger(seed)&&seed>0&&s
 export function makeEncounter(
   encounterId:string, seed:number, modifierIds:readonly ModifierId[],
 ): EncounterDefinition|null {
-  const template=ENCOUNTERS.find(e=>e.id===encounterId) ?? (encounterId===HYDRA.id ? HYDRA : undefined);
+  const template=ENCOUNTERS.find(e=>e.id===encounterId) ?? INTELLIGENCE_TRIALS.find(e=>e.id===encounterId);
   if(!template||!validSeed(seed)||modifierIds.length>2||
       new Set(modifierIds).size!==modifierIds.length||
       modifierIds.some(id=>!allowed.has(id)))return null;
