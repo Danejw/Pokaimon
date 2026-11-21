@@ -103,8 +103,6 @@ test('switching companions uses a turn without spending AP and keeps the battle 
   await page.getByRole('button', { name: 'Switch to GPT-6.2 Astra' }).click();
   await expect(page.getByRole('button', { name: 'Self-Correction' })).toBeVisible();
   await page.getByRole('button', { name: 'Self-Correction' }).click();
-  await expect(page.getByRole('button', { name: 'Self-Correction' })).toBeVisible();
-  await page.getByRole('button', { name: 'Self-Correction' }).click();
   await expect(page.getByRole('heading', { name: 'VICTORY!' })).toBeVisible();
   await page.screenshot({ path: 'test-results/visual/squad-win-' + testInfo.project.name + '.png', fullPage:true });
 });
