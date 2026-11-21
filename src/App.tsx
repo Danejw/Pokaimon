@@ -4,6 +4,10 @@ import { BattlePanel } from './game/BattlePanel';
 import { PixelPortrait } from './game/PixelPortrait';
 import { ModelDex, TeamEditor } from './game/TeamHub';
 import { CampaignPage } from './game/CampaignPage';
+import { ChallengePage } from './game/ChallengePage';
+import { getChallenge } from './content/challenges';
+import { makeEncounter, type ScenarioCode } from './content/variants';
+import { buildBattleReplay } from './battle/replay';
 import type { CampaignMission } from './content/campaign';
 import { rosterForProgress } from './content/team';
 import { pickWildEncounter } from './game/encounterFlow';
@@ -14,9 +18,9 @@ import { MODELS, MOVES } from './content/core';
 import { ENCOUNTERS } from './content/encounters';
 import type { EncounterDefinition, BattleState } from './battle/types';
 import { defaultPreferences, loadPreferences, savePreferences, type Preferences } from './storage/preferences';
-import { clearProgress, loadProgress, recordBattleProgress, recordMissionVictory, saveProgress, setTeam, setAlternateLoadout, type Progress } from './storage/progress';
+import { clearProgress, loadProgress, recordBattleProgress, recordMissionVictory, recordChallengeCompletion, recordBattleReplay, saveProgress, setTeam, setAlternateLoadout, type Progress } from './storage/progress';
 
-type Screen='home'|'battle'|'guide'|'settings'|'modeldex'|'team'|'campaign';
+type Screen='home'|'battle'|'guide'|'settings'|'modeldex'|'team'|'campaign'|'challenges';
 
 export function App(){
   const [screen,setScreen]=useState<Screen>('home');
@@ -25,6 +29,8 @@ export function App(){
   const [encounter,setEncounter]=useState<EncounterDefinition>(ENCOUNTERS[0]);
   const [sessionId,setSessionId]=useState(0);
   const [activeMissionId,setActiveMissionId]=useState<string|null>(null);
+  const [activeChallengeId,setActiveChallengeId]=useState<string|null>(null);
+  const [activeScenario,setActiveScenario]=useState<ScenarioCode|null>(null);
   const [aguiStatus,setAguiStatus]=useState<AguiProbeResult|null>(null);
   const [testingAgui,setTestingAgui]=useState(false);
   const firstPlay=useRef(true);
@@ -32,9 +38,22 @@ export function App(){
   useEffect(()=>{saveProgress(progress);},[progress]);
   useEffect(()=>{if(screen!=='battle'||!prefs.sound)setBattleMusic(false,false);},[screen,prefs.sound]);
   const recordBattle=useCallback((id:string,battle:BattleState)=>setProgress(old=>{
-    const next=recordBattleProgress(old,id,battle);
-    return activeMissionId&&battle.outcome==='won' ? recordMissionVictory(next,activeMissionId,battle) : next;
-  }),[activeMissionId]);
+    let next=recordBattleProgress(old,id,battle);
+    if(activeMissionId && battle.outcome==='won')
+      next=recordMissionVictory(next,activeMissionId,battle);
+    if(!activeMissionId){
+      const roster=rosterForProgress(old).filter(model=>old.teamIds.includes(model.id));
+      const replay=buildBattleReplay(battle,{
+        encounterId:id,modifierIds:activeScenario?.modifierIds??[],roster,
+      });
+      next=recordBattleReplay(next,replay);
+      if(activeChallengeId){
+        const challenge=getChallenge(activeChallengeId);
+        if(challenge)next=recordChallengeCompletion(next,challenge,battle,replay);
+      }
+    }
+    return next;
+  }),[activeMissionId,activeScenario,activeChallengeId]);
   const roster = rosterForProgress(progress);
   const activeTeam = progress.teamIds.map(id=>roster.find(model=>model.id===id)).filter((model):model is typeof roster[number]=>!!model);
   useEffect(()=>{
@@ -49,6 +68,8 @@ export function App(){
   const update=(part:Partial<Preferences>)=>setPrefs(old=>({...old,...part}));
   const launchEncounter=()=>{
     setActiveMissionId(null);
+    setActiveChallengeId(null);
+    setActiveScenario(null);
     const override=firstPlay.current?new URLSearchParams(window.location.search).get('encounter'):null;
     firstPlay.current=false;
     setEncounter(pickWildEncounter(ENCOUNTERS,Math.random,override));
@@ -58,8 +79,22 @@ export function App(){
     playCue('encounter',prefs.sound);
   };
   const launchMission=(mission:CampaignMission)=>{
+    setActiveScenario(null);
+    setActiveChallengeId(null);
     setActiveMissionId(mission.id);
     setEncounter(mission.encounter);
+    setSessionId(id=>id+1);
+    setScreen('battle');
+    setBattleMusic(true,prefs.sound);
+    playCue('encounter',prefs.sound);
+  };
+  const launchChallenge=(scenario:ScenarioCode,challengeId:string|null)=>{
+    const encounter=makeEncounter(scenario.encounterId,scenario.seed,scenario.modifierIds);
+    if(!encounter)return;
+    setActiveMissionId(null);
+    setActiveChallengeId(challengeId);
+    setActiveScenario(scenario);
+    setEncounter(encounter);
     setSessionId(id=>id+1);
     setScreen('battle');
     setBattleMusic(true,prefs.sound);
@@ -84,16 +119,20 @@ export function App(){
         <button className="primary retro-primary" onClick={launchEncounter}>▶ PLAY</button>
         <button className="secondary retro-secondary" onClick={()=>setScreen('campaign')}>CAMPAIGN</button>
       </div>
-      <div className="home-submenu"><button className="text-button retro-text-button" onClick={()=>setScreen('modeldex')}>MODELDEX</button>
+      <div className="home-submenu"><button className="text-button retro-text-button" onClick={()=>setScreen('challenges')}>CHALLENGES</button>
+        <button className="text-button retro-text-button" onClick={()=>setScreen('modeldex')}>MODELDEX</button>
         <button className="text-button retro-text-button" onClick={()=>setScreen('team')}>TEAM</button>
         <button className="text-button retro-text-button" onClick={()=>setScreen('guide')}>FIELD GUIDE</button>
         <button className="text-button retro-text-button" onClick={()=>setScreen('settings')}>⚙ SETTINGS</button></div>
     </section>}
 
     {screen==='battle'&&<BattlePanel key={sessionId} encounter={encounter} roster={activeTeam}
+      seed={activeScenario?.seed??1} challenge={activeChallengeId?getChallenge(activeChallengeId):undefined}
       reducedMotion={prefs.reducedMotion} soundEnabled={prefs.sound} textSpeed={prefs.textSpeed} difficulty={prefs.difficulty}
-      nextLabel={activeMissionId?'▶ CHAPTER SELECT':undefined}
-      onHome={()=>setScreen('home')} onNext={activeMissionId?()=>setScreen('campaign'):launchEncounter} onFinish={recordBattle}/>}
+      nextLabel={activeMissionId?'▶ CHAPTER SELECT':activeScenario?'▶ CHALLENGES':undefined}
+      onHome={()=>setScreen('home')} onNext={activeMissionId?()=>setScreen('campaign'):activeScenario?()=>setScreen('challenges'):launchEncounter} onFinish={recordBattle}/>}
+
+    {screen==='challenges'&&<ChallengePage progress={progress} onHome={()=>setScreen('home')} onLaunch={launchChallenge}/>}
 
     {screen==='campaign'&&<CampaignPage progress={progress} onHome={()=>setScreen('home')} onLaunch={launchMission}/>}
 
