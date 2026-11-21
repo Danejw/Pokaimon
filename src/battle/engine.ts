@@ -7,8 +7,10 @@ function addEvent(events: BattleEvent[], turn: number, kind: BattleEvent['kind']
   events.push({ seq: events.length, turn, kind, message, ...(amount === undefined ? {} : { amount }) });
 }
 export function createBattle(encounter: EncounterDefinition = TASK, model: ModelDefinition = INITIAL_MODEL, seed = 1, squad: readonly ModelDefinition[] = MODELS): BattleState {
+  const maxAp=encounter.budget?.ap ?? AP_LIMIT;
+  const maxTurns=encounter.budget?.turns ?? TURN_LIMIT;
   return {
-    encounterId: encounter.id, modelId: model.id, squadIds: [...new Set([model.id, ...squad.map(companion => companion.id)])], seed, turn: 0, ap: AP_LIMIT, maxAp: AP_LIMIT,
+    encounterId: encounter.id, modelId: model.id, squadIds: [...new Set([model.id, ...squad.map(companion => companion.id)])], seed, turn: 0, ap: maxAp, maxAp, maxTurns,
     stageIndex: 0, guarded: false, lastMoveCategory: null, lastMoveTurn: -1, bossPhaseTriggered: false,
     goals: encounter.stages.map(stage => stage.goal), progress: encounter.stages.map(() => 0),
     outcome: 'active', feedback: 'A wild ' + encounter.name + ' appeared! Choose a capability.',
@@ -122,7 +124,7 @@ function finishTurn(next: BattleState, encounter: EncounterDefinition, initialFe
     next.guarded = false;
     addEvent(next.events, next.turn, 'STATUS_CONSUMED', 'Guard expired.');
   }
-  if (next.ap <= 0 || next.turn >= TURN_LIMIT) {
+  if (next.ap <= 0 || next.turn >= next.maxTurns) {
     next.outcome = 'lost';
     addEvent(next.events, next.turn, 'BATTLE_LOST', 'Out of action points! Try a different approach.');
     feedback += ' Out of action points! Try again.';
