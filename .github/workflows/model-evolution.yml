@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     outputs:
-      changed: ${ steps.detect.outputs.changed }}
+      changed: ${{ steps.detect.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
         with: { persist-credentials: false }
@@ -31,9 +31,9 @@ jobs:
         with: { node-version: '22' }
       - name: Read-only provider discovery and verification
         env:
-          OPENAI_API_KEY: ${ secrets.OPENAI_MODEL_LIST_KEY }}
-          ANTHROPIC_API_KEY: ${ secrets.ANTHROPIC_MODEL_LIST_KEY }}
-          XAI_API_KEY: ${ secrets.XAI_MODEL_LIST_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_MODEL_LIST_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_MODEL_LIST_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_MODEL_LIST_KEY }}
         run: node scripts/evolve-models.mjs --live --apply
       - name: Validate generated catalog
         run: node scripts/evolve-models.mjs --validate-only
@@ -77,8 +77,8 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${ vars.MODEL_PUBLISHER_APP_ID }}
-          private-key: ${ secrets.MODEL_PUBLISHER_APP_PRIVATE_KEY }}
+          app-id: ${{ vars.MODEL_PUBLISHER_APP_ID }}
+          private-key: ${{ secrets.MODEL_PUBLISHER_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
       - uses: actions/download-artifact@v4
@@ -98,7 +98,7 @@ jobs:
       - name: Open content-only pull request
         id: pr
         env:
-          GH_TOKEN: ${ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -118,8 +118,8 @@ jobs:
       - name: Require actual verification job and passing checks before merge
         if: steps.pr.outputs.created == 'true'
         env:
-          GH_TOKEN: ${ steps.app-token.outputs.token }}
-          PR_URL: ${ steps.pr.outputs.url }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_URL: ${{ steps.pr.outputs.url }}
         shell: bash
         run: |
           set -euo pipefail
