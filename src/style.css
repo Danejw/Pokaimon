@@ -474,9 +474,17 @@ h1,h2,h3{margin:0}
   .challenge-card{padding:9px 7px}.challenge-actions button{font-size:12px}}
 
 
-/* Content-sized handheld shell: avoid viewport-height blank space on short pages. */
+/* Center the handheld when there is spare viewport height; keep tall pages scrollable. */
+#root{
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:safe center;
+}
 .retro-shell{
   min-height:0;
+  flex-shrink:0;
 }
 .retro-home,.home-page,.retro-page,.retro-battle{
   flex:0 0 auto;

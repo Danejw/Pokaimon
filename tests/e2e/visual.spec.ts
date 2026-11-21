@@ -332,3 +332,37 @@ test('desktop wallpaper covers viewport below a short home page and home copy st
   expect(wallpaper.scrollWidth).toBeLessThanOrEqual(1441);
   await page.screenshot({ path: dir + '/desktop-wallpaper-clean-menu.png', fullPage: true });
 });
+
+test('home handheld is vertically centered when it fits and scrolls on short phones', async ({ page }) => {
+  for (const viewport of [{ width: 390, height: 960 }, { width: 768, height: 1200 }, { width: 1440, height: 1000 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto('./');
+    const layout = await page.evaluate(() => {
+      const shell = document.querySelector('.retro-shell')!.getBoundingClientRect();
+      return {
+        topSpace: shell.top,
+        bottomSpace: innerHeight - shell.bottom,
+        horizontalOverflow: document.documentElement.scrollWidth > innerWidth + 1,
+      };
+    });
+    expect(layout.topSpace).toBeGreaterThanOrEqual(0);
+    expect(Math.abs(layout.topSpace - layout.bottomSpace)).toBeLessThanOrEqual(4);
+    expect(layout.horizontalOverflow).toBe(false);
+  }
+
+  await page.setViewportSize({ width: 390, height: 520 });
+  await page.goto('./');
+  const compact = await page.evaluate(() => {
+    const shell = document.querySelector('.retro-shell')!.getBoundingClientRect();
+    return {
+      top: shell.top,
+      bottom: shell.bottom,
+      horizontalOverflow: document.documentElement.scrollWidth > innerWidth + 1,
+    };
+  });
+  expect(compact.top).toBeGreaterThanOrEqual(-1);
+  expect(compact.bottom).toBeGreaterThan(520);
+  expect(compact.horizontalOverflow).toBe(false);
+  await page.getByRole('button', { name: /SETTINGS/i }).click();
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
+});
