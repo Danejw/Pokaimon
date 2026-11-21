@@ -14,6 +14,7 @@ export interface ModelCatalogEntry {
     reviewStatus: 'pending' | 'reviewed';
     /** Only explicitly sourced capabilities belong here. Empty means no claims verified. */
     verifiedCapabilities: readonly string[];
+    providerModelId?: string;
   };
   description: string;
   moveIds: readonly [string, string, string, string];
@@ -51,6 +52,18 @@ export const MODEL_CATALOG: readonly ModelCatalogEntry[] = [
     description:'A careful technical reviewer gameplay loadout. Stats reflect game balance.',
     moveIds:['extended-thinking','context-recall','code-review','self-correction'],
     palette:'#f5ae82',balance:{focus:4,tempo:3,precision:4,patch:'1'},
+  },
+
+  {
+    id:'opus55',publicationStatus:'approved',
+    facts:{provider:'Anthropic',displayName:'Claude Opus 5.5',version:'5.5',
+      providerModelId:'claude-opus-5-5',
+      sourceUrl:'https://platform.claude.com/docs/en/models/opus-5-5/overview',
+      recordedAt:'2026-11-20',reviewStatus:'reviewed',
+      verifiedCapabilities:['text','image-input','tool-use','adaptive-thinking']},
+    description:'A simulated coding-and-research tactician. Real model features are documented separately; battle strengths are fictional.',
+    moveIds:['extended-thinking','deep-research','code-review','self-correction'],
+    palette:'#b6a0d8',balance:{focus:4,tempo:3,precision:4,patch:'1'},
   },
 ];
 
