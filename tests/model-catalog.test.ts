@@ -30,6 +30,8 @@ describe('Phase 5: model registry', () => {
     const newModel=newRoster[4];
     expect(newModel.id).toBe('trial');
     expect(getModelSprite(newModel.id)).toBe(fallbackModelSprite);
+    expect(fallbackModelSprite.pixels).toHaveLength(32);
+    expect(fallbackModelSprite.pixels.every(row => row.length === 32)).toBe(true);
     let battle=createBattle(TASK,newModel,1,[newModel]);
     battle=applyMove(battle,'deep-think',newModel,TASK);
     expect(battle.stageIndex).toBe(1);
