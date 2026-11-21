@@ -17,6 +17,14 @@
 | 4 | [Replayability and Game Feel](PHASE_4_REPLAYABILITY_FEEL.md) | Varied repeatable challenges, replay, achievements, better animations and sound | 3 |
 | 5 | [Living Model Ecosystem](PHASE_5_LIVING_ROSTER.md) | Validated model registry and safe candidate-import workflow for new releases | 4 |
 
+## Next authorized expansion: Phase 6 → Phase 8
+
+The original five-phase expansion is implemented on the feature branch with automated checks, subject to remaining real-device/production release work. The next **approved planning order** is [Phase 6: Battle Intelligence 2.0](PHASE_6_BATTLE_INTELLIGENCE.md), then [Phase 8: Autonomous Living Model Evolution](PHASE_8_AUTONOMOUS_MODEL_EVOLUTION.md). **Phase 7 Gauntlet is deferred**, and there is no overworld in these two phases.
+
+Phase 6 creates three deep reactive battles (Hallucination Hydra, Regression Golem, Scope Shifter) with clues, alternate solution routes, recoverable mistakes and evidence-based enemy decisions. Phase 8 builds automatic official release discovery → verified identity → lineage/evolution mapping → original procedural sprite → validated fictional move kit → constrained CI/autopublishing → ModelDex, with a fail-closed exception process.
+
+The new [Phase 6 + 8 execution tracker](NEXT_EXPANSION_TASKS.md) contains implementation slice order and actual verification gates. **Both new phases are planned, not implemented.** Routine release-to-evolution publishing in Phase 8 will require a one-time user-authorized production workflow and permissions setup; it will not be activated by committing documentation.
+
 Track execution in [TASKS.md](TASKS.md). Each phase file provides sequenced vertical slices, affected code, game rules, verification tests and exit gate. Work **serially**: complete, test, visually inspect and document one phase before starting the next; no speculative Phase 5 infrastructure during Phase 1.
 
 ## Verified implementation baseline from source (Nov 20)
