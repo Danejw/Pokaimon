@@ -1,0 +1,137 @@
+name: Autonomous Model Evolutions
+# Only runs nightly from DEFAULT branch after separately authorized merge and setup.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Inspect sources without publishing (default safe)"
+        type: boolean
+        required: true
+        default: true
+  schedule:
+    - cron: "23 10 * * *"
+
+permissions:
+  contents: read
+concurrency:
+  group: model-evolution-publisher
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    name: Check official provider listings
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    outputs:
+      changed: ${ steps.detect.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Read-only provider discovery and verification
+        env:
+          OPENAI_API_KEY: ${ secrets.OPENAI_MODEL_LIST_KEY }}
+          ANTHROPIC_API_KEY: ${ secrets.ANTHROPIC_MODEL_LIST_KEY }}
+          XAI_API_KEY: ${ secrets.XAI_MODEL_LIST_KEY }}
+        run: node scripts/evolve-models.mjs --live --apply
+      - name: Validate generated catalog
+        run: node scripts/evolve-models.mjs --validate-only
+      - name: Detect catalog or observation changes
+        id: detect
+        shell: bash
+        run: |
+          if git diff --quiet -- src/content/generatedModels.json src/game/generatedSprites.json data/model-observations.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: model-evolution-data
+          path: |
+            src/content/generatedModels.json
+            src/game/generatedSprites.json
+            data/model-observations.json
+            data/model-scan-report.json
+          retention-days: 7
+
+  publish:
+    name: Create data-only PR and gate on real CI
+    needs: discover
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      needs.discover.outputs.changed == 'true' &&
+      vars.MODEL_AUTOPUBLISH_ENABLED == 'true' &&
+      (github.event_name == 'schedule' || inputs.dry_run == false)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions: { contents: read }
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      # A GitHub App token is mandatory. GITHUB_TOKEN PRs don't trigger CI.
+      - name: Mint scoped GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${ vars.MODEL_PUBLISHER_APP_ID }}
+          private-key: ${ secrets.MODEL_PUBLISHER_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - uses: actions/download-artifact@v4
+        with:
+          name: model-evolution-data
+          path: .
+      - name: Revalidate content and enforce allowlist
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/evolve-models.mjs --validate-only
+          forbidden=$(git diff --name-only -- | grep -Ev '^(src/content/generatedModels\.json|src/game/generatedSprites\.json|data/model-observations\.json)$' || true)
+          if [ -n "$forbidden" ]; then echo "Forbidden modified path: $forbidden"; exit 1; fi
+          git add -- src/content/generatedModels.json src/game/generatedSprites.json data/model-observations.json
+          forbidden=$(git diff --cached --name-only | grep -Ev '^(src/content/generatedModels\.json|src/game/generatedSprites\.json|data/model-observations\.json)$' || true)
+          if [ -n "$forbidden" ]; then echo "Forbidden staged path: $forbidden"; exit 1; fi
+      - name: Open content-only pull request
+        id: pr
+        env:
+          GH_TOKEN: ${ steps.app-token.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --cached --quiet; then
+            echo "created=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          gh auth setup-git
+          git config user.name "pokaimon-evolution[bot]"
+          git config user.email "pokaimon-evolution[bot]@users.noreply.github.com"
+          name="auto/models-${GITHUB_RUN_ID}"
+          git switch -c "$name"
+          git commit -m "content: sourced automatic model evolutions"
+          git push origin HEAD:"$name"
+          pr_url=$(gh pr create --head "$name" --base main --title "Pokaimon: sourced model evolutions" --body "Data and original pixels only. Official source evidence and independent CI verification required. No engine or workflow changes.")
+          echo "url=$pr_url" >> "$GITHUB_OUTPUT"
+          echo "created=true" >> "$GITHUB_OUTPUT"
+      - name: Require actual verification job and passing checks before merge
+        if: steps.pr.outputs.created == 'true'
+        env:
+          GH_TOKEN: ${ steps.app-token.outputs.token }}
+          PR_URL: ${ steps.pr.outputs.url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          found=0
+          for i in {1..25}; do
+            if gh pr checks "$PR_URL" --json name --jq '.[].name' 2>/dev/null | grep -q '^verify$'; then
+              found=1; break
+            fi
+            sleep 15
+          done
+          if [ "$found" -ne 1 ]; then
+            echo "CI did not start. Leave the PR open, no merge." >&2; exit 1
+          fi
+          gh pr checks "$PR_URL" --watch --fail-fast
+          gh pr merge "$PR_URL" --squash --delete-branch
