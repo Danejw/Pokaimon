@@ -1,10 +1,10 @@
-import { applyMove, createBattle, switchModel } from './engine';
+import { applyMove, createBattle, inspectHydraEvidence, switchModel } from './engine';
 import type { BattleState, ModelDefinition } from './types';
 import { MODELS, MOVES } from '../content/core';
 import { makeEncounter, type ModifierId } from '../content/variants';
 
 export const REPLAY_CONTENT_VERSION=1;
-export type ReplayAction = {kind:'move'|'switch';id:string};
+export type ReplayAction = {kind:'move'|'switch'|'inspect';id:string};
 export interface BattleReplay {
   formatVersion:1;
   contentVersion:number;
@@ -35,10 +35,12 @@ export function buildBattleReplay(
   },
 ):BattleReplay {
   const actions:ReplayAction[]=battle.events.filter(event=>
-    event.kind==='MOVE_USED'||event.kind==='MODEL_SWITCHED').map(event=>
+    event.kind==='MOVE_USED'||event.kind==='MODEL_SWITCHED'||event.kind==='CLUE_FOUND').map(event=>
     event.kind==='MOVE_USED'
       ? {kind:'move',id:event.moveId??''}
-      : {kind:'switch',id:event.modelId??''}
+      : event.kind==='CLUE_FOUND'
+        ? {kind:'inspect',id:event.clueId??''}
+        : {kind:'switch',id:event.modelId??''}
   );
   const initialModelId=battle.events.find(e=>e.kind==='CHARACTER_SELECTED')?.modelId??battle.modelId;
   return {
@@ -78,13 +80,15 @@ export function restoreBattleReplay(raw:unknown):BattleState|null {
   if(!initial)return null;
   let state=createBattle(encounter,initial,replay.seed,roster);
   for(const action of replay.actions){
-    if(!action||typeof action!=='object'||(action.kind!=='move'&&action.kind!=='switch')||
+    if(!action||typeof action!=='object'||(action.kind!=='move'&&action.kind!=='switch'&&action.kind!=='inspect')||
        typeof action.id!=='string'||action.id.length>50)return null;
     const active=roster.find(model=>model.id===state.modelId);
     if(!active)return null;
     const next=action.kind==='move'
       ? applyMove(state,action.id,active,encounter)
-      : switchModel(state,action.id,encounter,roster);
+      : action.kind==='inspect'
+        ? inspectHydraEvidence(state,action.id,encounter)
+        : switchModel(state,action.id,encounter,roster);
     if(next===state)return null;
     state=next;
   }
