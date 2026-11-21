@@ -272,3 +272,48 @@ test('rival punishes repeating a tactic without hiding the outcome', async ({ pa
   await expect(page.locator('.rival-counter')).toContainText('anticipated that repeated reasoning move');
   await page.screenshot({ path:'test-results/visual/rival-counter-'+testInfo.project.name+'.png', fullPage:true });
 });
+
+test('new challenge hub presents three replayable objectives and a copyable scenario', async ({page},testInfo)=>{
+  await page.goto('./');
+  await page.getByRole('button',{name:'CHALLENGES'}).click();
+  await expect(page.getByRole('heading',{name:'Battle Challenges'})).toBeVisible();
+  await expect(page.locator('.challenge-card')).toHaveCount(3);
+  await expect(page.getByRole('textbox',{name:'Precision Audit challenge code'})).toHaveValue('PK1.task.101.extra-audit');
+  await page.screenshot({path:'test-results/visual/challenges-'+testInfo.project.name+'.png',fullPage:true});
+  await page.getByRole('textbox',{name:'Paste challenge code'}).fill('PK1.task.101.extra-audit');
+  await page.getByRole('button',{name:'PLAY CODE'}).click();
+  await expect(page.locator('.challenge-objective')).toContainText('PRECISION AUDIT');
+  await expect(page.getByRole('button',{name:'Select GPT-6.2 Astra'})).toBeVisible();
+});
+
+test('precision audit awards a verified challenge badge and replay after a real victory', async ({page},testInfo)=>{
+  await page.goto('./');
+  await page.getByRole('button',{name:'CHALLENGES'}).click();
+  await page.locator('.challenge-card').first().getByRole('button',{name:/BATTLE/}).click();
+  await page.getByRole('button',{name:'Select GPT-6.2 Astra'}).click();
+  for(const move of ['Deep Think','Code Execution','Self-Correction','Self-Correction']){
+    await expect(page.getByRole('button',{name:move})).toBeVisible();
+    await page.getByRole('button',{name:move}).click();
+  }
+  await expect(page.getByRole('heading',{name:'VICTORY!'})).toBeVisible();
+  await expect(page.locator('.challenge-result')).toContainText('CHALLENGE CLEAR');
+  await page.screenshot({path:'test-results/visual/challenge-win-'+testInfo.project.name+'.png',fullPage:true});
+  await page.getByRole('button',{name:/CHALLENGES/}).click();
+  await expect(page.locator('.challenge-achievements')).toContainText('1/3 CHALLENGES CLEARED');
+  await expect(page.getByText('FIRST CHALLENGE')).toBeVisible();
+  await page.locator('.challenge-replay summary').click();
+  await expect(page.locator('.challenge-replay')).toContainText('Reconstructed from your action log');
+  await page.reload();
+  await page.getByRole('button',{name:'CHALLENGES'}).click();
+  await expect(page.locator('.challenge-achievements')).toContainText('1/3 CHALLENGES CLEARED');
+  await expect(page.locator('.challenge-replay')).toHaveCount(1);
+});
+
+test('challenge code rejects unsupported or malicious text without changing route', async ({page})=>{
+  await page.goto('./');
+  await page.getByRole('button',{name:'CHALLENGES'}).click();
+  await page.getByRole('textbox',{name:'Paste challenge code'}).fill('PK1.task.1.unknown');
+  await page.getByRole('button',{name:'PLAY CODE'}).click();
+  await expect(page.getByRole('status').filter({hasText:'Invalid or unsupported'})).toBeVisible();
+  await expect(page.locator('.challenge-card')).toHaveCount(3);
+});
