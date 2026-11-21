@@ -1,6 +1,6 @@
 # Battle Evolution execution tracker
 
-**Status:** PHASES 1–2 AUTOMATED ACCEPTANCE VERIFIED / PHASES 3–5 PLANNED. Physical-device QA remains open. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
+**Status:** PHASES 1–3 AUTOMATED ACCEPTANCE VERIFIED / PHASES 4–5 PLANNED. Physical phone QA outstanding. Physical-device QA remains open. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
 No checkboxes below represent implemented work. Update after verifying commits, CI and actual browser playthroughs, not upon writing documentation.
 
 ## Phase 1: Battle System 2.0
@@ -20,12 +20,12 @@ No checkboxes below represent implemented work. Update after verifying commits, 
 - [x] **Gate 2:** Prepare team, win, discover, reload and see accurate ModelDex/mastery state
 
 ## Phase 3: Campaign and Boss Battles
-- [ ] 3A Campaign chapter map/menu and deterministic mission gating
-- [ ] 3B Rival trainer with simple explainable tactic patterns
-- [ ] 3C Multi-phase boss with fair warning, loss and retry
-- [ ] 3D Rewards, chapter completion and Quick Play preservation
-- [ ] 3E Full campaign playtest and save/return QA
-- [ ] **Gate 3:** Start chapter, play mission, beat boss, unlock next chapter and resume
+- [x] 3A Campaign chapter map/menu and deterministic mission gating
+- [x] 3B Rival trainer with simple explainable tactic patterns
+- [x] 3C Multi-phase boss with fair warning, loss and retry
+- [x] 3D Rewards, chapter completion and Quick Play preservation
+- [x] 3E Full campaign playtest and save/return QA
+- [x] **Gate 3: Start chapter, play mission, beat boss, unlock next chapter and resume
 
 ## Phase 4: Replayability and Game Feel
 - [ ] 4A Seeded encounter modifiers with solvability validator
@@ -84,3 +84,9 @@ Next slice:
 **Implementation changed since roadmap:** Phase 2 local progress uses schema v2 and tracks unique cleared tasks, discovered move IDs and contributing models. It avoids new backends and real inference. Phase 3 should build on v2 with its own backwards-compatible migration.
 
 **No main merge or production deployment was performed by these phases.** The draft PR remains available for review. Automated gates permit progressing to Phase 3 while flagging real-phone testing as an outstanding release risk.
+
+## Phase 3 acceptance (Nov 20, 2026)
+
+**Full suite verified:** [GitHub Actions #44847525790](https://github.com/Danejw/Pokaimon/actions/runs/44847525790) on commit `cc20b3bf` passed lint, typecheck, Vitest, AG-UI, build, and **60 Playwright mobile/desktop tests**. Saved-local campaign supports 3 chapters, 9 missions, three scripted rivals and three bespoke boss phases; Quick Play remains separate, and progress schema v3 migrates v1/v2. Pure `tests/campaign-balance.test.ts` confirms a winning route for each starting companion on every mission. The first 58 of 60 browser tests passed on prior run [44846909393](https://github.com/Danejw/Pokaimon/actions/runs/44846909393); the two failures were a strict Playwright selector matching both the rival and ordinary enemy response, resolved with `.rival-counter` and rerun.
+
+**Actual screenshots opened from final CI artifact `14684625314`:** `campaign-locked-chromium-mobile.png`, `rival-counter-chromium-mobile.png`, `rival-counter-chromium-desktop.png`, `boss-phase-chromium-mobile.png`. The chapter hierarchy, original rival and Scope Giant sprites, counters, and action controls are readable; mobile battle's additional status lines make the full page **taller than the screen**. This is an identified UX improvement for Phase 4, so don't describe every battle as no-scroll. Physical phone audio/touch verification remains outstanding. No production deployment or merge.
