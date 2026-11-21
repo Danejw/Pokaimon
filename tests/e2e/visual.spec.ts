@@ -303,3 +303,32 @@ test('desktop handheld frame has outer margins and follows page content height',
   expect(campaign.horizontalOverflow).toBe(false);
   await page.screenshot({ path: dir + '/desktop-campaign-content-height.png', fullPage: true });
 });
+
+
+test('desktop wallpaper covers viewport below a short home page and home copy stays minimal', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('./');
+  const shell = page.locator('.retro-shell');
+  await expect(shell).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Master your models/i })).toBeVisible();
+  await expect(page.getByText('A NEW KIND OF WILD ENCOUNTER')).toHaveCount(0);
+  await expect(page.getByText('16-BIT AI LAB')).toHaveCount(0);
+  await expect(page.locator('.retro-header .brand')).toHaveText('POKAIMON');
+  const wallpaper = await page.evaluate(() => {
+    const html = getComputedStyle(document.documentElement);
+    const body = getComputedStyle(document.body);
+    const shellBottom = document.querySelector('.retro-shell')!.getBoundingClientRect().bottom;
+    return {
+      htmlBackground: html.backgroundImage,
+      bodyBackground: body.backgroundImage,
+      shellBottom,
+      viewportHeight: innerHeight,
+      scrollWidth: document.documentElement.scrollWidth,
+    };
+  });
+  expect(wallpaper.shellBottom).toBeLessThan(wallpaper.viewportHeight - 12);
+  expect(wallpaper.htmlBackground).toContain('repeating-linear-gradient');
+  expect(wallpaper.bodyBackground).toContain('repeating-linear-gradient');
+  expect(wallpaper.scrollWidth).toBeLessThanOrEqual(1441);
+  await page.screenshot({ path: dir + '/desktop-wallpaper-clean-menu.png', fullPage: true });
+});
