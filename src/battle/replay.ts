@@ -74,7 +74,6 @@ export function restoreBattleReplay(raw:unknown):BattleState|null {
     if(!base)return null;
     roster.push({...base,moveIds:ids as [string,string,string,string]});
   }
-  if(!roster.every(model=>model.id==='astra' || model.id==='grok'||model.id==='fable'))return null;
   const initial=roster.find(model=>model.id===replay.initialModelId);
   if(!initial)return null;
   let state=createBattle(encounter,initial,replay.seed,roster);
