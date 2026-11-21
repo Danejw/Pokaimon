@@ -114,6 +114,8 @@ export function BattlePanel({
   const counterEvent = battle?.events.find(event =>
     event.turn === battle.turn && event.kind === 'ENEMY_ACTED' &&
     event.message.includes(' used '));
+  const hydraResponse = encounter.mechanic === 'hydra' ? battle?.events.find(event =>
+    event.turn === battle.turn && event.kind === 'ENEMY_ACTED' && event.message.includes('Echo Chamber')) : undefined;
 
   const message = (phase === 'encounter' || phase === 'selection')
     ? 'A wild ' + encounter.name + ' appeared!'
@@ -311,6 +313,7 @@ export function BattlePanel({
           <div><strong>EVIDENCE NOTEBOOK</strong>
             <span role="status" aria-live="polite">{battle.hydra.clueKnown ? HYDRA_CLUE.clue : 'Two citations support the claim. Are they independent?'}</span>
             {battle.hydra.falseConfidence > 0 && <small>⚠ ECHO CHAMBER · EXTRA VERIFICATION REQUIRED</small>}
+            {hydraResponse && <small className="hydra-response" role="status">{hydraResponse.message}</small>}
           </div>
           {!battle.hydra.clueKnown && <button className="hydra-inspect" onClick={inspectEvidence} aria-label="Inspect source provenance">INSPECT SOURCE <small>1 TURN · 0 AP</small></button>}
         </div>}
