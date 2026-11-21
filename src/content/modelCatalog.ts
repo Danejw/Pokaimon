@@ -100,12 +100,14 @@ export function validateCatalog(entries: readonly ModelCatalogEntry[], moves: Re
       errors.push('Incomplete game balance in '+entry.id);
     if(entry.facts.reviewStatus==='pending'&&entry.facts.verifiedCapabilities.length>0)
       errors.push('Unreviewed capability claims in '+entry.id);
+    if(entry.publicationStatus==='approved'&&entry.facts.reviewStatus!=='reviewed')
+      errors.push('Unreviewed playable model '+entry.id);
   }
   return errors;
 }
 
 export function catalogToModels(entries: readonly ModelCatalogEntry[]): ModelDefinition[] {
-  return entries.filter(entry=>entry.publicationStatus==='approved').map(entry=>({
+  return entries.filter(entry=>entry.publicationStatus==='approved' && entry.facts.reviewStatus==='reviewed').map(entry=>({
     id:entry.id,provider:entry.facts.provider,displayName:entry.facts.displayName,
     version:entry.facts.version,source:entry.facts.sourceUrl,
     verifiedAt:entry.facts.recordedAt,description:entry.description,
