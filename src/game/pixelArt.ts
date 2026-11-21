@@ -11,7 +11,33 @@ export type ModelPose = 'idle' | 'charge' | 'attack' | 'victory' | 'hurt';
 export type PixelArt = PixelDrawing;
 
 export const enemySprites: Record<string, PixelArt> = handDrawnEnemies;
-export const modelSprites: Record<ModelId, PixelArt> = handDrawnModels;
+export const modelSprites: Record<string, PixelArt> = handDrawnModels;
+/** Original generic sprite used when a new catalog model has no authored art yet. */
+export const fallbackModelSprite: PixelArt = {
+  pixelSize: 3,
+  palette: { K:0x293d4c, B:0x597e9c, L:0x9ec4d5, W:0xfaf6de, E:0x63dfb2 },
+  pixels: [
+    '................',
+    '.....KKKKKK.....',
+    '....KBBBBBBK....',
+    '...KBBLLLLBBK...',
+    '..KBLWWWWWWLBK..',
+    '..KBLWKKWWKLBK..',
+    '..KBLWKKWWKLBK..',
+    '..KBLWWWWWWLBK..',
+    '..KBLWEEEEWLBK..',
+    '..KBLWWWWWWLBK..',
+    '...KBLWWWWLBK...',
+    '....KBBBBBBK....',
+    '.....KKKKKK.....',
+    '......K..K......',
+    '......K..K......',
+    '................',
+  ],
+};
+export function getModelSprite(modelId:string): PixelArt {
+  return modelSprites[modelId] ?? fallbackModelSprite;
+}
 export const trainerSprite: PixelArt = handDrawnTrainer;
 
 // Cached texture per sprite and pose. The characters have clean 3px pixels
