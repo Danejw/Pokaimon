@@ -1,10 +1,10 @@
-name: Pokaimon Next Preview
+name: Pokaimon Battle Evolution Preview
 
 # A disposable experiment: publish main unchanged at /Pokaimon/ and the
-# experimental branch at /Pokaimon/next/. Never publish experiment at root.
+# Battle Evolution branch at /Pokaimon/next/. Never publish experiment at root.
 on:
   push:
-    branches: [feat/overnight-gameplay-polish]
+    branches: [feat/battle-evolution]
   workflow_dispatch:
 
 permissions:
@@ -19,7 +19,7 @@ concurrency:
 jobs:
   preview:
     runs-on: ubuntu-latest
-    # This isolated branch is not permitted by the main-only Pages environment protection.
+    # The preview deploys to the same Pages site as the stable root.
     # Deployment still requires the pages:write and id-token:write permissions.
     steps:
       - name: Checkout stable production source
@@ -40,7 +40,7 @@ jobs:
       - name: Checkout the isolated experiment
         uses: actions/checkout@v4
         with:
-          ref: feat/overnight-gameplay-polish
+          ref: feat/battle-evolution
           path: experiment
           persist-credentials: false
       - name: Verify experiment before publishing
