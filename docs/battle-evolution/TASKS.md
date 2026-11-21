@@ -31,15 +31,15 @@ No checkboxes below represent implemented work. Update after verifying commits, 
 - [x] 4A Seeded encounter modifiers with solvability validator
 - [x] 4B Repeatable challenges and separate optional challenge tiers
 - [x] 4C Achievements/replay summary from battle event history
-- [ ] 4D Original multi-frame sprite FX, sound cues and animation polish
+- [x] 4D Original multi-frame sprite FX, sound cues and animation polish
 - [ ] 4E Mobile visual QA, reduced-motion and seed replay verification
 - [ ] **Gate 4:** Three meaningfully different repeat battles with shareable reproducible seed and polished feedback
 
 ## Phase 5: Living Model Ecosystem
-- [ ] 5A Separate factual evidence metadata from fictional balance profile
-- [ ] 5B Versioned validated model registry, asset fallback and migration
-- [ ] 5C Discovery adapter produces untrusted candidates from official references
-- [ ] 5D Review workflow + automated checks + safe publish to static bundle
+- [x] 5A Separate factual evidence metadata from fictional balance profile
+- [x] 5B Versioned validated model registry, asset fallback and migration
+- [x] 5C Discovery adapter produces untrusted candidates from official references
+- [x] 5D Review workflow + automated checks + safe publish to static bundle
 - [ ] 5E End-to-end newly-added model playtest, regression and rollback rehearsal
 - [ ] **Gate 5:** Add a model through metadata/configuration + review, without editing reducer or UI logic
 
@@ -124,3 +124,12 @@ The new Opus creature has a distinct **fictional** technique loadout using the e
 **Tests added or adjusted:** `tests/model-catalog.test.ts` verifies provenance/balance separation, review gate and fallback; `tests/model-candidate.test.ts` rejects malicious/invalid manifest inputs; `tests/roster.test.ts` and team progress tests include the fourth catalog entry while preserving three-member teams; `tests/e2e/battle.spec.ts` includes Opus ModelDex → team editor → battle → win and screenshots; `tests/model-catalog.test.ts` includes replay restoration with a newly registered model. The old Phase 4 replay fixture had passed the entire four-model catalog to a three-member replay schema and caused one Vitest failure on [CI 44857020568](https://github.com/Danejw/Pokaimon/actions/runs/44857020568). The fixture now uses the valid first three-member squad, and a separate new-model replay regression test was added. **The corrected code has not yet passed its final-head CI gate at the time of this note.**
 
 **Pending:** Finish latest head CI, download fresh screenshots (challenge victory, new model on mobile and desktop, combo result), inspect visual regressions, record remaining mobile screen-height tradeoffs, and verify full on-device audio/touch. Source review has been completed for four model identities, but future release discovery is still a manual local-manifest-to-candidate workflow rather than an unattended scheduled discovery system. No automatic model publication or main merge has occurred.
+
+
+## Phase 4 and Phase 5 integration verification
+
+**Verified code head `d7c88c0`:** [GitHub CI 44857141193](https://github.com/Danejw/Pokaimon/actions/runs/44857141193) passed lint, typecheck, all Vitest tests, AG-UI, production build and mobile/desktop Playwright tests. The prior one-test failure in run 44857020568 was the old 4-model replay fixture violating the explicit 3-member team limit and was fixed before this passing run. Artifact `14688575256` downloaded and actual `new-model-chromium-mobile.png`, `new-model-win-chromium-mobile.png`, corresponding desktop versions, `evidence-combo-chromium-mobile.png`, `evidence-combo-chromium-desktop.png`, and challenge screens were opened as rendered images. ModelDex → team save → Opus model selection → complete TASK victory, combo event wiring, challenge result and replay were exercised by CI.
+
+**Visual observation and correction:** The original generic Opus fallback character appeared **too small** compared with the three existing characters in both initial screenshots. Changed sprite geometry from 16×16 to 32×32 art cells (same original hand-authored motif, crisp 3px pixels), and added a deterministic dimension unit assertion. This later edit **needs a new CI and actual screenshot review**, as earlier passing runs cannot verify it. Challenge menu is readable but still long on portrait phones; fullscreen fit is not claimed. Reduced-motion event guard is in the code; subjective animation and physical audio/playtest remain unverified.
+
+**Publishing limits:** Current importer accepts a local JSON manifest and emits a candidate-only review record; it has no automatic network discovery or recurring scheduler. Manual provider-source review and a PR remain necessary to publish new models. All four selected model facts were checked against dated official sources; game scores and outcomes are simulated. No service credentials, paid model execution or merge were introduced. This is a **static bundle workflow**, not a claim of automatic discovery/publishing. Physical-phone QA and any rollback rehearsal on a deployed preview remain outstanding. Keep final exit gates unchecked until verified.
