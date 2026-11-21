@@ -23,7 +23,7 @@ const THIRD_KEY='pokaimon:progress:v3';
 const KEY='pokaimon:progress:v4';
 export const defaultProgress: Progress = {
   schema:4, cleared:[], challengesCleared:[], achievements:[], lastReplay:null,
-  missionsCleared:[], teamIds:MODELS.map(model=>model.id),
+  missionsCleared:[], teamIds:MODELS.slice(0,3).map(model=>model.id),
   discoveredMoves:[], winsByModel:{}, useAlternateLoadout:false,
 };
 
@@ -51,7 +51,7 @@ function migrate(value:unknown):Progress | null {
     teamIds:rawTeam.length>0&&rawTeam.length<=3?rawTeam:[...roster],
     discoveredMoves, winsByModel:{},useAlternateLoadout};
   if(!teamCanHandleEncounters(rosterForProgress(provisional).filter(m=>provisional.teamIds.includes(m.id))))
-    provisional.teamIds=[...roster];
+    provisional.teamIds=roster.slice(0,3);
   if(object.winsByModel && typeof object.winsByModel==='object'){
     for(const [id,value] of Object.entries(object.winsByModel as Record<string,unknown>)){
       if(roster.includes(id) && typeof value==='number' && Number.isInteger(value) && value>=0)
