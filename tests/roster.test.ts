@@ -23,10 +23,10 @@ function canWin(model: ModelDefinition): boolean {
   return false;
 }
 describe('model and move library',()=>{
-  it('contains three versioned models with four equipped moves each',()=>{
+  it('contains four versioned models with four equipped moves each',()=>{
     expect(validateRoster()).toEqual([]);
-    expect(MODELS).toHaveLength(3);
-    expect(MODELS.map(m=>m.moveIds.length)).toEqual([4,4,4]);
+    expect(MODELS).toHaveLength(4);
+    expect(MODELS.map(m=>m.moveIds.length)).toEqual([4,4,4,4]);
   });
   it('every model can complete TASK using its own moves',()=>{
     for(const model of MODELS)expect(canWin(model), model.displayName).toBe(true);
