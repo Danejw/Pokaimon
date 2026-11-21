@@ -1,5 +1,5 @@
 import type { EncounterDefinition } from '../battle/types';
-import { BUG, HALLUCINATION, MATH, RESEARCH } from './encounters';
+import { MATH, RESEARCH } from './encounters';
 import { TASK } from './core';
 
 export type MissionKind = 'wild' | 'rival' | 'boss';
