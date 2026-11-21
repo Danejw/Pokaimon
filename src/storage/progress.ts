@@ -72,9 +72,9 @@ export function setAlternateLoadout(progress:Progress,enabled:boolean):Progress 
   if(progress.cleared.length<3)return progress;
   return {...progress,useAlternateLoadout:enabled};
 }
-export function recordVictory(progress:Progress,encounterId:string,battle:BattleState):Progress {
-  if(battle.outcome!=='won'||battle.encounterId!==encounterId)return progress;
-  const isNew=!progress.cleared.includes(encounterId);
+export function recordBattleProgress(progress:Progress,encounterId:string,battle:BattleState):Progress {
+  if(battle.outcome==='active'||battle.encounterId!==encounterId)return progress;
+  const isNew=battle.outcome==='won'&&!progress.cleared.includes(encounterId);
   const discoveredMoves=[...new Set([
     ...progress.discoveredMoves,
     ...battle.events.filter(e=>e.kind==='MOVE_USED' && !!e.moveId).map(e=>e.moveId!),
@@ -92,6 +92,8 @@ export function recordVictory(progress:Progress,encounterId:string,battle:Battle
   if(!isNew && discoveredMoves.length===progress.discoveredMoves.length)return progress;
   return {...progress,cleared,discoveredMoves,winsByModel};
 }
+export const recordVictory=recordBattleProgress;
+
 export function clearProgress():Progress {
   const progress={...defaultProgress,teamIds:[...defaultProgress.teamIds]};
   saveProgress(progress);
