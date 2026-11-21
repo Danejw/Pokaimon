@@ -314,7 +314,7 @@ export function BattlePanel({
         {encounter.boss && <div className="boss-intent" role="status">
           {battle?.bossPhaseTriggered ? '★ BOSS PHASE: '+encounter.boss.label : 'BOSS BATTLE · '+(difficulty==='hard'?'A change is coming.':'Prepare for a '+encounter.boss.effect+' phase.')}
         </div>}
-        {rivalEvent && <div className="wild-counter" role="status">{rivalEvent.message}</div>}
+        {rivalEvent && <div className="wild-counter rival-counter" role="status">{rivalEvent.message}</div>}
         {intel?.incomingSpecial && <div className="battle-intent" role="status">
           {difficulty === 'hard' ? encounter.name + ' is preparing an action.' : encounter.name + ' prepares ' + intel.incomingSpecial + '.'}
           {battle?.guarded && <b> · GUARD READY</b>}
