@@ -316,7 +316,7 @@ export function BattlePanel({
           <b>{moves[selectedMove]?.name}:</b>{' '}{moves[selectedMove]?.description}{' '}
           {difficulty === 'easy' && <span>{forecasts[selectedMove]?.status === 'effective'
             ? 'Fits this step (simulated +' + forecasts[selectedMove].gain + ').'
-            : 'No progress on this step.'}</span>}
+            : 'No progress on this step.'}{moves[selectedMove]?.tacticalEffect === 'guard' ? ' Can block an incoming counter.' : ''}</span>}
         </div>}
         {!switching && difficulty === 'easy' && !intel?.incomingSpecial && <div className="retro-help tactical-help">{intel?.incomingSpecial
           ? 'WILD COUNTER NEXT: ' + intel.incomingSpecial.toUpperCase()
