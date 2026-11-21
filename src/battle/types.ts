@@ -18,10 +18,10 @@ export interface EncounterDefinition {
   id: string; name: string; level: number; description: string; category: string;
   stages: readonly StageDefinition[]; lesson: string; special: string; specialEffect?: 'scope-shift' | 'regression' | 'source-conflict' | 'hidden-assumption' | 'false-lead';
 }
-export type EventKind = 'ENCOUNTER_STARTED' | 'CHARACTER_SELECTED' | 'MOVE_USED' | 'STAGE_PROGRESS_CHANGED' | 'STAGE_COMPLETED' | 'ENEMY_ACTED' | 'BATTLE_WON' | 'BATTLE_LOST';
+export type EventKind = 'ENCOUNTER_STARTED' | 'CHARACTER_SELECTED' | 'MOVE_USED' | 'STAGE_PROGRESS_CHANGED' | 'STAGE_COMPLETED' | 'ENEMY_ACTED' | 'BATTLE_WON' | 'BATTLE_LOST' | 'MODEL_SWITCHED';
 export interface BattleEvent { seq: number; turn: number; kind: EventKind; message: string; amount?: number; }
 export interface BattleState {
-  encounterId: string; modelId: string; seed: number; turn: number; ap: number; maxAp: number;
+  encounterId: string; modelId: string; squadIds: string[]; seed: number; turn: number; ap: number; maxAp: number;
   progress: number[]; goals: number[]; stageIndex: number; outcome: Outcome;
   feedback: string; events: BattleEvent[];
 }
