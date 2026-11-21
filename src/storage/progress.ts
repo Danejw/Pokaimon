@@ -114,6 +114,10 @@ export function recordMissionVictory(progress:Progress,missionId:string,battle:B
      !isMissionUnlocked(missionId,progress.missionsCleared))return progress;
   return {...progress,missionsCleared:[...progress.missionsCleared,missionId]};
 }
+export function recordBattleReplay(progress:Progress,replay:BattleReplay):Progress {
+  if(!restoreBattleReplay(replay))return progress;
+  return {...progress,lastReplay:replay};
+}
 export function recordChallengeCompletion(
   progress:Progress,challenge:ChallengeDefinition,battle:BattleState,replay:BattleReplay|null,
 ):Progress {
