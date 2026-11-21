@@ -2,10 +2,15 @@ import type { BattleState } from '../battle/types';
 import { MODELS, MOVES } from '../content/core';
 import { rosterForProgress, teamCanHandleEncounters } from '../content/team';
 import { CAMPAIGN_MISSIONS, getCampaignMission, isMissionUnlocked } from '../content/campaign';
+import { CHALLENGES, evaluateChallenge, type ChallengeDefinition } from '../content/challenges';
+import { restoreBattleReplay, type BattleReplay } from '../battle/replay';
 
 export interface Progress {
-  schema: 3;
+  schema: 4;
   cleared: string[];
+  challengesCleared: string[];
+  achievements: string[];
+  lastReplay: BattleReplay | null;
   missionsCleared: string[];
   teamIds: string[];
   discoveredMoves: string[];
@@ -14,9 +19,11 @@ export interface Progress {
 }
 const OLD_KEY='pokaimon:progress:v1';
 const PREVIOUS_KEY='pokaimon:progress:v2';
-const KEY='pokaimon:progress:v3';
+const THIRD_KEY='pokaimon:progress:v3';
+const KEY='pokaimon:progress:v4';
 export const defaultProgress: Progress = {
-  schema:3, cleared:[], missionsCleared:[], teamIds:MODELS.map(model=>model.id),
+  schema:4, cleared:[], challengesCleared:[], achievements:[], lastReplay:null,
+  missionsCleared:[], teamIds:MODELS.map(model=>model.id),
   discoveredMoves:[], winsByModel:{}, useAlternateLoadout:false,
 };
 
@@ -31,13 +38,16 @@ function migrate(value:unknown):Progress | null {
   const cleared=cleanIds(object.cleared,[...new Set(['task','bug','research','math','hallucination',
     ...CAMPAIGN_MISSIONS.map(mission=>mission.encounter.id)])]);
   if(object.schema===1) return {...defaultProgress,cleared};
-  if(object.schema!==2&&object.schema!==3) return null;
+  if(object.schema!==2&&object.schema!==3&&object.schema!==4) return null;
   const discoveredMoves=cleanIds(object.discoveredMoves,Object.keys(MOVES));
   const roster=MODELS.map(m=>m.id);
   const rawTeam=cleanIds(object.teamIds,roster);
   const useAlternateLoadout=object.useAlternateLoadout===true && cleared.length>=3;
   const missionsCleared=cleanIds(object.missionsCleared,CAMPAIGN_MISSIONS.map(mission=>mission.id));
-  const provisional:Progress={schema:3,cleared,missionsCleared,
+  const challengesCleared=cleanIds(object.challengesCleared,CHALLENGES.map(challenge=>challenge.id));
+  const achievements=cleanIds(object.achievements,['first-challenge','combo-master','guard-master','squad-tactician']);
+  const lastReplay=object.schema===4 && restoreBattleReplay(object.lastReplay) ? object.lastReplay as BattleReplay : null;
+  const provisional:Progress={schema:4,cleared,missionsCleared,challengesCleared,achievements,lastReplay,
     teamIds:rawTeam.length>0&&rawTeam.length<=3?rawTeam:[...roster],
     discoveredMoves, winsByModel:{},useAlternateLoadout};
   if(!teamCanHandleEncounters(rosterForProgress(provisional).filter(m=>provisional.teamIds.includes(m.id))))
@@ -55,7 +65,7 @@ function parse(key:string):unknown {
 }
 export function loadProgress():Progress {
   try {
-    return migrate(parse(KEY)) ?? migrate(parse(PREVIOUS_KEY)) ?? migrate(parse(OLD_KEY)) ?? {...defaultProgress,teamIds:[...defaultProgress.teamIds]};
+    return migrate(parse(KEY)) ?? migrate(parse(THIRD_KEY)) ?? migrate(parse(PREVIOUS_KEY)) ?? migrate(parse(OLD_KEY)) ?? {...defaultProgress,teamIds:[...defaultProgress.teamIds]};
   }catch{return {...defaultProgress,teamIds:[...defaultProgress.teamIds]};}
 }
 export function saveProgress(progress:Progress):void{
@@ -103,6 +113,24 @@ export function recordMissionVictory(progress:Progress,missionId:string,battle:B
      progress.missionsCleared.includes(missionId) ||
      !isMissionUnlocked(missionId,progress.missionsCleared))return progress;
   return {...progress,missionsCleared:[...progress.missionsCleared,missionId]};
+}
+export function recordChallengeCompletion(
+  progress:Progress,challenge:ChallengeDefinition,battle:BattleState,replay:BattleReplay|null,
+):Progress {
+  if(!CHALLENGES.some(known=>known.id===challenge.id) || !evaluateChallenge(challenge,battle))return progress;
+  const already=progress.challengesCleared.includes(challenge.id);
+  const achievements=[...new Set([
+    ...progress.achievements,
+    'first-challenge',
+    ...(battle.events.some(e=>e.kind==='COMBO_TRIGGERED')?['combo-master']:[]),
+    ...(battle.events.some(e=>e.kind==='STATUS_CONSUMED'&&e.message.includes('Guard'))?['guard-master']:[]),
+    ...(battle.events.some(e=>e.kind==='MODEL_SWITCHED')?['squad-tactician']:[]),
+  ])];
+  const nextReplay=replay && restoreBattleReplay(replay) ? replay : progress.lastReplay;
+  if(already && achievements.length===progress.achievements.length && nextReplay===progress.lastReplay)return progress;
+  return {...progress,
+    challengesCleared:already?progress.challengesCleared:[...progress.challengesCleared,challenge.id],
+    achievements,lastReplay:nextReplay};
 }
 export const recordVictory=recordBattleProgress;
 
