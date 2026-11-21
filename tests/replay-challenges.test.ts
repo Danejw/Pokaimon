@@ -4,7 +4,7 @@ import { INITIAL_MODEL, MODELS } from '../src/content/core';
 import { makeEncounter, encodeChallengeCode, decodeChallengeCode } from '../src/content/variants';
 import { CHALLENGES, getChallenge, evaluateChallenge } from '../src/content/challenges';
 import { buildBattleReplay, restoreBattleReplay } from '../src/battle/replay';
-import { defaultProgress, loadProgress, saveProgress, recordChallengeCompletion } from '../src/storage/progress';
+import { loadProgress, saveProgress, recordChallengeCompletion } from '../src/storage/progress';
 
 describe('Phase 4: deterministic variations and challenge constraints',()=>{
   it('does not mutate static encounter templates and makes reproducible variants',()=>{
