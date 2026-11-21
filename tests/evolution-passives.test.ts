@@ -31,6 +31,7 @@ describe('Phase 8 preapproved fictional passives',()=>{
     const swapped=switchModel(second,other.id,TASK,[model,other]);
     const back=switchModel(swapped,model.id,TASK,[model,other]);
     expect(back.events.filter(e=>e.kind==='MODEL_SWITCHED'&&e.modelId===model.id)).toHaveLength(1);
+    expect(back.guarded).toBe(false);
   });
   it('verification link adds exactly eight to an eligible Research → Verification combo',()=>{
     const model=evo('verification-link');
