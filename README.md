@@ -22,6 +22,8 @@ The Vite app is served from `/Pokaimon/` to support GitHub Pages deployment. Vis
 - [Game design](docs/GAME_DESIGN.md)
 - [Phased plan](docs/IMPLEMENTATION_PLAN.md)
 - [MVP status and manual playtest](docs/MVP_STATUS.md)
+- [Battle Evolution: five detailed post-MVP phases](docs/battle-evolution/README.md)
+- [Battle Evolution: serial execution tracker](docs/battle-evolution/TASKS.md)
 - [Retro wild encounter and summon design](docs/RETRO_BATTLE_DIRECTION.md)
 - [Security and rights review](docs/SECURITY_REVIEW.md)
 - [Skills and agent guide](AGENTS.md)
