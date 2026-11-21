@@ -42,7 +42,9 @@ export function App(){
     if(activeMissionId && battle.outcome==='won')
       next=recordMissionVictory(next,activeMissionId,battle);
     if(!activeMissionId){
-      const roster=rosterForProgress(old).filter(model=>old.teamIds.includes(model.id));
+      const available=rosterForProgress(old);
+      const roster=old.teamIds.map(teamId=>available.find(model=>model.id===teamId))
+        .filter((model):model is typeof available[number]=>!!model);
       const replay=buildBattleReplay(battle,{
         encounterId:id,modifierIds:activeScenario?.modifierIds??[],roster,
       });
