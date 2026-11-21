@@ -19,7 +19,7 @@ export interface EncounterDefinition {
   stages: readonly StageDefinition[]; lesson: string; special: string; specialEffect?: 'scope-shift' | 'regression' | 'source-conflict' | 'hidden-assumption' | 'false-lead';
 }
 export type EventKind = 'ENCOUNTER_STARTED' | 'CHARACTER_SELECTED' | 'MOVE_USED' | 'STAGE_PROGRESS_CHANGED' | 'STAGE_COMPLETED' | 'ENEMY_ACTED' | 'BATTLE_WON' | 'BATTLE_LOST' | 'MODEL_SWITCHED' | 'STATUS_APPLIED' | 'STATUS_CONSUMED' | 'COMBO_TRIGGERED';
-export interface BattleEvent { seq: number; turn: number; kind: EventKind; message: string; amount?: number; }
+export interface BattleEvent { seq: number; turn: number; kind: EventKind; message: string; amount?: number; moveId?: string; modelId?: string; }
 export interface BattleState {
   encounterId: string; modelId: string; squadIds: string[]; seed: number; turn: number; ap: number; maxAp: number;
   progress: number[]; goals: number[]; stageIndex: number; outcome: Outcome;
