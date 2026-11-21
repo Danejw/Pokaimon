@@ -1,6 +1,6 @@
 # Battle Evolution execution tracker
 
-**Status:** PHASES 1–3 AUTOMATED ACCEPTANCE VERIFIED / PHASES 4–5 PLANNED. Physical phone QA outstanding. Physical-device QA remains open. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
+**Status:** PHASES 1–3 AUTOMATED ACCEPTANCE VERIFIED / PHASE 4 CHALLENGES AND REPLAY TESTED / PHASE 5 REGISTRY AND REVIEW-ONLY IMPORT IMPLEMENTED, VERIFICATION PENDING. Physical phone QA outstanding. Physical-device QA remains open. Branch: `feat/battle-evolution` from `main` at `70be65c` (Nov 20, 2026). [Draft PR #4](https://github.com/Danejw/Pokaimon/pull/4).
 No checkboxes below represent implemented work. Update after verifying commits, CI and actual browser playthroughs, not upon writing documentation.
 
 ## Phase 1: Battle System 2.0
@@ -28,9 +28,9 @@ No checkboxes below represent implemented work. Update after verifying commits, 
 - [x] **Gate 3: Start chapter, play mission, beat boss, unlock next chapter and resume
 
 ## Phase 4: Replayability and Game Feel
-- [ ] 4A Seeded encounter modifiers with solvability validator
-- [ ] 4B Repeatable challenges and separate optional challenge tiers
-- [ ] 4C Achievements/replay summary from battle event history
+- [x] 4A Seeded encounter modifiers with solvability validator
+- [x] 4B Repeatable challenges and separate optional challenge tiers
+- [x] 4C Achievements/replay summary from battle event history
 - [ ] 4D Original multi-frame sprite FX, sound cues and animation polish
 - [ ] 4E Mobile visual QA, reduced-motion and seed replay verification
 - [ ] **Gate 4:** Three meaningfully different repeat battles with shareable reproducible seed and polished feedback
@@ -90,3 +90,20 @@ Next slice:
 **Full suite verified:** [GitHub Actions #44847525790](https://github.com/Danejw/Pokaimon/actions/runs/44847525790) on commit `cc20b3bf` passed lint, typecheck, Vitest, AG-UI, build, and **60 Playwright mobile/desktop tests**. Saved-local campaign supports 3 chapters, 9 missions, three scripted rivals and three bespoke boss phases; Quick Play remains separate, and progress schema v3 migrates v1/v2. Pure `tests/campaign-balance.test.ts` confirms a winning route for each starting companion on every mission. The first 58 of 60 browser tests passed on prior run [44846909393](https://github.com/Danejw/Pokaimon/actions/runs/44846909393); the two failures were a strict Playwright selector matching both the rival and ordinary enemy response, resolved with `.rival-counter` and rerun.
 
 **Actual screenshots opened from final CI artifact `14684625314`:** `campaign-locked-chromium-mobile.png`, `rival-counter-chromium-mobile.png`, `rival-counter-chromium-desktop.png`, `boss-phase-chromium-mobile.png`. The chapter hierarchy, original rival and Scope Giant sprites, counters, and action controls are readable; mobile battle's additional status lines make the full page **taller than the screen**. This is an identified UX improvement for Phase 4, so don't describe every battle as no-scroll. Physical phone audio/touch verification remains outstanding. No production deployment or merge.
+
+
+## Phase 4 evidence (Nov 20, 2026)
+
+**Existing work discovered at HEAD `f5fae212`:** `src/content/variants.ts` provides three deterministic authored modifiers and a bounded PK1 share code; `src/content/challenges.ts` evaluates three curated objectives from genuine battle events. `src/battle/replay.ts` reconstructs and fingerprints battle state from action records; `src/game/ChallengePage.tsx` offers challenge selection, code entry/copy, earned badges, and last-battle replay. Local progress schema v4 migrates prior saves and records challenge completions and replays. `tests/replay-challenges.test.ts` covers reproducibility, invalid codes, battle reachability, event-defined goals, replay integrity and local persistence.
+
+**Automation evidence:** [GitHub CI run 44849581357](https://github.com/Danejw/Pokaimon/actions/runs/44849581357) completed successfully on `f5fae212`. Downloaded the screenshot artifact `14684194625` and **visually inspected** `challenges-chromium-mobile.png`, `challenge-win-chromium-mobile.png`, `challenges-chromium-desktop.png` and `challenge-win-chromium-desktop.png`. Challenge cards, code controls, results and earned medal are readable and no horizontal clipping was visible in those four images. These are full-page screenshots, not an assertion that the screen fits without vertical scroll. The 1082px-wide mobile capture was scaled by Playwright device pixel ratio and full-page heights were 3229/2292px respectively. The challenge menu is tall on a phone and could benefit from a condensed layout. Motion/audio quality cannot be proven by static screenshots.
+
+**Completion status:** 4A, 4B, 4C have automated evidence. 4D still requires a measured new sprite/sound polish slice and recorded audio/motion test; 4E needs a seed-vs-input manual QA sweep and phone/desktop visual review after any additional changes. Do not claim Phase 4 fully complete or deployed yet.
+
+## Phase 5 implementation underway (Nov 20, 2026)
+
+**Starting point:** `f5fae212`, CI green as linked above. New `src/content/modelCatalog.ts` stores game publication status, separate fictional balance profiles and explicit factual evidence review status. The three existing characters remain playable with their old recorded URLs/dates, currently **pending factual review**, while `core.ts` derives the playable roster from approved catalog entries. A new hypothetical model can use `getModelSprite`'s original generic fallback instead of needing a per-model art/UI switch. Removed three-ID-only casts and the old hardcoded replay restriction, and kept new teams limited to three slots. `ModelDex` no longer says “DOCUMENTATION CHECKED” for the legacy records. Added a no-network, no-cost, **candidate-only** importer at `scripts/prepare-model-candidate.mjs`, test coverage in `tests/model-catalog.test.ts` and `tests/model-candidate.test.ts`, and [MODEL_ONBOARDING.md](MODEL_ONBOARDING.md).
+
+**Verification pending:** The changes above still need a green **final-head** CI run and new mobile/desktop screenshot review. No verified new real-world model was added. Factual capability approval, real-world source checks and a full reviewed release/rollback demonstration remain 5D–5E follow-ups. Do not state Phase 5 complete yet.
+
+**Safety:** Every change is on `feat/battle-evolution`; production `main` has not been changed. Draft PR #4 remains open; no paid model APIs, backend, or unattended publication were introduced.
