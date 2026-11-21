@@ -106,11 +106,9 @@ export function App(){
     <header className="topline retro-header">
       <span className="brandmark">✦</span>
       <span className="brand">POKAIMON</span>
-      <span className="edition">16-BIT AI LAB</span>
     </header>
 
     {screen==='home'&&<section className="home-page retro-home">
-      <p className="eyebrow">A NEW KIND OF WILD ENCOUNTER</p>
       <h1>Master your<br/><em>models.</em></h1>
       <p className="intro">WILD TASKS ARE OUT THERE. CHOOSE YOUR AI. LEARN ITS MOVES. WIN THE BATTLE.</p>
       <div className="home-visual retro-preview">
