@@ -10,11 +10,14 @@ import { playCue } from './sound';
 import { setBattleMusic } from './music';
 import type { Difficulty } from '../storage/preferences';
 import { battleMedal, forecastMove, getStageIntel } from '../battle/tactics';
+import { evaluateChallenge, type ChallengeDefinition } from '../content/challenges';
 
 export interface BattlePanelProps {
   encounter: EncounterDefinition;
   roster?: readonly ModelDefinition[];
   nextLabel?: string;
+  seed?: number;
+  challenge?: ChallengeDefinition;
   reducedMotion: boolean;
   soundEnabled: boolean;
   textSpeed: 'normal' | 'fast';
@@ -30,7 +33,7 @@ interface AttackAction {
 }
 
 export function BattlePanel({
-  encounter, roster = MODELS, nextLabel, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onFinish,
+  encounter, roster = MODELS, nextLabel, seed=1, challenge, reducedMotion, soundEnabled, textSpeed, difficulty, onHome, onNext, onFinish,
 }: BattlePanelProps) {
   const [phase, setPhase] = useState<BattlePhase>('encounter');
   const [model, setModel] = useState<ModelDefinition | null>(null);
@@ -139,7 +142,7 @@ export function BattlePanel({
     if (phase !== 'selection') return;
     playCue('throw', soundEnabled);
     setModel(next);
-    setBattle(createBattle(encounter, next, 1, roster));
+    setBattle(createBattle(encounter, next, seed, roster));
     setSelectedMove(0);
     setSwitching(false);
     setAttack(null);
@@ -220,10 +223,11 @@ export function BattlePanel({
   return <section className="retro-battle" aria-label={'Wild ' + encounter.name + ' encounter'}>
     <div className="retro-topbar">
       <button className="retro-back" onClick={onHome}>◀ HOME</button>
-      <span className="battle-chapter">WILD ENCOUNTER <span aria-hidden="true">✦</span></span>
+      <span className="battle-chapter">{challenge ? 'CHALLENGE BATTLE' : 'WILD ENCOUNTER'} <span aria-hidden="true">✦</span></span>
       <small>SIMULATION</small>
     </div>
 
+    {challenge && <div className="challenge-objective" role="status">{challenge.title.toUpperCase()} · {challenge.tier.toUpperCase()}</div>}
     <div className="game-frame">
       <div className="battle-screen">
         <BattleStage enemy={encounter.name} model={model?.id ?? null} phase={phase}
@@ -339,6 +343,10 @@ export function BattlePanel({
 
       {phase === 'result' && battle && <div className="retro-result">
         <h2>{battle.outcome === 'won' ? 'VICTORY!' : 'TRY AGAIN'}</h2>
+        {challenge&&<div className={'challenge-result '+(evaluateChallenge(challenge,battle)?'challenge-success':'challenge-failed')}>
+          {evaluateChallenge(challenge,battle)?'★ CHALLENGE CLEAR · '+challenge.title.toUpperCase():
+            battle.outcome==='won'?'TASK COMPLETED · CHALLENGE OBJECTIVE MISSED':'CHALLENGE FAILED · RETRY WITH A NEW STRATEGY'}
+        </div>}
         {battle.events.some(event => event.kind === 'COMBO_TRIGGERED') && <div className="battle-combo" role="status">EVIDENCE COMBO · RESEARCH + VERIFY</div>}
         {battleMedal(battle) && <div className="battle-medal" role="status"><b>{battleMedal(battle)}</b>
           <span>{battle.turn} TURNS · {battle.maxAp - battle.ap} AP USED</span></div>}
