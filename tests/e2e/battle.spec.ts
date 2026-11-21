@@ -120,3 +120,32 @@ test('switch menu stays legible and selectable on compact phones and desktop', a
   await page.getByRole('button', { name: /MOVES/i }).click();
   await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
 });
+
+test('code review blocks a telegraphed counter on its second turn', async ({ page }, testInfo) => {
+  await page.goto('./?encounter=task');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name: 'Select Grok 4.7' }).click();
+  await expect(page.getByRole('button', { name: 'Max Reasoning' })).toBeVisible();
+  await page.getByRole('button', { name: 'Max Reasoning' }).click();
+  await expect(page.locator('.battle-intent')).toContainText('Scope Shift');
+  await page.getByRole('button', { name: 'Code Review' }).click();
+  await expect(page.locator('.wild-counter')).toContainText('blocked');
+  await page.screenshot({ path: 'test-results/visual/guard-counter-' + testInfo.project.name + '.png', fullPage:true });
+  await page.getByRole('button', { name: 'Code Review' }).click();
+  await expect(page.getByRole('heading', { name: 'VICTORY!' })).toBeVisible();
+});
+
+test('research followed by verification earns a clear simulated combo reward', async ({ page }, testInfo) => {
+  await page.goto('./?encounter=research');
+  await page.getByRole('button', { name: /PLAY/i }).click();
+  await page.getByRole('button', { name: 'Select GPT-6.2 Astra' }).click();
+  await expect(page.getByRole('button', { name: 'Deep Think' })).toBeVisible();
+  await page.getByRole('button', { name: 'Deep Think' }).click();
+  await expect(page.getByRole('button', { name: 'Deep Research' })).toBeVisible();
+  await page.getByRole('button', { name: 'Deep Research' }).click();
+  await expect(page.getByRole('button', { name: 'Self-Correction' })).toBeVisible();
+  await page.getByRole('button', { name: 'Self-Correction' }).click();
+  await expect(page.getByRole('heading', { name: 'VICTORY!' })).toBeVisible();
+  await expect(page.locator('.battle-combo')).toContainText('RESEARCH + VERIFY');
+  await page.screenshot({ path: 'test-results/visual/evidence-combo-' + testInfo.project.name + '.png', fullPage:true });
+});
