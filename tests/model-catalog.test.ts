@@ -10,17 +10,20 @@ describe('Phase 5: model registry', () => {
     expect(validateCatalog(MODEL_CATALOG, MOVES)).toEqual([]);
     expect(catalogToModels(MODEL_CATALOG)).toEqual(MODELS);
     expect(MODEL_CATALOG).toHaveLength(4);
-    expect(MODEL_CATALOG.filter(entry => entry.facts.reviewStatus === 'pending')).toHaveLength(3);
+    expect(MODEL_CATALOG.every(entry => entry.facts.reviewStatus === 'reviewed')).toBe(true);
     expect(MODEL_CATALOG.find(entry => entry.id === 'opus55')?.facts.reviewStatus).toBe('reviewed');
     expect(MODEL_CATALOG.every(entry => entry.balance.focus >= 1)).toBe(true);
   });
   it('a candidate is never playable until explicitly approved', () => {
     const candidate = {
       ...MODEL_CATALOG[0], id:'trial', publicationStatus:'candidate' as const,
-      facts:{...MODEL_CATALOG[0].facts, displayName:'Test Creature', sourceUrl:'https://example.org/fictional', reviewStatus:'pending' as const},
+      facts:{...MODEL_CATALOG[0].facts, displayName:'Test Creature', sourceUrl:'https://example.org/fictional', reviewStatus:'pending' as const, verifiedCapabilities:[]},
     };
     expect(catalogToModels([...MODEL_CATALOG,candidate])).toHaveLength(4);
-    const approved={...candidate,publicationStatus:'approved' as const};
+    expect(validateCatalog([{...candidate, publicationStatus:'approved'}],MOVES))
+      .toContain('Unreviewed playable model trial');
+    const approved={...candidate,publicationStatus:'approved' as const,
+      facts:{...candidate.facts,reviewStatus:'reviewed' as const}};
     const newRoster=catalogToModels([...MODEL_CATALOG,approved]);
     expect(newRoster).toHaveLength(5);
     const newModel=newRoster[4];
