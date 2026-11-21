@@ -512,3 +512,7 @@ h1,h2,h3{margin:0}
 .intelligence-trial{border:4px solid #344254;box-shadow:3px 3px 0 #87968b;padding:11px 10px;margin:10px 0}
 .intelligence-trial p{font:15px/1.3 'Chakra Petch',system-ui,sans-serif;margin:8px 0}
 @media(max-width:375px){.intelligence-trial{padding:9px 7px}}
+
+.strategy-recap{margin:7px;padding:10px;border:3px solid #5e8071;background:#edf3d7;color:#304f48;font:600 12px/1.4 'Chakra Petch',system-ui,sans-serif}
+.strategy-recap b{display:block;color:#254b47;letter-spacing:.5px}
+.strategy-recap p{margin:4px 0}

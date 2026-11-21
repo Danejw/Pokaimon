@@ -392,6 +392,7 @@ export function BattlePanel({
             battle.outcome==='won'?'TASK COMPLETED · CHALLENGE OBJECTIVE MISSED':'CHALLENGE FAILED · RETRY WITH A NEW STRATEGY'}
         </div>}
         {battle.events.some(event => event.kind === 'COMBO_TRIGGERED') && <div className="battle-combo" role="status">EVIDENCE COMBO · RESEARCH + VERIFY</div>}
+        {encounter.mechanic && <div className="strategy-recap" role="status"><b>STRATEGY REPORT</b><p>{battle.events.some(event=>event.kind==='CLUE_FOUND')?'Clue investigated. ': 'Clue skipped. '}{battle.events.some(event=>event.kind==='APPROACH_CHANGED')?'Plan revised after changed requirements. ':''}{battle.events.some(event=>event.kind==='ENEMY_ACTED' && (/Brittle Patch!|Scope Creep!|amplified/.test(event.message)))?'The enemy exploited an unverified assumption. ':'You prevented the enemy\'s extra verification burden. '}Compare outcomes by retrying with a different approach.</p></div>}
         {battleMedal(battle) && <div className="battle-medal" role="status"><b>{battleMedal(battle)}</b>
           <span>{battle.turn} TURNS · {battle.maxAp - battle.ap} AP USED</span></div>}
         <p>{summarizeBattle(battle, encounter)}</p>

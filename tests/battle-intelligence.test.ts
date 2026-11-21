@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { createBattle, applyMove, inspectHydraEvidence } from '../src/battle/engine';
-import { HYDRA } from '../src/content/intelligentEncounters';
+import { createBattle, applyMove, inspectHydraEvidence, inspectScenarioClue, reviseScopePlan } from '../src/battle/engine';
+import { HYDRA, GOLEM, SCOPE, INTELLIGENCE_CLUES } from '../src/content/intelligentEncounters';
 import { INITIAL_MODEL, MODELS } from '../src/content/core';
 import { buildBattleReplay, restoreBattleReplay } from '../src/battle/replay';
 import { makeEncounter } from '../src/content/variants';
@@ -61,5 +61,57 @@ describe('Phase 6A: Hallucination Hydra decision',()=>{
     const replay=buildBattleReplay(state,{encounterId:'hydra',modifierIds:[],roster:MODELS.slice(0,3)});
     expect(replay.actions[0]).toEqual({kind:'inspect',id:'source-duplicate'});
     expect(restoreBattleReplay(replay)).toEqual(state);
+  });
+});
+describe('Phase 6: Reactive Regression Golem',()=>{
+  const begin=()=>createBattle(GOLEM,INITIAL_MODEL,602,MODELS.slice(0,3));
+  const move=(s:ReturnType<typeof begin>,id:string)=>applyMove(s,id,INITIAL_MODEL,GOLEM);
+  it('diagnostic clue prevents a risky regression, and rushed repair requires a second test',()=>{
+    let safe=inspectScenarioClue(begin(),INTELLIGENCE_CLUES.golem.id,GOLEM);
+    expect(safe.tactic?.inspected).toBe(true);
+    for(const id of ['deep-think','code-execution','self-correction'])safe=move(safe,id);
+    expect(safe.outcome).toBe('won');
+    let rushed=begin();
+    for(const id of ['deep-think','code-execution'])rushed=move(rushed,id);
+    expect(rushed.goals[2]).toBe(GOLEM.stages[2].goal+20);
+    expect(rushed.events.some(e=>e.kind==='ENEMY_ACTED'&&e.message.includes('Brittle Patch'))).toBe(true);
+    rushed=move(rushed,'self-correction');
+    expect(rushed.outcome).toBe('active');
+    rushed=move(rushed,'self-correction');
+    expect(rushed.outcome).toBe('won');
+    expect(safe.ap).toBeGreaterThan(rushed.ap);
+  });
+  it('rejects repeated/unknown inspections and restores each decision from replay',()=>{
+    const base=begin();
+    expect(inspectScenarioClue(base,'evil',GOLEM)).toBe(base);
+    const observed=inspectScenarioClue(base,INTELLIGENCE_CLUES.golem.id,GOLEM);
+    expect(inspectScenarioClue(observed,INTELLIGENCE_CLUES.golem.id,GOLEM)).toBe(observed);
+    let done=observed;
+    for(const id of ['deep-think','code-execution','self-correction'])done=move(done,id);
+    expect(restoreBattleReplay(buildBattleReplay(done,{encounterId:'golem',modifierIds:[],roster:MODELS.slice(0,3)}))).toEqual(done);
+  });
+});
+describe('Phase 6: Responsive Scope Shifter',()=>{
+  const begin=()=>createBattle(SCOPE,INITIAL_MODEL,603,MODELS.slice(0,3));
+  const move=(s:ReturnType<typeof begin>,id:string)=>applyMove(s,id,INITIAL_MODEL,SCOPE);
+  it('early clarification prevents rework while unprepared plans can replan or double-verify',()=>{
+    let early=inspectScenarioClue(begin(),INTELLIGENCE_CLUES.scope.id,SCOPE);
+    for(const id of ['deep-think','code-execution','self-correction'])early=move(early,id);
+    expect(early.outcome).toBe('won');
+    let revised=move(begin(),'deep-think');
+    expect(revised.tactic?.consequence).toBe(true);
+    expect(revised.goals[2]).toBe(56);
+    revised=reviseScopePlan(revised,SCOPE);
+    expect(revised.tactic?.recovered).toBe(true);
+    expect(revised.goals[2]).toBe(36);
+    expect(reviseScopePlan(revised,SCOPE)).toBe(revised);
+    for(const id of ['code-execution','self-correction'])revised=move(revised,id);
+    expect(revised.outcome).toBe('won');
+    const replay=buildBattleReplay(revised,{encounterId:SCOPE.id,modifierIds:[],roster:MODELS.slice(0,3)});
+    expect(replay.actions.some(x=>x.kind==='replan')).toBe(true);
+    expect(restoreBattleReplay(replay)).toEqual(revised);
+    let brute=move(begin(),'deep-think');
+    for(const id of ['code-execution','self-correction','self-correction'])brute=move(brute,id);
+    expect(brute.outcome).toBe('won');
   });
 });
