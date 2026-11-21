@@ -29,6 +29,14 @@ export function ChallengePage({progress,onHome,onLaunch}:{
     <h2>Battle Challenges</h2>
     <p className="intro">A new challenge for your models. Match techniques, build combos, and discover strategic ways to win.</p>
     <p className="challenge-achievements" role="status">{progress.challengesCleared.length}/{CHALLENGES.length} CHALLENGES CLEARED · {progress.achievements.length} BADGES EARNED</p>
+    <article className="challenge-card intelligence-trial">
+      <div className="challenge-heading"><span>★ Hallucination Hydra</span><small>NEW TRIAL</small></div>
+      <p>A confident claim hides duplicate sources. Inspect the evidence or try to push through its Echo Chamber.</p>
+      <div className="challenge-actions">
+        <span>DECISION-DRIVEN BOSS</span>
+        <button className="primary" onClick={()=>onLaunch({encounterId:'hydra',seed:601,modifierIds:[]},null)}>▶ HYDRA TRIAL</button>
+      </div>
+    </article>
     {CHALLENGES.map((challenge,index)=>{
       const scenario={encounterId:challenge.encounterId,seed:challenge.seed,modifierIds:[...challenge.modifierIds]};
       const share=encodeChallengeCode(scenario);
