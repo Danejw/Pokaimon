@@ -375,3 +375,34 @@ h1,h2,h3{margin:0}
   color:#356246;font:800 12px 'Chakra Petch',system-ui,sans-serif;
 }
 @media(max-width:375px){.battle-intent{font-size:11px;padding:2px 5px}}
+
+
+/* ModelDex and squad editor: reuse existing handheld visual language. */
+.home-submenu{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin:8px 0}
+.home-submenu .text-button{font-size:clamp(14px,3.4vw,17px);padding:6px 7px;margin:4px 0}
+.modeldex-actions{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:14px}
+.modeldex-actions .secondary{min-height:44px;padding:7px;font-size:14px}
+.modeldex-actions span{font:700 13px/1.2 'Chakra Petch',system-ui,sans-serif;color:#50665e}
+.dex-entry{align-items:flex-start}
+.dex-entry .guide-portrait{margin-top:3px}
+.dex-entry .guide-card-copy p{font-size:15px;line-height:1.3}
+.dex-moves{margin:8px 0;border-top:2px dashed #a2aa9a;border-bottom:2px dashed #a2aa9a;padding:8px 0}
+.dex-moves summary{cursor:pointer;font:700 14px 'Chakra Petch',system-ui,sans-serif}
+.dex-moves p{padding:4px 0;margin:5px 0}
+.dex-moves b{font-size:13px}
+.dex-moves span{font-size:14px}
+.team-pick{display:flex;align-items:center;gap:9px;margin:6px 0;padding:9px;background:#fff9e8;border:4px solid #344254}
+.team-pick input,.team-reward-option input{accent-color:#4b986a;width:21px;height:21px;flex:none}
+.team-pick .squad-icon{width:52px;height:52px}
+.team-pick-copy{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+.team-pick-copy strong{font:700 17px 'Chakra Petch',system-ui,sans-serif}
+.team-pick-copy small{font:600 12px/1.2 'Chakra Petch',system-ui,sans-serif;color:#637078;overflow-wrap:anywhere}
+.team-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0 6px}
+.team-actions button{font-size:14px;padding:8px 5px}
+.team-message{min-height:28px;font:700 13px/1.35 'Chakra Petch',system-ui,sans-serif;color:#5b664d}
+.team-reward{background:#f7edce;border:4px solid #344254;padding:12px;margin:17px 0}
+.team-reward h3{margin:3px 0 11px!important}
+.team-reward strong{font:700 17px 'Chakra Petch',system-ui,sans-serif}
+.team-reward p{font:15px/1.3 'Chakra Petch',system-ui,sans-serif}
+.team-reward-option{display:flex;align-items:center;gap:9px;font:700 15px 'Chakra Petch',system-ui,sans-serif;margin:12px 0}
+.team-reward small{font:700 13px 'Chakra Petch',system-ui,sans-serif;color:#65695f}
