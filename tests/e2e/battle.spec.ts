@@ -318,3 +318,31 @@ test('challenge code rejects unsupported or malicious text without changing rout
   await expect(page.getByRole('status').filter({hasText:'Invalid or unsupported'})).toBeVisible();
   await expect(page.locator('.challenge-card')).toHaveCount(3);
 });
+
+test('new approved model uses generic original art and wins a complete data-driven battle', async ({page},testInfo)=>{
+  await page.setViewportSize(testInfo.project.name.includes('mobile')?{width:390,height:844}:{width:1280,height:900});
+  await page.goto('./?encounter=task');
+  await page.getByRole('button',{name:'MODELDEX'}).click();
+  await expect(page.locator('.dex-entry')).toHaveCount(4);
+  await expect(page.locator('.dex-entry').last()).toContainText('Claude Opus 5.5');
+  await expect(page.locator('.dex-entry').last()).toContainText('EVIDENCE REVIEWED');
+  await page.getByRole('button',{name:'EDIT TEAM'}).click();
+  await page.getByRole('checkbox',{name:'Team Grok 4.7'}).uncheck();
+  await page.getByRole('checkbox',{name:'Team Claude Fable 5.2'}).uncheck();
+  await page.getByRole('checkbox',{name:'Team Claude Opus 5.5'}).check();
+  await page.getByRole('button',{name:'SAVE TEAM'}).click();
+  await expect(page.getByRole('status')).toContainText('TEAM SAVED');
+  await page.getByRole('button',{name:/HOME/i}).click();
+  await page.getByRole('button',{name:/PLAY/i}).click();
+  await page.getByRole('button',{name:'Select Claude Opus 5.5'}).click();
+  await expect(page.getByTestId('phaser-stage')).toHaveAttribute('data-model','opus55');
+  await expect(page.getByRole('button',{name:'Extended Thinking'})).toBeVisible();
+  await page.screenshot({path:'test-results/visual/new-model-'+testInfo.project.name+'.png',fullPage:true});
+  await page.getByRole('button',{name:'Extended Thinking'}).click();
+  await expect(page.getByRole('button',{name:'Code Review'})).toBeVisible();
+  await page.getByRole('button',{name:'Code Review'}).click();
+  await expect(page.getByRole('button',{name:'Self-Correction'})).toBeVisible();
+  await page.getByRole('button',{name:'Self-Correction'}).click();
+  await expect(page.getByRole('heading',{name:'VICTORY!'})).toBeVisible();
+  await page.screenshot({path:'test-results/visual/new-model-win-'+testInfo.project.name+'.png',fullPage:true});
+});
